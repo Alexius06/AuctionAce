@@ -1,50 +1,42 @@
 const mongoose = require('mongoose');
 const schema = mongoose.schema;
 
-const MessageSchema = new schema({
+const HistorySchema = new schema({
     id: {
         type: Number,
         required: true,
         unique: true,
-        
     },
-    senderId: {
+    itemId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Item',
+        required: true,
+    },
+    userId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
         required: true,
-        
     },
-    receiverId: {
+    EventId: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'User',
-        required: true,
-        
+        ref: 'Event',
+        required: true, 
     },
-    message: {
-        type: String,
-        required: true,
-        minlength: 3,
-        maxlength: 1000
-    },
-    sentAt: {
+    createdAt: {
         type: Date,
         default: Date.now
     },
-    status: {   
-        type: String,
-        enum: ['Sent','Unsent'],
-        default: 'Sent'
-    },  
     updatedAt: {
         type: Date,
         default: Date.now
     }   
 });
-MessageSchema.pre('save',function(next){
+
+HistorySchema.pre('save',function(next){
     this.updatedAt = Date.now();    
-    next();
+    next();History
 });
 
 
-const Message = mongoose.model('Message', MessageSchema,'Messages');    
-module.exports = Message;  
+const History = mongoose.model('History', HistorySchema,'Auction History');    
+module.exports = History;  

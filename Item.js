@@ -25,6 +25,16 @@ const ItemSchema = new schema({
         required: true,
         minlength: 0
     },
+    Userid:{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        required: true,
+    },
+    Eventid:{    
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Event',
+        required: true,
+    },
     
     createdAt: {
         type: Date,
