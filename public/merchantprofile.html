@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Merchant Profile Page</title>
+    <link rel="icon" href="../favicon.png"  type="image/png">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@3.3.0/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Reem+Kufi&display=swap" rel="stylesheet">
+    <style>
+        body{
+            font-family: 'Reem Kufi', sans-serif;
+            background: radial-gradient(circle at center, #c9c9c9, #606060);
+            overflow-x: hidden;
+        }
+        .nav-link:hover {
+        color: #c7ae6a;
+        }
+        .page::-webkit-scrollbar {
+            width: 8px; /* Slim scrollbar width */
+        }
+
+        .page::-webkit-scrollbar-track {
+            background: transparent; /* Hide the track */
+        }
+
+        .page::-webkit-scrollbar-thumb {
+            background: #bfa75d; /* Gold color */
+            border-radius: 4px; /* Rounded scrollbar */
+        }
+
+        .page::-webkit-scrollbar-thumb:hover {
+            background: #a68e4d; /* Darker gold on hover */
+        }
+    </style>
+</head>
+
+<body class="bg-red-500 flex justify-center items-center min-h-screen">
+    <div class="relative w-full max-w-6xl">
+        <!-- Background Container -->
+        <div class="relative bg-gradient-to-b from-gray-200 to-gray-50 rounded-lg shadow-lg overflow-hidden">
+            <!-- Intricate lines -->
+            <div class="absolute top-0 left-0 w-full h-64 bg-gray-300 opacity-50 transform scale-125 -rotate-6"></div>
+
+            <!-- Navbar (Assumed to be included) -->
+            <nav class="absolute top-0 w-full bg-transparent px-6 py-4">
+                <ul class="flex space-x-4 text-white">
+                    <li><a href="#" class="hover:underline text-[#606060] nav-link">Home</a></li>
+                    <!-- Add more navbar items here -->
+                </ul>
+            </nav>
+
+            <!-- User Info Section -->
+            <div class="relative z-10 pt-24 flex flex-col items-left pl-[8rem] overflow-y-scroll page">
+                <!-- Profile Image -->
+                <div class="w-32 h-32 rounded-full bg-[#c7ae6a] bg-opacity-30 flex text-3xl font-bold justify-center items-center text-center overflow-hidden">
+                    T
+                </div>
+
+                <!-- User Details -->
+                <div class="text-left mt-4">
+                    <h1 class="text-2xl font-semibold">Tania Opuama</h1>
+                    <p class="text-gray-600">@dfw.taniaa</p>
+                    <p class="text-sm mt-2">Merchant</p>
+                    <p class="flex items-center text-sm text-gray-500 mt-2">
+                        <span class="mr-2">📞</span> 07066139073
+                    </p>
+                    <p class="flex items-center text-sm text-gray-500 mt-2">
+                        <span class="mr-2">📍</span> 57 Brains & Hammers City,lifecamp, Abuja
+                    </p>
+                    <p class="flex items-center text-sm text-gray-500 mt-2">
+                        <span class="mr-2">📅</span> Joined 16 Sept 2024
+                    </p>
+                </div>
+
+                <!-- Edit Button -->
+                <button
+                    class="absolute top-4 right-4 text-[#606060] px-4 py-2 rounded-full shadow-md hover:shadow-xl bg-[#c7ae6a]">Edit</button>
+
+                <!-- Tabs -->
+                <div class="mt-8 w-full pr-[10rem]">
+                    <ul class="flex border-b-2 border-gray-200 text-sm">
+                        <li class="mr-4 pb-2 ">Item Upload</li>
+                        <li class="mr-4 pb-2 border-b-2 border-black">Item Status</li>
+                        <li class="pb-2">Inventory</li>
+                    </ul>
+
+                    <!-- Table Section -->
+                    <div class="mt-4">
+                        <table class="table-auto w-full text-left text-gray-500">
+                            <thead>
+                                <tr class="text-xs uppercase text-gray-400">
+                                    <th class="px-4 py-2">Name</th>
+                                    <th class="px-4 py-2">Size</th>
+                                    <th class="px-4 py-2">Location</th>
+                                    <th class="px-4 py-2">Status</th>
+                                    <th class="px-4 py-2">Uploaded At</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="bg-white border-b">
+                                    <td class="px-4 py-2">Moro Chickens Co.</td>
+                                    <td class="px-4 py-2">40 Acres</td>
+                                    <td class="px-4 py-2">Mando</td>
+                                    <td class="px-4 py-2 text-red-500">Pending</td>
+                                    <td class="px-4 py-2">16 Sept 2024</td>
+                                </tr>
+                                <!-- More rows as needed -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.tailwindcss.com"></script>
+</body>
+
+</html>

@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AuctionAce - Live Auction</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@3.3.0/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="icon" href="../favicon.png"  type="image/png">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Reem+Kufi&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Reem Kufi', sans-serif;
+            background: radial-gradient(circle at center, #c9c9c9, #606060);
+            overflow-x: hidden;
+        }
+
+        h1,
+        h2,
+        h3 {
+            font-family: 'Playfair Display', serif;
+        }
+
+        .btn-hover {
+            transition: all 0.3s ease;
+            border-radius: 30px;
+        }
+
+        .btn-hover:hover {
+            background-color: #c7ae6a;
+            color: white;
+            transform: translateY(-5px);
+            box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .selected {
+            border: 2px solid #c7ae6a;
+        }
+
+        /* Image gallery */
+        .large-frame img {
+            height: 500px;
+            width: 500px ;  
+        }
+
+        .small-frame {
+            cursor: pointer;
+            padding: 4px;
+            transition: border-color 0.3s ease;
+        }
+
+        .small-frame.selected {
+            border: 2px solid #c7ae6a;
+        }
+
+        /* Live chat */
+        .live-chat {
+            resize: vertical;
+            overflow-y: auto;
+            max-height: 40vh;
+            padding: 10px;
+            background-color: #f3f3f3;
+            border: 1px solid #ccc;
+        }
+
+        .chat-input {
+            padding-right: 40px;
+            width: 100%;
+        }
+
+        .send-icon {
+            position: absolute;
+            right: 10px;
+            top: 12px;
+            color: black;
+        }
+
+        .navbar {
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+            background: linear-gradient(to right, #6d6d6d, #8d8d8d, #b5b5b5);
+        }
+
+        .nav-link {
+            color: #606060;
+        }
+
+        .nav-link:hover {
+            color: #c7ae6a;
+        }
+
+        .bg-theme {
+            background-color: #f9f9f9;
+            border: 1px solid #ccc;
+        }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(60px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0px);
+            }
+        }
+        .animate-fade {
+            animation: fadeIn 1s ease-in-out;
+        }
+        .animate-fade1 {
+            animation: fadeIn 2s ease-in-out;
+        }
+        .animate-fade2 {
+            animation: fadeIn 3s ease-in-out;
+        }
+        .animate-fade3 {
+            animation: fadeIn 4s ease-in-out;
+        }
+        #current-image {
+            transition: opacity 0.4s ease-in-out;
+            object-fit: cover;
+            width: 100%;
+            height: 100%;
+        }
+        .current-bids #bidsList::-webkit-scrollbar {
+            width: 8px; /* Slim scrollbar width */
+        }
+
+        .current-bids #bidsList::-webkit-scrollbar-track {
+            background: transparent; /* Hide the track */
+        }
+
+        .current-bids #bidsList::-webkit-scrollbar-thumb {
+            background: #bfa75d; /* Gold color */
+            border-radius: 4px; /* Rounded scrollbar */
+        }
+
+        .current-bids #bidsList::-webkit-scrollbar-thumb:hover {
+            background: #a68e4d; /* Darker gold on hover */
+        }
+    </style>
+</head>
+
+<body class="bg-gray-100">
+
+    <!-- Navbar -->
+    <nav class="navbar py-4 px-6 flex justify-between mr-0 items-center">
+        <img src="../AuctionAceLogo.png" class="w-45 h-24" alt="AuctionAce Logo">
+        <nav class="space-x-6">
+            <a href="#" class="text-lg font-semibold nav-link playfair">Home</a>
+            <a href="#" class="text-lg font-semibold nav-link playfair">Auctions</a>
+            <a href="#" class="text-lg font-semibold nav-link playfair">Contact</a>
+        </nav>
+    </nav>
+        <!-- sidebar -->
+    <div id="sidebar" class="sidebar fixed left-0 top-0 h-full w-64 bg-gray-800 text-white transform z-50 -translate-x-full transition-transform duration-300">
+        <ul class="p-4">
+            <li class="p-2 hover:bg-gray-600 cursor-pointer">Item 1</li>
+            <li class="p-2 hover:bg-gray-600 cursor-pointer">Item 2</li>
+            <li class="p-2 hover:bg-gray-600 cursor-pointer">Item 3</li>
+        </ul>
+    </div>
+
+    <!-- Auction Item Section -->
+    <section class="container mx-auto py-8">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Image Display Section -->
+            <div class="col-span-2 flex">
+                <div class="large-frame bg-[#6d6d6d] shadow-lg animate-fade">
+                    <img  class="object-cover transition-opacity duration-400 ease-in-out opacity-100" src="https://encrypted-tbn0.gstaq=tbn:ANd9GcTHRdZhe2KIARgMmq7zzxZj8pNPYCX_JLVDCPEFOTwBmBV6O5hlymOzpUQgHDTDtPA4fHc&usqp=CAU" id="current-image" alt="Current Item Image">
+                </div>
+                <div class="small-frames flex flex-col space-y-4 ml-4">
+                    <div class="small-frame selected animate-fade1">
+                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQzQNeRoKLvGLQ9zy6WaGBq4C16yS3SpkbErfBTF0okrDaJaI6zfjPYAjLhslWEEK28Y7s&usqp=CAU"  id="item1" alt="Item Image 1" onclick="changeImage('item1')">
+                    </div>
+                    <div class="small-frame animate-fade2">
+                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTsWpQ6xOW19duRniIqQd7bcBX18vyNAkKe46vYzuGFD1X_Si0z7nI1tVaOAGpX2Pk4iAU&usqp=CAU"  id="item2" alt="Item Image 2" onclick="changeImage('item2')">
+                    </div>
+                    <div class="small-frame animate-fade3">
+                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSqeJ4UOSJXg-R48DOOt7JFZFuEn6yH__GPH1yCEqVh_2pT8Zq2O9sbfk-o48aNVlenIZA&usqp=CAU"  id="item3" alt="Item Image 3" onclick="changeImage('item3')">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Item Description & Bidding Section -->
+            <div class="bg-theme p-6 shadow-lg w-full max-h-[26.25rem] md:max-h-[37.5rem]">
+                <h3 class="text-3xl font-bold text-gray-800 mb-4">Exclusive Vintage Watch</h3>
+                <p class="text-gray-700 mb-6">An elegant timepiece from the 1960s, made with exquisite craftsmanship. Don't miss the chance to own this one-of-a-kind item.</p>
+                <div class="current-bids mb-6 ">
+                    <h4 class="text-xl font-bold text-gray-800 mb-2">Current Bids</h4>
+                    <ul class="list-disc list-inside h-[48px] overflow-y-scroll" id="bidsList">
+                        <li>JohnDoe: $500</li>
+                        <li>JaneSmith: $450</li>
+                    </ul>
+                </div>
+                <div class="flex items-center mb-4">
+                    <select id="currency" class="border border-gray-300 rounded-l-md px-4 py-2 bg-gray-100">
+                        <option value="USD" selected>$</option>
+                        <option value="NGN">₦</option>
+                    </select>
+                    <input type="text" id="bidInput" class="border border-gray-300 rounded-r-md px-4 py-2 w-full" placeholder="Enter your bid..." oninput="validateBid()" />
+                </div>
+                <button onclick="addBid()" class="bg-[#c7ae6a] text-black px-6 py-2 rounded-md hover:bg-[#a99254] w-full">Place Bid</button>
+                <button  onclick="deletePreviousBid()" class="bg-red-500 text-white px-6 py-2 rounded-md hover:bg-red-700 w-full">Delete Previous Bid</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Live Chat Section -->
+    <section class="container mx-auto mb-8">
+        <div class="bg-white p-6 shadow-lg live-chat">
+            <h3 class="text-2xl font-bold text-gray-800 mb-4">Live Chat</h3>
+            <div id="chat-box" class="overflow-auto max-h-72">
+                <p><strong>JohnDoe:</strong> Excited to see the final bid!</p>
+                <p><strong>JaneSmith:</strong> This is a great item.</p>
+            </div>
+            <div class="mt-4 relative">
+                <input type="text" id="chat-message" class="chat-input border border-gray-300 rounded-md px-4 py-2" placeholder="Type a message...">
+                <i class="fas fa-paper-plane bg-[#c7ae6a]  text-center  pr-1 text-xl send-icon h-7 w-7 rounded-full hover:bg-[#a99254] cursor-pointer"></i>
+            </div>
+        </div>
+    </section>
+    
+    <script>
+        
+
+
+        let currentImageIndex = 0;
+        var images = [];
+
+        function changeImage(imgid) {
+            
+            var img = document.getElementById(imgid);
+            var imageSrc = img.getAttribute('src');    
+            var currentImage = document.getElementById('current-image');
+
+            // Fade out the current image
+            currentImage.classList.add('opacity-0');
+
+            // Delay the change to wait for fade-out animation
+            setTimeout(() => {
+                // Change the image source
+                currentImage.src = imageSrc;
+
+                // Fade-in the new image
+                currentImage.classList.remove('opacity-0');
+            }, 400); // Ensure the delay matches the CSS transition duration
+
+            // Remove 'selected' class from all frames
+            document.querySelectorAll('.small-frame').forEach(frame => {
+                frame.classList.remove('selected');
+            });
+
+            // Add 'selected' class to the clicked image's parent
+            img.parentElement.classList.add('selected');
+        }
+
+        window.onload = function() {
+            // Collect all image elements within the small frames
+            document.querySelectorAll('.small-frame img').forEach(img => {
+                images.push(img); 
+            });
+
+            if (images.length > 0) {
+                let firstImage = images[0];
+                document.getElementById('current-image').src = firstImage.getAttribute('src');
+                firstImage.parentElement.classList.add('selected'); 
+            }
+
+            console.log(images, images.length); 
+        }
+        
+        setInterval(() => {
+            currentImageIndex = (currentImageIndex + 1) % images.length;
+            changeImage(images[currentImageIndex].id); 
+        }, 5000);
+
+
+        // exchange rate  and  bid  price calculation
+
+        let exchangeRate;
+        async function getDollarToNairaRate() {
+            if (!exchangeRate){
+                const apiKey = 'f8378639736c8c684088f08c';
+                const url = `https://v6.exchangerate-api.com/v6/${apiKey}/latest/USD`;
+
+                try {
+                    let response = await fetch(url);
+                    let data = await response.json();
+                    exchangeRate = data.conversion_rates.NGN; 
+                    console.log(exchangeRate);  
+                     
+                } catch (error) {
+                    console.error("Error fetching exchange rates: ", error);
+                }
+            } 
+            return exchangeRate;   
+        }
+        let bids = [];
+        let lastBidId = null; // To store the unique ID of the last added bid
+
+        function validateBid() {
+            const bidInput = document.getElementById("bidInput");
+            const bidValue = bidInput.value;
+            bidInput.value = bidValue.replace(/[^0-9.]/g, "");
+        }
+
+        async function convertToNaira(amount, currency) {
+            exchangeRate = await getDollarToNairaRate();
+            return currency === 'USD' ? amount * exchangeRate : amount;
+                
+        }
+
+        async function addBid() {
+            const bidAmount = parseFloat(document.getElementById("bidInput").value) || 0;
+            const currency = document.getElementById("currency").value;
+            const bidderName = "JohnDoe"; // Replace with actual bidder name
+
+            if (bidAmount > 0 ) {
+                // Convert bid to Naira equivalent for comparison
+                const bidInNaira =  await convertToNaira(bidAmount, currency);
+
+                // Generate a unique ID for the bid
+                const bidId = Date.now(); // Use the current timestamp as a unique ID
+
+                // Store the bid and its conversion in the bids array with a unique ID
+                bids.push({ id: bidId, bidderName: bidderName, amount: bidAmount, currency: currency, bidInNaira: bidInNaira });
+
+                // Remember the ID of the last bid placed
+                lastBidId = bidId;
+
+                
+                
+                // Clear input field
+                document.getElementById("bidInput").value = '';
+
+                // Update the displayed bid list
+                displayBids();
+                bids.forEach(bid => {
+                    console.log(`Amount: ${bid.amount}, Currency: ${bid.currency}, Bid in Naira: ${bid.bidInNaira}`);
+                });
+            } 
+        }
+
+        function displayBids() {
+            const bidsList = document.getElementById("bidsList");
+            bidsList.innerHTML = ''; // Clear previous list
+            const sortedBids = [...bids].sort((a, b) => b.bidInNaira - a.bidInNaira);
+
+            sortedBids.forEach(bid => {
+                const bidItem = document.createElement("li");
+                bidItem.textContent = `${bid.bidderName}: ${bid.currency === 'USD' ? '$' : '₦'}${bid.amount.toLocaleString()}`;
+                bidsList.appendChild(bidItem);
+            });
+        }
+
+        function deletePreviousBid() {
+            if (lastBidId !== null && bids.length > 0) {
+                // Log the current bids for debugging
+                console.log("Bids before deletion:", bids);
+
+                // Find the bid index of the last placed bid
+                const bidIndex = bids.findIndex(bid => bid.id === lastBidId);
+                
+                // Check if the bid exists in the array
+                if (bidIndex !== -1) {
+                    // Remove the bid with the found index
+                    const removedBid = bids.splice(bidIndex, 1); // Removing the bid
+                    console.log(`Removed bid: `, removedBid); // Log the removed bid
+                    
+                    // Update the lastBidId to the next most recent one
+                    if (bids.length > 0) {
+                        // Find the last placed bid, i.e., the most recent one
+                        lastBidId = bids[bids.length - 1].id;
+                        console.log(`Updated lastBidId: ${lastBidId}`); // Log the new lastBidId
+                    } else {
+                        // If no bids remain, set lastBidId to null
+                        lastBidId = null;
+                        console.log("No more bids left. lastBidId set to null.");
+                    }
+
+                    // Update the displayed bid list
+                    displayBids();
+
+                } else {
+                    console.log("Bid with lastBidId not found in the array.");
+                }
+            } else {
+                console.log("No bids to delete or lastBidId is null.");
+            }
+        }
+        // sidebar
+        const sidebar = document.getElementById('sidebar');
+        const mainContent = document.getElementById('main-content');
+
+        // Detect when mouse moves to the left edge
+        document.addEventListener('mousemove', (e) => {
+            if (e.clientX < 10) { // If mouse is near the left edge of the screen
+                sidebar.classList.remove('-translate-x-full'); // Show sidebar
+                mainContent.style.marginLeft = '16rem'; // Move content to the right
+            }
+        });
+
+        // Close sidebar when mouse leaves it
+        sidebar.addEventListener('mouseleave', () => {
+            sidebar.classList.add('-translate-x-full'); // Hide sidebar
+            mainContent.style.marginLeft = '0'; // Reset content position
+        });
+
+        // When an item in the sidebar is clicked
+        document.querySelectorAll('.sidebar li').forEach(item => {
+            item.addEventListener('click', () => {
+                // Replace content with item's information (dummy content here)
+                mainContent.innerHTML = `<h1>${item.textContent}</h1><p>Details for ${item.textContent}</p>`;
+                sidebar.classList.add('-translate-x-full'); // Hide sidebar after selection
+                mainContent.style.marginLeft = '0'; // Reset content position
+            });
+        });
+
+
+    </script>
+    <script src="https://cdn.tailwindcss.com"></script>
+</body>
+
+</html>

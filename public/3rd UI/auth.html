@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AuctionAce - Auth</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="icon" href="../../favicon.png">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Reem+Kufi&display=swap"
+    rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Reem Kufi', sans-serif;
+      background: radial-gradient(circle at center, #c9c9c9, #606060);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    h1 {
+      font-family: 'Playfair Display', serif;
+    }
+
+    input:focus {
+      border-color: #bfa75d;
+      outline: none;
+    }
+
+    .input-group label {
+      position: absolute;
+      top: 14px;
+      left: 15px;
+      font-size: 16px;
+      color: #838181;
+      transition: 0.2s ease all;
+    }
+
+    .input-group input:focus+label,
+    .input-group input:not(:placeholder-shown)+label {
+      top: -18px;
+      font-size: 12px;
+      color: #bfa75d;
+    }
+
+    .btn-hover {
+      transition: all 0.3s ease;
+      border-radius: 30px;
+    }
+
+    .btn-hover:hover {
+      background-color: #bfa75d;
+      color: white;
+      transform: translateY(-5px);
+      box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .ease-in {
+      animation: fadeIn 0.5s ease-in;
+    }
+
+    .appear {
+      animation: appear 0.5s ease-in;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: scale(0.9);
+      }
+
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    @keyframes appear {
+      from {
+        opacity: 0;
+
+      }
+
+      to {
+        opacity: 1;
+
+      }
+    }
+
+    footer {
+      margin-top: auto;
+    }
+
+    /* Custom scrollbar styling */
+    .register-form-container::-webkit-scrollbar {
+      width: 8px;
+      /* Slim scrollbar width */
+    }
+
+    .register-form-container::-webkit-scrollbar-track {
+      background: transparent;
+      /* Hide the track */
+    }
+
+    .register-form-container::-webkit-scrollbar-thumb {
+      background: #bfa75d;
+      /* Gold color */
+      border-radius: 4px;
+      /* Rounded scrollbar */
+    }
+
+    .register-form-container::-webkit-scrollbar-thumb:hover {
+      background: #a68e4d;
+      /* Darker gold on hover */
+    }
+
+    /* Ensure submit button is always in view */
+    .register-form-container {
+      display: flex;
+      flex-direction: column;
+      max-height: 80vh;
+      /* Adjust max height as needed */
+      overflow-y: auto;
+    }
+
+    .register-form-container form {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .register-form-container form>div:last-child {
+      margin-top: auto;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="flex justify-center items-center min-h-screen bg-gray-150">
+    <!-- Register Section -->
+    <div id="register" class="w-full  justify-center grid md:grid-cols-2 grid-cols-1 ease-in">
+      <div class="flex justify-center  text-center items-center">
+        <p class="h-full flex justify-center items-end md:items-center text-6xl">
+          <i id="backbtn-register" onclick="window.location.href='index.html'"
+            class="fa-regular fa-circle-left pb-2 text-6xl md:p-0"></i> <span class="ml-4 pb-2">Register!</span>
+        </p>
+      </div>
+      <div
+        class="bg-white p-10 rounded-lg shadow-2xl max-w-lg w-full animate-fade register-form-container overflow-auto max-h-50 flex flex-col">
+
+        <form id="register-form" class="space-y-6">
+          <div id="regblock" class="space-y-6">
+            <h1 class="text-4xl font-bold text-center text-[#bfa75d] mb-8">Your First Auction Awaits!</h1>
+            <div class="input-group relative">
+              <input type="text" id="First-name" name="firstname"
+                class="w-full px-5 py-4 border border-[#838181] rounded-lg focus:ring focus:ring-[#bfa75d]"
+                placeholder=" " required>
+              <label for="First-name">First Name</label>
+            </div>
+            <div class="input-group relative">
+              <input type="text" id="Last-name" name="lastname"
+                class="w-full px-5 py-4 border border-[#838181] rounded-lg focus:ring focus:ring-[#bfa75d]"
+                placeholder=" " required>
+              <label for="Last-name">Last Name</label>
+            </div>
+            <div class="input-group relative">
+              <input type="text" id="Username" name="username"
+                class="w-full px-5 py-4 border border-[#838181] rounded-lg focus:ring focus:ring-[#bfa75d]"
+                placeholder=" " required>
+              <label for="Username">UserName</label>
+            </div>
+            <div class="input-group relative">
+              <input type="email" id="email" name="email"
+                class="w-full px-5 py-4 border border-[#838181] rounded-lg focus:ring focus:ring-[#bfa75d]"
+                placeholder=" " required>
+              <label for="email">Email Address</label>
+            </div>
+            <div class="input-group relative">
+              <input type="number" id="phonenumber" name="phoneNumber"
+                class="w-full px-5 py-4 border border-[#838181] rounded-lg focus:ring focus:ring-[#bfa75d]"
+                placeholder=" " required>
+              <label for="phonenumber">Phone Number</label>
+            </div>
+            <div class="input-group relative">
+              <input type="password" id="password" name="password" min="8"
+                class="w-full px-5 py-4 border border-[#838181] rounded-lg focus:ring focus:ring-[#bfa75d]"
+                placeholder=" " required>
+              <label for="password">Password</label>
+              <span id="togglepwd1" onclick="togglePasswordVisibility('password', 'togglepwd1')"
+                class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500 cursor-pointer">
+                👁️
+              </span>
+            </div>
+            <div class="input-group relative">
+              <input type="password" id="confirm-password" name="confirm-password" min="8"
+                class="w-full px-5 py-4 border border-[#838181] rounded-lg focus:ring focus:ring-[#bfa75d]"
+                placeholder=" " required>
+              <label for="confirm-password">Confirm Password</label>
+              <span id="togglepwd2" onclick="togglePasswordVisibility('confirm-password', 'togglepwd2')"
+                class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500 cursor-pointer">
+                👁️
+              </span>
+            </div>
+            <p id="error-message" class="text-red-600  text-center hidden"></p>
+            <div class="text-center w-full">
+              <a id="1streg"
+                class="w-full block btn-hover bg-[#bfa75d] text-white py-4 font-semibold cursor-pointer">Next</a>
+            </div>
+
+          </div>
+
+
+          <div id="roleblock" class="w-full flex justify-center items-center hidden">
+            <div class="w-full max-w-md mx-auto p-6">
+              <h1 class="text-4xl font-bold text-center text-[#bfa75d] mb-6">Choose Your Role</h1>
+              <div class="grid grid-cols-1 gap-6">
+                <div class="bg-white p-6 rounded-lg shadow-lg flex flex-col items-center text-center">
+                  <h2 class="text-2xl font-semibold mb-4"><i class="fa-solid fa-gavel"></i>Bidder</h2>
+                  <p class="text-gray-700 mb-4"></i>Ready to find your next big win? Sign up as a Bidder and start
+                    placing your bets!</p>
+                  <a id="bidder" class="btn-hover bg-[#bfa75d] text-white py-2 px-4 font-semibold">Register as
+                    Bidder</a>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-lg flex flex-col items-center text-center">
+                  <h2 class="text-2xl font-semibold mb-4"><i class="fa-solid fa-store"></i>Merchant</h2>
+                  <p class="text-gray-700 mb-4">Got items to sell? Register as a Merchant and start auctioning your
+                    goods!</p>
+                  <a id="merchant" class="btn-hover bg-[#bfa75d] text-white py-2 px-4 font-semibold">Register as
+                    Merchant</a>
+                </div>
+              </div>
+              <input type="hidden" id="role" name="role">
+              <p id="regerror-message" class="text-red-600  text-center hidden"></p>
+              <div class="mt-6 flex justify-between">
+                <a id="2ndreg"
+                  class="btn-back-hover  text-[#606060]  hover:text-[#bfa75d] text-center flex items-center text-lg font-semibold">Back</a>
+                <button type="submit" class="w-1/2 btn-hover bg-[#bfa75d] text-white py-4 font-semibold">Sign
+                  Up</button>
+
+              </div>
+            </div>
+          </div>
+        </form>
+
+        <p class="mt-6 text-center text-sm text-[#606060]">Already have an account? <a href="#" onclick="showLogin()"
+            class="text-[#bfa75d] font-semibold">Log In</a></p>
+      </div>
+    </div>
+    <!-- Login Section -->
+    <div id="login" class="w-full max-w-4xl grid md:grid-cols-2 grid-cols-1 gap-6 hidden ease-in">
+      <div class="bg-white p-10 rounded-lg shadow-2xl w-full animate-fade">
+        <h1 class="text-4xl font-bold text-center text-[#bfa75d] mb-8">Back to the Bidding Wars!</h1>
+        <form id="login-form" class="space-y-6">
+          <div class="input-group relative">
+            <input type="email" id="log-email" name="email"
+              class="w-full px-5 py-4 border border-[#838181] rounded-lg focus:ring focus:ring-[#bfa75d]"
+              placeholder=" " required>
+            <label for="email">Email Address</label>
+          </div>
+          <div class="input-group relative">
+            <input type="password" id="log-password" name="password"
+              class="w-full px-5 py-4 border border-[#838181] rounded-lg focus:ring focus:ring-[#bfa75d]"
+              placeholder=" " required>
+            <label for="password">Password</label>
+            <span id="togglepwd" onclick="togglePasswordVisibility('log-password','togglepwd')"
+              class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500 cursor-pointer">
+              👁️
+            </span>
+          </div>
+          <p id="error-message3" class="text-red-600  text-center hidden"></p>
+          <div class="text-center">
+            <button type="submit" class="w-full btn-hover bg-[#bfa75d] text-white py-4 font-semibold">Log In</button>
+          </div>
+        </form>
+        <p class="mt-6 text-center text-sm text-[#606060]">Don't have an account? <a href="#" onclick="showRegister()"
+            class="text-[#bfa75d] font-semibold">Sign Up</a></p>
+      </div>
+      <div class="flex justify-center ml-0 text-center items-center">
+        <p class="h-full flex justify-center items-end md:items-center text-6xl">
+          <i id="backbtn-login" onclick="window.location.href='index.html'"
+            class="fa-regular fa-circle-left text-6xl pt-2 md:p-0"></i>
+          <span class="ml-4 pt-2">Login!</span>
+        </p>
+      </div>
+    </div>
+  </div>
+
+
+
+  <footer class="text-gray-700 text-center py-8">
+    &copy; 2024 AuctionAce. All rights reserved.
+  </footer>
+
+  <script>
+    // switching  between login  and  register
+    function showLogin() {
+      document.getElementById('register').classList.add('hidden');
+      document.getElementById('login').classList.remove('hidden');
+    }
+    function showRegister() {
+      document.getElementById('login').classList.add('hidden');
+      document.getElementById('register').classList.remove('hidden');
+    }
+
+    // role  choosing
+
+    document.getElementById('bidder').addEventListener('click', function () {
+      document.getElementById('role').value = 'bidder';
+      console.log("bidder")
+    });
+
+    document.getElementById('merchant').addEventListener('click', function () {
+      document.getElementById('role').value = 'merchant';
+      console.log("merchant")
+    });
+
+    // multi-step registration visibility toggle
+    document.getElementById('1streg').addEventListener('click', function () {
+      if (validateregForm()) {
+        document.getElementById('error-message2').textContent = '';
+        document.getElementById('error-message2').classList.add('hidden');
+        document.getElementById('roleblock').classList.remove('hidden');
+        document.getElementById('regblock').classList.add('hidden');
+      }
+    });
+    document.getElementById('2ndreg').addEventListener('click', function () {
+
+      document.getElementById('roleblock').classList.add('hidden');
+      document.getElementById('regblock').classList.remove('hidden');
+
+    });
+
+
+    // registration  processing
+    const regform = document.getElementById('register-form');
+    const password = document.getElementById('password');
+    const confirmPassword = document.getElementById('confirm-password');
+    const errorMessage = document.getElementById('error-message');
+    const regerrorMessage = document.getElementById('regerror-message');
+
+    const buttonClick = () => {
+      console.log('Button  clicked');
+    }
+
+    regform.addEventListener('submit', async function (event) {
+      event.preventDefault();
+      const selectedRole = document.getElementById('role').value;
+
+      if (selectedRole) {
+        document.getElementById('error-message').textContent = '';
+        document.getElementById('error-message').classList.add('hidden');
+
+        const formData = new FormData(event.target);
+        const data = Object.fromEntries(formData.entries());
+        console.log('DATA:', data);
+
+
+        try {
+          const response = await fetch('http://localhost:3000/users/register', {
+            method: 'POST',
+            credentials: 'include',
+            headers: { 'Content-Type': 'application/json' }, // You also need headers
+            body: JSON.stringify(data) // Send JSON string of form data
+          });
+
+          const result = await response.json();
+          console.log('RESPONSE:', result);
+
+
+          if (response.ok) {
+            document.getElementById('regerror-message').classList.add('text-green-600', 'appear');
+            document.getElementById('regerror-message').textContent = 'Registration Successful!';
+            document.getElementById('regerror-message').classList.remove('text-red-600', 'hidden');
+            setTimeout(() => {
+              window.location.href = 'home.html';
+            }, 1000);
+            localStorage.setItem('username', result.username);
+          } else {
+            document.getElementById('error-message').textContent = result.message;
+            document.getElementById('error-message').classList.remove('hidden');
+
+          }
+
+        } catch (error) {
+          console.log('Error:', error); // Log any error that occurs
+        }
+
+      }
+      else {
+
+        event.preventDefault();
+        document.getElementById('error-message2').textContent = 'Please select a role before submitting!';
+        document.getElementById('error-message2').classList.remove('hidden');
+      }
+
+    });
+
+    //login  processing
+
+    document.getElementById('login-form').addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const formData = new FormData(event.target);
+      const data = Object.fromEntries(formData.entries());
+
+      try {
+        const response = await fetch('http://localhost:3000/users/login', {
+          method: 'POST',
+          credentials: 'include',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data)
+        });
+
+        const result = await response.json();
+        
+        console.log('RESPONSE:', result);
+        if (result.ok) {
+          console.log('token'+result.token);  
+          console.log('username'+result.username);    
+          // Store token or redirect as needed          
+          document.getElementById('error-message3').classList.remove('text-red-600', 'hidden');
+          document.getElementById('error-message3').classList.add('text-green-600', 'appear');
+          document.getElementById('error-message3').textContent = 'Login Succesful!';
+          setTimeout(() => {
+            window.location.href = 'home.html';
+          }, 1000);          
+        } else {
+          document.getElementById('error-message3').textContent = result.message;
+          document.getElementById('error-message3').classList.remove('hidden');
+        }
+
+      } catch (error) {
+        console.log('Error:', error);
+      }
+    });
+
+
+    function getQueryParams() {
+      const params = new URLSearchParams(window.location.search);
+      return {
+        section: params.get('section') || 'register'
+      };
+    }
+
+    // Function to show the correct section based on the URL parameter
+    function showInitialSection() {
+      const section = getQueryParams().section;
+      if (section === 'login') {
+        showLogin();
+      } else {
+        showRegister();
+      }
+    }
+
+    // Call the function on page load
+    document.addEventListener('DOMContentLoaded', showInitialSection);
+
+    function togglePasswordVisibility(passwordFieldid, togglePwdIconid) {
+      const passwordField = document.getElementById(passwordFieldid);
+      const togglePwdIcon = document.getElementById(togglePwdIconid);
+
+      togglePwdIcon.addEventListener('click', function () {
+        if (passwordField.getAttribute('type') === 'password') {
+          passwordField.setAttribute('type', 'text');
+          this.textContent = '🙈';
+        } else {
+          passwordField.setAttribute('type', 'password');
+          this.textContent = '👁️';
+        }
+      })
+    }
+    function validateregForm() {
+      const firstName = document.getElementById('First-name').value.trim();
+      const lastName = document.getElementById('Last-name').value.trim();
+      const username = document.getElementById('Username').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const phoneNumber = document.getElementById('phonenumber').value.trim();
+      const password = document.getElementById('password').value.trim();
+      const confirmPassword = document.getElementById('confirm-password').value.trim();
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      const phoneRegex = /^[0-9]{11}$/;
+      const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
+
+      if (!firstName || !lastName || !username || !email || !phoneNumber || !password || !confirmPassword) {
+        document.getElementById('error-message').textContent = 'All fields must be filled out!';
+        document.getElementById('error-message').classList.remove('hidden');
+        return false;
+      }
+
+      if (!emailRegex.test(email)) {
+        document.getElementById('error-message').textContent = 'Please enter a valid email address!';
+        document.getElementById('error-message').classList.remove('hidden');
+        return false;
+      }
+
+      if (!phoneRegex.test(phoneNumber)) {
+        document.getElementById('error-message').textContent = 'Please enter a valid 11-digit phone number!';
+        document.getElementById('error-message').classList.remove('hidden');
+        return false;
+      }
+      if (!passwordRegex.test(password)) {
+        document.getElementById('error-message').textContent = 'Your password must be at least 8 characters and contain at least one character and number';
+        document.getElementById('error-message').classList.remove('hidden');
+        return false;
+      }
+      if (password !== confirmPassword) {
+        document.getElementById('error-message').textContent = 'Passwords do not match!';
+        document.getElementById('error-message').classList.remove('hidden');
+        return false;
+      }
+
+      return true;
+    }
+
+
+
+
+  </script>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+</body>
+
+</html>

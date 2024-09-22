@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AuctionAce - Home</title>
+  <link rel="icon" href="../favicon.png" type="image/png">
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@3.3.0/dist/tailwind.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Reem+Kufi&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    body {
+      font-family: 'Reem Kufi', sans-serif;
+      background: radial-gradient(circle at center, #c9c9c9, #606060);
+      overflow-x: hidden;
+    }
+
+    h1,
+    h2,
+    .playfair {
+      font-family: 'Playfair Display', serif;
+    }
+
+    .btn-hover {
+      transition: all 0.3s ease;
+      border-radius: 30px;
+    }
+
+    .btn-hover:hover {
+      background-color: #c7ae6a;
+      color: white;
+      transform: translateY(-5px);
+      box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .animate-fade {
+      animation: fadeIn 1s ease-out;
+    }
+
+    .animate-fade1 {
+      animation: fadeIn 2s ease-out;
+    }
+
+    .animate-fade2 {
+      animation: fadeIn 4s ease-out;
+    }
+
+    .animate-fade3 {
+      animation: fadeIn 3s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(60px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0px);
+      }
+    }
+
+
+
+    .navbar {
+      transition: transform 0.5s ease-in-out, opacity 0.5s ease-in-out;
+      box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+      background: linear-gradient(to right, #6d6d6d, #8d8d8d, #b5b5b5);
+    }
+
+    .nav-link {
+      color: #606060;
+    }
+
+    .nav-link:hover {
+      color: #c7ae6a;
+    }
+
+    .hero-btn {
+      background-color: #c7ae6a;
+      color: #222222;
+    }
+
+    .hero-btn:hover {
+      background-color: #606060;
+      color: white;
+      color: #b5b5b5;
+    }
+
+    .carousel {
+      position: relative;
+      width: 100vw !important;
+      overflow: hidden;
+
+    }
+
+    .carousel-track {
+      display: flex;
+      transition: transform 1s ease-in-out;
+      height: 35rem;
+      max-height: 35rem;
+    }
+
+    .carousel-image {
+      min-width: 100%;
+      min-height: 100%;
+      flex: 0 0 100%;
+      object-fit: cover !important;
+    }
+
+    /* Bubbles (Indicators) */
+    .carousel-indicators {
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 8px;
+    }
+
+    .carousel-indicator {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background-color: #ffffff;
+      opacity: 0.5;
+      cursor: pointer;
+      transition: opacity 0.3s ease;
+    }
+
+    .carousel-indicator.active {
+      opacity: 1;
+      background-color: #c7ae6a;
+    }
+
+    @keyframes dropIn {
+      from {
+        opacity: 0;
+        transform: translateY(-30px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0px);
+      }
+    }
+
+    @keyframes gelatine {
+
+      0%,
+      100% {
+        transform: scale(1, 1);
+      }
+
+      25% {
+        transform: scale(0.9, 1.1);
+      }
+
+      50% {
+        transform: scale(1.1, 0.9);
+      }
+
+      75% {
+        transform: scale(0.95, 1.05);
+      }
+    }
+
+    .dropdown-menu {
+      border-radius: 0.5rem;
+      clip-path: inset(-1px -1px 0 -1px round 1rem 1rem 0 0);
+      animation: dropIn 1s ease-in-out;
+    }
+
+    .userprofile {
+      border: solid 2px #e8c943
+    }
+
+    .p-icon:hover {
+      animation: gelatine 1s ease-in-out;
+    }
+  </style>
+</head>
+
+<body class="text-gray-900">
+  <!-- Navbar -->
+  <nav class="navbar  mr-0 py-4 px-6 flex justify-between items-center animate-fade" id="navbar">
+    <img src="../AuctionAceLogo.png" class="w-45 h-24" alt="" srcset="">
+    <nav class="space-x-6">
+      <a href="#" class="text-lg font-semibold nav-link playfair">Home</a>
+      <a href="#auctions" class="text-lg font-semibold nav-link playfair">Auctions</a>
+      <a href="#features" class="text-lg font-semibold nav-link playfair">Features</a>
+      <a href="#contact" class="text-lg font-semibold nav-link playfair">Contact</a>
+    </nav>
+    <div class="relative">
+      <button class="flex items-center bg-inherit userprofile text-[#606060]  pr-4 rounded-full focus:outline-none">
+        <i class="fas p-icon fa-user text-2xl rounded-full bg-[#c7ae6a] text-[#606060] ml-0 px-2 py-1 mr-2"></i>
+        <span id="username"></span>
+        <i id="profileMenuButton" class="fas fa-chevron-down ml-2"></i>
+      </button>
+      <div id="profileMenu"
+        class="absolute right-0 mt-2 w-48 bg-white border border-gray-300 shadow-lg dropdown-menu hidden overflow-hidden">
+        <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">View Profile</a>
+        <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Logout</a>
+      </div>
+    </div>
+
+  </nav>
+  <!-- Carousel section -->
+  <section class="container  w-full  py-16 text-center">
+    <h2 class="text-4xl  text-center  pl-20 w-[100vw] font-bold text-[#606060] mb-6 underline">Explore Featured Items
+    </h2>
+
+    <div class="carousel relative w-full">
+      <div class="carousel-track flex">
+        <!-- Carousel Images -->
+        <img
+          src="https://images.squarespace-cdn.com/content/v1/5d925fc4b07e152c35bd4405/1632181332227-DT91R6GY6GHWJCLY9NLJ/Old+Crows+Antiques+How+to+Identify+Reaearch+and+Value+Antiques.jpg"
+          alt="Item 1" class="carousel-image  w-fit h-full object-cover">
+        <img
+          src="https://hodinkee.imgix.net/uploads/images/1573656874421-pc5qmwhp99-aa41a43c35b6515abfc539aa5922db89/newman_grandmaster_graves.jpg?ixlib=rails-1.1.0&fm=jpg&q=55&auto=format&usm=12"
+          alt="Item 2" class="carousel-image  w-fit h-full object-cover">
+        <img
+          src="https://www.adampartridge.co.uk/media/1948/hero.jpg?crop=0.052930984536737176,0.053586335048411315,0.096286768452818319,0.43706852230565041&cropmode=percentage&width=1440&height=700&rnd=133689058200000000"
+          alt="Item 3" class="carousel-image  w-fit h-full object-cover">
+      </div>
+      <!-- Carousel Indicators -->
+      <div class="carousel-indicators">
+        <span class="carousel-indicator"></span>
+        <span class="carousel-indicator"></span>
+        <span class="carousel-indicator"></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Hero Section -->
+  <section class="container mx-auto px-6 py-16 text-center animate-fade">
+    <h2 class="text-6xl font-bold text-[#222222] leading-tight">Join the Auction Revolution</h2>
+    <p class="text-2xl text-gray-700 max-w-lg mx-auto leading-relaxed mb-12">Experience live auctions with modern
+      simplicity and timeless elegance. Dive into AuctionAce today and start bidding on exclusive items.</p>
+    <div class="space-x-4">
+      <a href="auth.html" class="btn-hover hero-btn font-semibold py-4 px-10 shadow-lg hover:shadow-xl">Get Started</a>
+
+    </div>
+  </section>
+  <section class="container mx-auto px-6 py-16 flex flex-col justify-between text-center bg-inherit animate-fade1">
+    <h2 class="text-4xl font-bold text-gray-900 mb-6 underline">How It Works</h2>
+    <div class="flex flex-col md:flex-row justify-around">
+      <div class="bg-white p-6 rounded-lg shadow-md mb-6 md:mb-0 w-2/7">
+        <h3 class="text-2xl font-semibold text-[#bfa75d] mb-2">Register!</h3>
+        <p class="text-gray-700">Create an account to start bidding on items and participating in auctions.</p>
+      </div>
+      <div class="bg-[#8c8c8c] p-6 rounded-lg text-[#bfa75d] shadow-md mb-6 md:mb-0 w-2/7">
+        <h3 class="text-2xl font-semibold mb-2">Bid!!</h3>
+        <p class="text-gray-700">Place your bids on items and track the auction progress in real-time.</p>
+      </div>
+      <div class="bg-white p-6 rounded-lg text-[#bfa75d] shadow-md w-2/7">
+        <h3 class="text-2xl font-semibold mb-2">Win!!!</h3>
+        <p class="text-gray-700">If you win the auction, you'll receive instructions on how to complete the purchase.
+        </p>
+      </div>
+    </div>
+  </section>
+  <section class="container mx-auto px-6 py-16 text-center">
+    <h2 class="text-4xl font-bold text-gray-900 mb-6">Featured Auctions</h2>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <div class="bg-white p-6 rounded-lg shadow-md transform transition-transform duration-300 hover:scale-105">
+        <img src="https://via.placeholder.com/300x200" alt="Auction Item"
+          class="w-full h-40 object-cover mb-4 rounded-lg">
+        <h3 class="text-2xl font-semibold mb-2">Auction Item 1</h3>
+        <p class="text-gray-700">Description of the auction item goes here. Lorem ipsum dolor sit amet.</p>
+      </div>
+      <div class="bg-white p-6 rounded-lg shadow-md transform transition-transform duration-300 hover:scale-105">
+        <img src="https://via.placeholder.com/300x200" alt="Auction Item"
+          class="w-full h-40 object-cover mb-4 rounded-lg">
+        <h3 class="text-2xl font-semibold mb-2">Auction Item 1</h3>
+        <p class="text-gray-700">Description of the auction item goes here. Lorem ipsum dolor sit amet.</p>
+      </div>
+      <div class="bg-white p-6 rounded-lg shadow-md transform transition-transform duration-300 hover:scale-105">
+        <img src="https://via.placeholder.com/300x200" alt="Auction Item"
+          class="w-full h-40 object-cover mb-4 rounded-lg">
+        <h3 class="text-2xl font-semibold mb-2">Auction Item 1</h3>
+        <p class="text-gray-700">Description of the auction item goes here. Lorem ipsum dolor sit amet.</p>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Features Section -->
+
+  <section class="container mx-auto px-6 py-16 grid grid-cols-1 md:grid-cols-3 gap-8 ">
+    <h2
+      class="text-4xl  text-center  font-bold text-gray-900 mb-6  md:col-span-2 md:row-start-1 flex items-center justify-center underline">
+      It Features</h2>
+
+    <div class="bg-[#8c8c8c] p-8 shadow-md rounded-lg  animate-fade1  md:row-start-1 md:col-start-3">
+      <h3 class="text-2xl font-semibold text-[#bfa75d] mb-4">Real-Time Bidding</h3>
+      <p class="text-gray-700">Experience fast and accurate bidding with our real-time system. Bid and win in seconds.
+      </p>
+    </div>
+
+    <div class="bg-white p-8 shadow-md rounded-lg  animate-fade2  md:row-start-2 md:col-start-2">
+      <h3 class="text-2xl font-semibold text-[#bfa75d] mb-4">Wide Range of Items</h3>
+      <p class="text-gray-700">From collectibles to electronics, explore an extensive range of auction items curated for
+        you.</p>
+    </div>
+
+    <div class="bg-[#8c8c8c] p-8 shadow-md rounded-lg  animate-fade3  md:row-start-3 md:col-start-1">
+      <h3 class="text-2xl font-semibold text-[#bfa75d] mb-4">Secure Payments</h3>
+      <p class="text-gray-700">Our secure payment gateway ensures your transactions are safe and hassle-free.</p>
+    </div>
+  </section>
+
+  <section class="container mx-auto px-6 py-16 text-center bg-inherit">
+    <h2 class="text-4xl font-bold text-gray-900 mb-6 underline">What Our Users Say</h2>
+    <div class="flex flex-col md:flex-row justify-between">
+      <div class="bg-[#8c8c8c] p-6 rounded-lg shadow-md mb-6 md:mb-0 w-2/5 animate-fade1">
+        <p class="text-gray-700">“AuctionAce has transformed the way I bid on items. The process is smooth and
+          intuitive!”</p>
+        <p class="font-semibold mt-4 text-[#bfa75d]">~John Doe~</p>
+      </div>
+      <div class="bg-[#8c8c8c] p-6 rounded-lg shadow-md mb-6 md:mb-0 w-2/5 animate-fade1">
+        <p class="text-gray-700">“I love the variety of items available and the live auction experience. Highly
+          recommended!”</p>
+        <p class="font-semibold mt-4 text-[#bfa75d]">~Jane Smith~</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="text-gray-700 text-center py-8  p-16">
+    &copy; 2024 AuctionAce. All rights reserved.
+  </footer>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jwt-decode/build/jwt-decode.min.js"></script>
+
+  <script>
+    const track = document.querySelector('.carousel-track');
+    const images = document.querySelectorAll('.carousel-image');
+    const indicators = document.querySelectorAll('.carousel-indicator');
+    let currentIndex = 0;
+    const intervalTime = 3000; // 3 seconds
+
+    // Function to update the carousel slide
+    function updateCarousel() {
+      const width = images[0].clientWidth;
+      track.style.transform = `translateX(-${currentIndex * width}px)`;
+      indicators.forEach((indicator, index) => {
+        indicator.classList.toggle('active', index === currentIndex);
+      });
+    }
+
+    // Function to auto-change slides every few seconds
+    function autoSlide() {
+      currentIndex = (currentIndex + 1) % images.length;
+      updateCarousel();
+    }
+
+    // Set automatic sliding interval
+    setInterval(autoSlide, intervalTime);
+
+    // Initialize first active indicator
+    indicators[0].classList.add('active');
+
+    // Resize event to adjust carousel on window resize
+    window.addEventListener('resize', updateCarousel);
+
+
+    //  Clickable indicators to manually select slide (if needed)
+    indicators.forEach((indicator, index) => {
+      indicator.addEventListener('click', () => {
+        currentIndex = index;
+        updateCarousel();
+      });
+    });
+    console.log(window.scrollY);
+    let lastScrollTop = 0;
+    const navbar = document.getElementById('navbar');
+
+    window.onload = function () {
+      window.scrollTo(0, 750.4000244140625);
+    }
+    window.addEventListener('scroll', function () {
+      let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+
+      if (scrollTop < lastScrollTop) {
+        // Scroll up - show sticky navbar
+        navbar.classList.add('sticky', 'top-0', 'z-50');
+        navbar.style.transform = 'translateY(0)';
+        navbar.style.opacity = 0.85;
+      } else if (scrollTop > lastScrollTop) {
+        // Scroll down - hide sticky navbar
+        navbar.style.transform = 'translateY(-100%)';
+        navbar.style.opacity = '0';
+
+      }
+
+      lastScrollTop = scrollTop;
+    });
+
+    // profile dropdown
+
+
+    document.getElementById('profileMenuButton').addEventListener('click', function () {
+      var menu = document.getElementById('profileMenu');
+      menu.classList.toggle('hidden');
+    });
+
+
+    // fetch user  details
+    document.addEventListener('DOMContentLoaded', () => {
+      const userId = getUserIdFromToken();
+      if (userId) {
+        fetchUserDetails(userId);
+      } else {
+        console.error('User ID could not be extracted from token.');
+        // Optionally redirect to login if no token is present
+      }
+    });
+
+    async function fetchUserDetails(userId) {
+      try {
+        const response = await fetch(`http://localhost:3000/users/${userId}`, {
+          method: 'GET',
+          credentials: 'include',
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to fetch user details');
+        }
+
+        const user = await response.json();
+        document.getElementById('username').textContent = user.username;
+      } catch (error) {
+        console.error('Error fetching user details:', error);
+      }
+    }
+
+    function getUserIdFromToken() {
+      const tokenCookie = document.cookie.split('; ').find(row => row.startsWith('Btoken='));
+      if (!tokenCookie) {
+        console.error('No token found in cookies.');
+        return null; // Token is missing
+      }
+      console.log('tokencookie:'+tokenCookie); 
+
+      const token = tokenCookie.split('=')[1];
+      if (!token) {
+        console.error('Token is malformed or missing.');
+        return null;
+      }
+      console.log('token:'+token); 
+      try {
+        const decoded = jwt_decode(token); // Decode the JWT token (you need jwt-decode library)
+        return decoded.id; // Return user ID from decoded token
+      } catch (error) {
+        console.error('Error decoding token:', error);
+        return null; // Return null if decoding fails
+      }
+    }
+
+
+
+
+  </script>
+</body>
+
+</html>

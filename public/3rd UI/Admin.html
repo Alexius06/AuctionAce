@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - AuctionAce</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@3.3.0/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Reem+Kufi&display=swap" rel="stylesheet">
+    <style>
+        .sidebar {
+            height: 100vh;
+            transition: width 0.5s;
+        }
+
+        .sidebar-collapsed {
+            width: 4rem;
+        }
+
+        .sidebar-expanded {
+            width: 16rem;
+        }
+
+        .dashboard-header {
+            background-color: #6d6d6d;
+            color: white;
+        }
+
+        .active-menu {
+            background-color: #c7ae6a;
+            color: #606060;
+        }
+
+        .dashboard-section {
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 50;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 15% auto;
+            padding: 20px;
+            border-radius: 8px;
+            width: 50%;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-close {
+            cursor: pointer;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body class="font-ReemKufi bg-gray-100">
+
+    <!-- Sidebar -->
+    <div class="sidebar sidebar-expanded fixed top-0 left-0 bg-gray-800 text-white flex flex-col space-y-4 px-4 py-6">
+        <button class="text-lg font-semibold hover:text-yellow-500" onclick="toggleSidebar()">☰ Menu</button>
+        <a href="#dashboard" class="text-lg font-semibold hover:text-yellow-500 active-menu">Dashboard</a>
+        <a href="#verify-items" class="text-lg font-semibold hover:text-yellow-500">Verify Items</a>
+        <a href="#content-editor" class="text-lg font-semibold hover:text-yellow-500">Content Editor</a>
+        <a href="#manage-users" class="text-lg font-semibold hover:text-yellow-500">Manage Users</a>
+        <a href="#site-settings" class="text-lg font-semibold hover:text-yellow-500">Site Settings</a>
+        <a href="#transaction-history" class="text-lg font-semibold hover:text-yellow-500">Transaction History</a>
+    </div>
+
+    <!-- Main Dashboard Content -->
+    <div class="ml-64 p-8 dashboard-section">
+
+        <!-- Dashboard Header -->
+        <header class="dashboard-header p-6 mb-8 shadow-lg rounded-lg">
+            <h1 class="text-3xl font-semibold">Admin Dashboard</h1>
+            <p>Manage auctions, content, users, and site settings.</p>
+        </header>
+
+        <!-- Dashboard Overview Section -->
+        <section id="dashboard" class="fade-in">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h2 class="text-xl font-semibold mb-4">Total Auctions</h2>
+                    <p class="text-4xl font-bold">150</p>
+                    <p>Ongoing: 30 | Upcoming: 70 | Ended: 50</p>
+                    <button class="mt-4 px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600" onclick="showModal('viewAuctionDetails')">View Details</button>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h2 class="text-xl font-semibold mb-4">Registered Users</h2>
+                    <p class="text-4xl font-bold">2,300</p>
+                    <p>Active: 500 | Bidders: 1500</p>
+                    <button class="mt-4 px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600" onclick="showModal('viewUserDetails')">View Details</button>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h2 class="text-xl font-semibold mb-4">Messages Sent</h2>
+                    <p class="text-4xl font-bold">5,780</p>
+                    <p>Last 24 hours: 200</p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h2 class="text-xl font-semibold mb-4">Total Earnings</h2>
+                    <p class="text-4xl font-bold">$50,000</p>
+                    <p>This Month: $5,000</p>
+                    <button class="mt-4 px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600" onclick="showModal('viewEarningsDetails')">View Details</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Verify Auction Items Section -->
+        <section id="verify-items" class="fade-in mt-16">
+            <h2 class="text-2xl font-semibold mb-4">Verify Items for Auction</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Example Item -->
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h3 class="text-xl font-semibold mb-2">Item 1: Diamond Necklace</h3>
+                    <p>Seller: John Doe</p>
+                    <p>Status: <span class="text-yellow-500">Pending Verification</span></p>
+                    <button class="mt-4 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600" onclick="verifyItem(1)">Verify</button>
+                    <button class="mt-4 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600" onclick="rejectItem(1)">Reject</button>
+                    <button class="mt-4 px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600" onclick="showModal('viewItemDetails')">View Details</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Content Editor Section -->
+        <section id="content-editor" class="fade-in mt-16">
+            <h2 class="text-2xl font-semibold mb-4">Content Editor</h2>
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <h3 class="text-xl font-semibold mb-4">Homepage Content</h3>
+                <textarea id="homepage-content" class="w-full h-48 p-4 border border-gray-300 rounded-md" placeholder="Edit homepage content..."></textarea>
+                <button class="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600" onclick="saveContent('homepage')">Save Changes</button>
+            </div>
+        </section>
+
+        <!-- Manage Users Section -->
+        <section id="manage-users" class="fade-in mt-16">
+            <h2 class="text-2xl font-semibold mb-4">Manage Users</h2>
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <h3 class="text-xl font-semibold mb-2">User: John Doe</h3>
+                <p>Email: johndoe@example.com</p>
+                <p>Status: <span class="text-green-500">Active</span></p>
+                <button class="mt-4 px-4 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600">Suspend</button>
+                <button class="mt-4 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600">Delete</button>
+                <button class="mt-4 px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600" onclick="showModal('viewUserActions')">View User History</button>
+            </div>
+        </section>
+
+        <!-- Site Settings Section -->
+        <section id="site-settings" class="fade-in mt-16">
+            <h2 class="text-2xl font-semibold mb-4">Site Settings</h2>
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <h3 class="text-xl font-semibold mb-4">Update Site Settings</h3>
+                <label for="site-name" class="block font-semibold mb-2">Site Name</label>
+                <input id="site-name" type="text" class="w-full p-2 border border-gray-300 rounded-md mb-4" value="AuctionAce">
+                <label for="site-email" class="block font-semibold mb-2">Contact Email</label>
+                <input id="site-email" type="email" class="w-full p-2 border border-gray-300 rounded-md mb-4" value="contact@auctionace.com">
+                <button class="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600" onclick="saveSettings()">Save Changes</button>
+            </div>
+        </section>
+
+    </div>
+
+    <!-- Modal Template -->
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="text-xl font-semibold" id="modal-title">Modal Title</h2>
+                <span class="modal-close" onclick="closeModal()">X</span>
+            </div>
+            <div id="modal-body">
+                <!-- Modal content goes here -->
+            </div>
+            <div class="mt-4">
+                <button class="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600" onclick="closeModal()">Close</button>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        function toggleSidebar() {
+            const sidebar = document.querySelector('.sidebar');
+            sidebar.classList.toggle('sidebar-collapsed');
+            sidebar.classList.toggle('sidebar-expanded');
+        }
+
+        function showModal(modalType) {
+            const modal = document.getElementById('modal');
+            const modalTitle = document.getElementById('modal-title');
+            const modalBody = document.getElementById('modal-body');
+
+            switch(modalType) {
+                case 'viewAuctionDetails':
+                    modalTitle.textContent = 'Auction Details';
+                    modalBody.innerHTML = '<p>Details about ongoing auctions...</p>';
+                    break;
+                case 'viewUserDetails':
+                    modalTitle.textContent = 'User Details';
+                    modalBody.innerHTML = '<p>Details about registered users...</p>';
+                    break;
+                case 'viewEarningsDetails':
+                    modalTitle.textContent = 'Earnings Details';
+                    modalBody.innerHTML = '<p>Details about the total earnings...</p>';
+                    break;
+                case 'viewItemDetails':
+                    modalTitle.textContent = 'Item Details';
+                    modalBody.innerHTML = '<p>Details about the item for auction...</p>';
+                    break;
+                case 'viewUserActions':
+                    modalTitle.textContent = 'User History';
+                    modalBody.innerHTML = '<p>Details about the user’s actions...</p>';
+                    break;
+                default:
+                    modalTitle.textContent = 'Modal Title';
+                    modalBody.innerHTML = '<p>Default modal content...</p>';
+            }
+
+            modal.style.display = 'block';
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('modal');
+            modal.style.display = 'none';
+        }
+
+        function saveContent(section) {
+            alert(section + ' content saved.');
+        }
+
+        function saveSettings() {
+            alert('Settings saved.');
+        }
+
+        function verifyItem(itemId) {
+            alert('Item ' + itemId + ' has been verified.');
+        }
+
+        function rejectItem(itemId) {
+            alert('Item ' + itemId + ' has been rejected.');
+        }
+    </script>
+</body>
+</html>
