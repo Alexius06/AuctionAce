@@ -1,6 +1,8 @@
 const User = require('../models/User');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
+const path = require('path');
+const { console } = require('inspector');
 
 
 
@@ -27,8 +29,8 @@ exports.register = async (req, res) => {
         res.cookie('Btoken', token, {
             httpOnly: false, 
             secure: true,
-            sameSite: 'None', 
-            maxAge: 3600000 // 1 hour
+            sameSite: 'Strict'
+            
         });
         console.log('Response Headers:', res.getHeaders());
         res.status(201).json({ message: 'User created successfully', newUser,token });
@@ -52,13 +54,50 @@ exports.login = async (req, res) => {
         res.cookie('Btoken', token, {
             httpOnly: false,
             secure: true,
-            sameSite: 'None', 
-            maxAge: 3600000 // 1 hour
+            sameSite: 'Strict'
+            
         });
         console.log('Response Headers:', res.getHeaders());
         res.status(200).json({ ok: true,token, user});   
     } catch (error) {
         res.status(500).json({ message: 'Failed to login', error });
+    }
+};
+exports.logout = async (req, res) => {
+    try {
+        await res.clearCookie('Btoken', {
+            httpOnly: true,  // Ensure the cookie is cleared in a secure way
+            secure: false,   // Set to true in production if using HTTPS
+            sameSite: 'Strict'
+        });
+        console.log('hiiiiiiii  im  checking');
+        // Send the login page file after logout
+        return res.sendFile(path.join(__dirname, '../public/index.html'));
+        
+    } catch (error) {
+        res.status(500).json({ message: 'Failed to logout', error });
+        console.log(error)
+        
+    }
+};
+
+
+exports.getProfilePage = (req, res) => {
+    
+    try {
+        if (req.user.role === 'bidder') {        
+            return res.sendFile(path.join(__dirname, '../public/bidderprofile.html'));
+        } else if (req.user.role === 'merchant') {
+            return res.sendFile(path.join(__dirname, '../public/merchantProfile.html'));
+        } else if (req.user.role === 'admin') {
+            return res.sendFile(path.join(__dirname, '../public/Admin.html'));  
+        } else {
+            res.status(403).send('Access denied: Invalid role');
+        }
+        res.status(200).json({ message: 'Profile Page successfully checked' });    
+    } catch (error) {
+        res.status(500).json({ message: 'Failed to get profile page', error });
+        console.log(error) ;
     }
 };
 
@@ -73,15 +112,16 @@ exports.authenticate = (req, res, next) => {
 
     if (!token){
         console.log('no  token provided ');
-        return res.status(401).json({ message:'no token found', redirect: '/login' })
+        
+        // return res.status(401).json({ message:'no token found', redirect: '/login' })
     } 
 
     jwt.verify(token, process.env.JWT_SECRET , (err, decoded) => {
         if (err) {
             console.log('Invalid token');   
-            return res.status(401).json({ message:'incorrect token', redirect: '/login' })
+            // return res.status(401).json({ message:'incorrect token', redirect: '/login' })
         }
-
+        console.log(decoded)
         req.user = decoded;
         next();
     });

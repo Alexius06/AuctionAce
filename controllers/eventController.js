@@ -80,3 +80,12 @@ exports.deleteEvent = async (req, res) => {
         res.status(500).json({ message: 'Failed to delete event', error });
     }
 };
+
+exports.getRandomEvents = async (req, res) => {
+    try {
+      const randomEvents = await Event.aggregate([{ $sample: { size: 3 } }]); // Retrieve 3 random events
+      res.status(200).json(randomEvents);
+    } catch (error) {
+      res.status(500).json({ message: 'Failed to fetch random events', error });
+    }
+  };

@@ -1,12 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard - AuctionAce</title>
-    <link rel="icon" href="./favicon.png"  type="image/png">
+    <link rel="icon" href="/favicon.png" type="image/png">
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@3.3.0/dist/tailwind.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Reem+Kufi&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Reem+Kufi&display=swap"
+        rel="stylesheet">
     <style>
         .sidebar {
             height: 100vh;
@@ -44,6 +46,7 @@
                 opacity: 0;
                 transform: translateY(20px);
             }
+
             to {
                 opacity: 1;
                 transform: translateY(0);
@@ -85,6 +88,7 @@
         }
     </style>
 </head>
+
 <body class="font-ReemKufi bg-gray-100">
 
     <!-- Sidebar -->
@@ -114,13 +118,15 @@
                     <h2 class="text-xl font-semibold mb-4">Total Auctions</h2>
                     <p class="text-4xl font-bold">150</p>
                     <p>Ongoing: 30 | Upcoming: 70 | Ended: 50</p>
-                    <button class="mt-4 px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600" onclick="showModal('viewAuctionDetails')">View Details</button>
+                    <button class="mt-4 px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600"
+                        onclick="showModal('viewAuctionDetails')">View Details</button>
                 </div>
                 <div class="bg-white p-6 rounded-lg shadow-md">
                     <h2 class="text-xl font-semibold mb-4">Registered Users</h2>
                     <p class="text-4xl font-bold">2,300</p>
                     <p>Active: 500 | Bidders: 1500</p>
-                    <button class="mt-4 px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600" onclick="showModal('viewUserDetails')">View Details</button>
+                    <button class="mt-4 px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600"
+                        onclick="showModal('viewUserDetails')">View Details</button>
                 </div>
                 <div class="bg-white p-6 rounded-lg shadow-md">
                     <h2 class="text-xl font-semibold mb-4">Messages Sent</h2>
@@ -131,7 +137,8 @@
                     <h2 class="text-xl font-semibold mb-4">Total Earnings</h2>
                     <p class="text-4xl font-bold">$50,000</p>
                     <p>This Month: $5,000</p>
-                    <button class="mt-4 px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600" onclick="showModal('viewEarningsDetails')">View Details</button>
+                    <button class="mt-4 px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600"
+                        onclick="showModal('viewEarningsDetails')">View Details</button>
                 </div>
             </div>
         </section>
@@ -145,9 +152,12 @@
                     <h3 class="text-xl font-semibold mb-2">Item 1: Diamond Necklace</h3>
                     <p>Seller: John Doe</p>
                     <p>Status: <span class="text-yellow-500">Pending Verification</span></p>
-                    <button class="mt-4 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600" onclick="verifyItem(1)">Verify</button>
-                    <button class="mt-4 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600" onclick="rejectItem(1)">Reject</button>
-                    <button class="mt-4 px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600" onclick="showModal('viewItemDetails')">View Details</button>
+                    <button class="mt-4 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
+                        onclick="verifyItem(1)">Verify</button>
+                    <button class="mt-4 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
+                        onclick="rejectItem(1)">Reject</button>
+                    <button class="mt-4 px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600"
+                        onclick="showModal('viewItemDetails')">View Details</button>
                 </div>
             </div>
         </section>
@@ -157,8 +167,10 @@
             <h2 class="text-2xl font-semibold mb-4">Content Editor</h2>
             <div class="bg-white p-6 rounded-lg shadow-md">
                 <h3 class="text-xl font-semibold mb-4">Homepage Content</h3>
-                <textarea id="homepage-content" class="w-full h-48 p-4 border border-gray-300 rounded-md" placeholder="Edit homepage content..."></textarea>
-                <button class="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600" onclick="saveContent('homepage')">Save Changes</button>
+                <textarea id="homepage-content" class="w-full h-48 p-4 border border-gray-300 rounded-md"
+                    placeholder="Edit homepage content..."></textarea>
+                <button class="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+                    onclick="saveContent('homepage')">Save Changes</button>
             </div>
         </section>
 
@@ -171,7 +183,8 @@
                 <p>Status: <span class="text-green-500">Active</span></p>
                 <button class="mt-4 px-4 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600">Suspend</button>
                 <button class="mt-4 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600">Delete</button>
-                <button class="mt-4 px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600" onclick="showModal('viewUserActions')">View User History</button>
+                <button class="mt-4 px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600"
+                    onclick="showModal('viewUserActions')">View User History</button>
             </div>
         </section>
 
@@ -181,10 +194,13 @@
             <div class="bg-white p-6 rounded-lg shadow-md">
                 <h3 class="text-xl font-semibold mb-4">Update Site Settings</h3>
                 <label for="site-name" class="block font-semibold mb-2">Site Name</label>
-                <input id="site-name" type="text" class="w-full p-2 border border-gray-300 rounded-md mb-4" value="AuctionAce">
+                <input id="site-name" type="text" class="w-full p-2 border border-gray-300 rounded-md mb-4"
+                    value="AuctionAce">
                 <label for="site-email" class="block font-semibold mb-2">Contact Email</label>
-                <input id="site-email" type="email" class="w-full p-2 border border-gray-300 rounded-md mb-4" value="contact@auctionace.com">
-                <button class="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600" onclick="saveSettings()">Save Changes</button>
+                <input id="site-email" type="email" class="w-full p-2 border border-gray-300 rounded-md mb-4"
+                    value="contact@auctionace.com">
+                <button class="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+                    onclick="saveSettings()">Save Changes</button>
             </div>
         </section>
 
@@ -201,11 +217,13 @@
                 <!-- Modal content goes here -->
             </div>
             <div class="mt-4">
-                <button class="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600" onclick="closeModal()">Close</button>
+                <button class="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600"
+                    onclick="closeModal()">Close</button>
             </div>
         </div>
     </div>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jwt-decode/build/jwt-decode.min.js"></script>
     <script>
         function toggleSidebar() {
             const sidebar = document.querySelector('.sidebar');
@@ -218,7 +236,7 @@
             const modalTitle = document.getElementById('modal-title');
             const modalBody = document.getElementById('modal-body');
 
-            switch(modalType) {
+            switch (modalType) {
                 case 'viewAuctionDetails':
                     modalTitle.textContent = 'Auction Details';
                     modalBody.innerHTML = '<p>Details about ongoing auctions...</p>';
@@ -267,6 +285,67 @@
         function rejectItem(itemId) {
             alert('Item ' + itemId + ' has been rejected.');
         }
+        // fetch user  details
+        var userId;
+        document.addEventListener('DOMContentLoaded', () => {
+            userId = getUserIdFromToken();
+            if (userId) {
+                fetchUserDetails(userId);
+            } else {
+                console.error('User ID could not be extracted from token.');
+                // Optionally redirect to login if no token is present
+            }
+        });
+
+        async function fetchUserDetails(userId) {
+            try {
+                const response = await fetch(`http://localhost:3000/users/${userId}`, {
+                    method: 'GET',
+                    credentials: 'include',
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to fetch user details');
+                }
+
+                const user = await response.json();
+                document.getElementById('username').textContent = user.username;
+            } catch (error) {
+                console.error('Error fetching user details:', error);
+            }
+        }
+
+        function getUserIdFromToken() {
+            const tokenCookie = document.cookie.split('; ').find(row => row.startsWith('Btoken='));
+            if (!tokenCookie) {
+                console.error('No token found in cookies.');
+                window.location.href = '/auth.html?section=login';
+                return null; // Token is missing
+            }
+            console.log('tokencookie:' + tokenCookie);
+
+            const token = tokenCookie.split('=')[1];
+            if (!token) {
+                console.error('Token is malformed or missing.');
+                window.location.href = '/auth.html?section=login';
+                return null;
+            }
+            console.log('token:' + token);
+            const currentTime = Math.floor(Date.now() / 1000);
+            try {
+                const decoded = jwt_decode(token);
+                if (decoded.exp && decoded.exp < currentTime) {
+                    window.location.href = '/auth.html?section=login';
+                } else {
+                    return decoded.id;
+                }
+            } catch (error) {
+                window.location.href = '/auth.html?section=login';
+                console.error('Error decoding token:', error);
+                return null; // Return null if decoding fails
+            }
+        }
     </script>
 </body>
+
 </html>

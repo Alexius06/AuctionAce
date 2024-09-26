@@ -5,33 +5,42 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Merchant Profile Page</title>
-    <link rel="icon" href="./favicon.png"  type="image/png">
+    <link rel="icon" href="/favicon.png" type="image/png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@3.3.0/dist/tailwind.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Reem+Kufi&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Reem+Kufi&display=swap"
+        rel="stylesheet">
     <style>
-        body{
+        body {
             font-family: 'Reem Kufi', sans-serif;
             background: radial-gradient(circle at center, #c9c9c9, #606060);
             overflow-x: hidden;
         }
+
         .nav-link:hover {
-        color: #c7ae6a;
+            color: #c7ae6a;
         }
+
         .page::-webkit-scrollbar {
-            width: 8px; /* Slim scrollbar width */
+            width: 8px;
+            /* Slim scrollbar width */
         }
 
         .page::-webkit-scrollbar-track {
-            background: transparent; /* Hide the track */
+            background: transparent;
+            /* Hide the track */
         }
 
         .page::-webkit-scrollbar-thumb {
-            background: #bfa75d; /* Gold color */
-            border-radius: 4px; /* Rounded scrollbar */
+            background: #bfa75d;
+            /* Gold color */
+            border-radius: 4px;
+            /* Rounded scrollbar */
         }
 
         .page::-webkit-scrollbar-thumb:hover {
-            background: #a68e4d; /* Darker gold on hover */
+            background: #a68e4d;
+            /* Darker gold on hover */
         }
     </style>
 </head>
@@ -44,77 +53,699 @@
             <div class="absolute top-0 left-0 w-full h-64 bg-gray-300 opacity-50 transform scale-125 -rotate-6"></div>
 
             <!-- Navbar (Assumed to be included) -->
-            <nav class="absolute top-0 w-full bg-transparent px-6 py-4">
+            <nav class="absolute top-0 w-full bg-transparent px-6 py-4 z-50">
                 <ul class="flex space-x-4 text-white">
-                    <li><a href="#" class="hover:underline text-[#606060] nav-link">Home</a></li>
-                    <!-- Add more navbar items here -->
+                    <li><a href="/home.html" class="hover:underline text-[#606060] nav-link">Home</a></li>
+                    <button onclick="openEditProfilePopup()"
+                        class="absolute top-4 right-4 text-[#606060] px-4 py-2 rounded-full shadow-md hover:shadow-xl bg-[#c7ae6a]">Edit</button>
                 </ul>
             </nav>
+            <!-- edit profile section -->
+            <div id="editProfilePopup"
+                class="hidden fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center transition-opacity duration-500 ease-in-out z-50">
+                <div
+                    class="bg-white rounded-lg shadow-lg p-6 w-96 transform transition-transform duration-500 ease-in-out scale-95">
+                    <h2 class="text-xl font-bold mb-4">Edit Profile</h2>
+                    <form id="editProfileForm">
+                        <div class="mb-4">
+                            <label for="firstname" class="block text-sm font-medium text-gray-700">First Name</label>
+                            <input type="text" id="firstname" name="firstname"
+                                class="mt-1 block w-full p-2 border border-gray-300 rounded-md" required>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="lastname" class="block text-sm font-medium text-gray-700">Last Name</label>
+                            <input type="text" id="lastname" name="lastname"
+                                class="mt-1 block w-full p-2 border border-gray-300 rounded-md" required>
+                        </div>
+
+                        <div class="mb-2">
+                            <label for="phonenumber" class="block text-sm font-medium text-gray-700">Phone
+                                Number</label>
+                            <input type="text" id="phone-number" name="phonenumber"
+                                class="mt-1 block w-full p-2 border border-gray-300 rounded-md" required>
+                        </div>
+                        <p id="error-message" class="text-red-600  text-center hidden"></p>
+                        <div class="flex justify-end">
+                            <button type="button" id="cancelButton"
+                                class="mr-2 bg-gray-500 text-white px-4 py-2 rounded-md">Cancel</button>
+                            <button type="submit" class="bg-[#c7ae6a] text-white px-4 py-2 rounded-md">Save</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
 
             <!-- User Info Section -->
             <div class="relative z-10 pt-24 flex flex-col items-left pl-[8rem] overflow-y-scroll page">
                 <!-- Profile Image -->
-                <div class="w-32 h-32 rounded-full bg-[#c7ae6a] bg-opacity-30 flex text-3xl font-bold justify-center items-center text-center overflow-hidden">
+                <div id="profileicon"
+                    class="w-32 h-32 rounded-full bg-[#c7ae6a] bg-opacity-30 flex text-3xl font-bold justify-center items-center text-center overflow-hidden cursor-pointer ">
                     T
                 </div>
 
                 <!-- User Details -->
                 <div class="text-left mt-4">
-                    <h1 class="text-2xl font-semibold">Tania Opuama</h1>
-                    <p class="text-gray-600">@dfw.taniaa</p>
+                    <h1 id="fullname" class="text-2xl font-semibold">Tania Opuama</h1>
+                    <p id="username" class="text-gray-600"><i class="fa-light fa-at"></i> <span></span></p>
                     <p class="text-sm mt-2">Merchant</p>
                     <p class="flex items-center text-sm text-gray-500 mt-2">
-                        <span class="mr-2">📞</span> 07066139073
+                        <span id="phonenumber"><i class="fa-duotone fa-solid fa-phone mr-2"></i>0000000</span>
                     </p>
                     <p class="flex items-center text-sm text-gray-500 mt-2">
-                        <span class="mr-2">📍</span> 57 Brains & Hammers City,lifecamp, Abuja
+                        <span id="email"><i class="fa-regular fa-envelope mr-2"></i>yourexample@gmail.com</span>
                     </p>
                     <p class="flex items-center text-sm text-gray-500 mt-2">
-                        <span class="mr-2">📅</span> Joined 16 Sept 2024
+                        <span id="joined"><i class="mr-2 fa-solid fa-calendar"></i>Joined 16 Sept 2024</span>
                     </p>
                 </div>
 
-                <!-- Edit Button -->
-                <button
-                    class="absolute top-4 right-4 text-[#606060] px-4 py-2 rounded-full shadow-md hover:shadow-xl bg-[#c7ae6a]">Edit</button>
+
+
 
                 <!-- Tabs -->
                 <div class="mt-8 w-full pr-[10rem]">
                     <ul class="flex border-b-2 border-gray-200 text-sm">
-                        <li class="mr-4 pb-2 ">Item Upload</li>
-                        <li class="mr-4 pb-2 border-b-2 border-black">Item Status</li>
-                        <li class="pb-2">Inventory</li>
+                        <li id="itemUpload" onclick="openUploadItemPopup()"
+                            class="mr-4 pb-2 cursor-pointer transition-colors duration-300 ease-in-out">Item Upload</li>
+                        <li id="itemStatus" onclick="openItemStatus()"
+                            class="mr-4 pb-2 cursor-pointer transition-colors duration-300 ease-in-out">Item Status</li>
+                        <li id="Inventory" onclick="openUpInventory()"
+                            class="pb-2 cursor-pointer transition-colors duration-300 ease-in-out">Inventory</li>
                     </ul>
 
                     <!-- Table Section -->
-                    <div class="mt-4">
-                        <table class="table-auto w-full text-left text-gray-500">
-                            <thead>
-                                <tr class="text-xs uppercase text-gray-400">
-                                    <th class="px-4 py-2">Name</th>
-                                    <th class="px-4 py-2">Size</th>
-                                    <th class="px-4 py-2">Location</th>
-                                    <th class="px-4 py-2">Status</th>
-                                    <th class="px-4 py-2">Uploaded At</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr class="bg-white border-b">
-                                    <td class="px-4 py-2">Moro Chickens Co.</td>
-                                    <td class="px-4 py-2">40 Acres</td>
-                                    <td class="px-4 py-2">Mando</td>
-                                    <td class="px-4 py-2 text-red-500">Pending</td>
-                                    <td class="px-4 py-2">16 Sept 2024</td>
-                                </tr>
-                                <!-- More rows as needed -->
-                            </tbody>
-                        </table>
+                    <div class="mt-4 hidden transition-opacity duration-500 ease-in-out" id="ItemStatusPage">
+                        <div class="h-[122px] overflow-y-scroll page">
+                            <table class="table-auto w-full text-left text-gray-500">
+                                <thead class="mb-1">
+                                    <tr class="text-xs uppercase text-gray-400 sticky top-0 bg-gray-200">
+                                        <th class="px-4 py-2">Name</th>
+                                        <th class="px-4 py-2">Asking Price</th>
+                                        <th class="px-4 py-2">Status</th>
+                                        <th class="px-4 py-2">Uploaded At</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="itemsTableBody">
+                                    <!-- Dynamic rows will be populated here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="mt-4 hidden transition-opacity duration-500 ease-in-out" id="InventoryPage">
+                        <div class="h-[122px] overflow-y-scroll page">
+                            <table class="table-auto w-full text-center text-gray-500">
+                                <thead class="mb-1">
+                                    <tr class="text-xs uppercase text-gray-400 sticky top-0 bg-gray-200">
+                                        <th class="px-4 py-2">Uploaded Items</th>
+                                        <th id="inventorycount" class="px-4 py-2">Name</th>
+
+                                    </tr>
+                                </thead>
+                                <tbody id="inventory">
+                                    <!-- Dynamic rows will be populated here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <!-- Upload Item Popup with ease-in animation -->
+                    <div id="uploadItemPopup"
+                        class="hidden fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center transition-opacity duration-500 ease-in-out">
+                        <div
+                            class="bg-white rounded-lg shadow-lg p-6 w-96 transform transition-transform duration-500 ease-in-out scale-95">
+                            <h2 class="text-xl font-bold mb-4">Upload Item for Auction</h2>
+                            <form id="uploadItemForm" enctype="multipart/form-data">
+                                <div class="mb-4">
+                                    <label for="Itemname" class="block text-sm font-medium text-gray-700">Item
+                                        Name</label>
+                                    <input type="text" id="Itemname" name="Itemname"
+                                        class="mt-1 block w-full p-2 border border-gray-300 rounded-md" required>
+                                </div>
+
+                                <div class="mb-4">
+                                    <label for="Description"
+                                        class="block text-sm font-medium text-gray-700">Description</label>
+                                    <textarea id="description" name="Description"
+                                        class="mt-1 block w-full p-2 border border-gray-300 rounded-md" rows="3"
+                                        required></textarea>
+                                </div>
+
+                                <div class="mb-4">
+                                    <label for="images" class="block text-sm font-medium text-gray-700">Upload 3
+                                        Images</label>
+                                    <input type="file" id="images" name="images"
+                                        class="mt-1 block w-full p-2 border border-gray-300 rounded-md" accept="image/*"
+                                        multiple required onchange="validateFileCount(this)">
+                                </div>
+
+                                <div class="mb-4">
+                                    <label for="askingPrice" class="block text-sm font-medium text-gray-700">Asking
+                                        Price</label>
+                                    <div class="flex">
+                                        <select id="currency" name="currency"
+                                            class="mt-1 block border-gray-300 rounded-md shadow-sm">
+                                            <option value="$">$</option>
+                                            <option value="₦">₦</option>
+                                        </select>
+                                        <input type="number" id="askingPrice" name="AskingPrice"
+                                            class="mt-1 block w-full border-gray-300 rounded-md pl-2 shadow-sm mr-2"
+                                            required>
+                                    </div>
+                                </div>
+                                <p id="imageError" class="text-red-600 text-center "></p>
+                                <div class="flex justify-end">
+                                    <button type="button" id="cancelUploadButton"
+                                        class="mr-2 bg-gray-500 text-white px-4 py-2 rounded-md">Cancel</button>
+                                    <button type="submit"
+                                        class="bg-[#c7ae6a] text-white px-4 py-2 rounded-md">Submit</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Update Item Details -->
+                    <div id="updateItemPopup"
+                        class="hidden fixed z-50 inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center transition-opacity duration-500 ease-in-out">
+                        <div
+                            class="bg-white rounded-lg shadow-lg p-6 w-96 transform transition-transform duration-500 ease-in-out scale-95">
+                            <h2 class="text-xl font-bold mb-4">Update Item Details</h2>
+                            <form id="updateItemForm" enctype="multipart/form-data">
+                                <div class="mb-4">
+                                    <label for="UpdItemname" class="block text-sm font-medium text-gray-700">Item
+                                        Name</label>
+                                    <input type="text" id="UpdItemname" name="Itemname"
+                                        class="mt-1 block w-full p-2 border border-gray-300 rounded-md" >
+                                </div>
+
+                                <div class="mb-4">
+                                    <label for="UpdDescription"
+                                        class="block text-sm font-medium text-gray-700">Description</label>
+                                    <textarea id="Upddescription" name="Description"
+                                        class="mt-1 block w-full p-2 border border-gray-300 rounded-md" rows="3"
+                                        ></textarea>
+                                </div>
+
+                                <div class="mb-4">
+                                    <label for="Updimages" class="block text-sm font-medium text-gray-700">Upload 3
+                                        Images</label>
+                                    <input type="file" id="Updimages" name="images"
+                                        class="mt-1 block w-full p-2 border border-gray-300 rounded-md" accept="image/*"
+                                        multiple  onchange="validateFileCount(this)">
+                                </div>
+
+                                <div class="mb-4">
+                                    <label for="UpdaskingPrice" class="block text-sm font-medium text-gray-700">Asking
+                                        Price</label>
+                                    <div class="flex">
+                                        <select id="Updcurrency" name="currency"
+                                            class="mt-1 block border-gray-300 rounded-md shadow-sm">
+                                            <option value="$">$</option>
+                                            <option value="₦">₦</option>
+                                        </select>
+                                        <input type="number" id="UpdaskingPrice" name="AskingPrice"
+                                            class="mt-1 block w-full border-gray-300 rounded-md pl-2 shadow-sm mr-2">
+                                    </div>
+                                </div>
+                                <p id="UpdimageError" class="text-red-600 text-center "></p>
+                                <div class="flex justify-end">
+                                    <button type="button" id="cancelUpdateButton"
+                                        class="mr-2 bg-gray-500 text-white px-4 py-2 rounded-md">Cancel</button>
+                                    <button type="submit"
+                                        class="bg-[#c7ae6a] text-white px-4 py-2 rounded-md">Update</button>
+                                </div>
+                            </form>
+                        </div>
                     </div>
                 </div>
+
+                <!-- Confirm Delete Popup -->
+                <div id="deleteItemPopup"
+                    class="hidden fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center transition-opacity duration-500 ease-in-out">
+                    <div
+                        class="bg-white rounded-lg shadow-lg p-6 w-96 transform transition-transform duration-500 ease-in-out scale-95">
+                        <h2 class="text-xl font-bold mb-4">Are you sure you want to delete this Item?</h2>
+                        <div class="flex justify-end">
+                            <p id="DelimageError" class="text-red-600 text-center "></p>
+                            <button type="button" id="cancelDeleteButton"
+                                class="mr-2 bg-gray-500 text-white px-4 py-2 rounded-md">Cancel</button>
+                            <button type="button" class="bg-red-500 border-2 text-white px-4 py-2 rounded-md" id="Delete">Delete</button>
+                        </div>
+                    </div>
+                </div>
+
+
             </div>
         </div>
     </div>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jwt-decode/build/jwt-decode.min.js"></script>
+    <script>
+        var userId;
+        document.addEventListener('DOMContentLoaded', () => {
+            userId = getUserIdFromToken();
+            if (userId) {
+                fetchUserDetails(userId);
+            } else {
+                console.error('User ID could not be extracted from token.');
+                // Optionally redirect to login if no token is present
+            }
+        });
+
+        async function fetchUserDetails(userId) {
+            try {
+                const response = await fetch(`http://localhost:3000/users/${userId}`, {
+                    method: 'GET',
+                    credentials: 'include',
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to fetch user details');
+                }
+
+                const user = await response.json();
+                const firstLetter = user.firstname.charAt(0);
+                const dateperiod = new Date(user.createdAt);
+                const options = { year: 'numeric', month: 'short', day: 'numeric' };
+                const date = dateperiod.toLocaleDateString(undefined, options);
+                document.getElementById('profileicon').textContent = firstLetter;
+                document.getElementById('fullname').textContent = user.firstname + '  ' + user.lastname;
+                document.getElementById('username').childNodes[1].nodeValue = user.username;
+                document.getElementById('phonenumber').childNodes[1].nodeValue = user.phoneNumber;
+                console.log(user.phoneNumber, user.email, user.createdAt.slice(0, 9));
+                document.getElementById('email').childNodes[1].nodeValue = user.email;
+                document.getElementById('joined').childNodes[1].nodeValue = `Joined  ${date}`;
+
+            } catch (error) {
+                console.error('Error fetching user details:', error);
+            }
+        }
+
+        function getUserIdFromToken() {
+            const tokenCookie = document.cookie.split('; ').find(row => row.startsWith('Btoken='));
+            if (!tokenCookie) {
+                console.error('No token found in cookies.');
+                window.location.href = '/auth.html?section=login';
+                return null; // Token is missing
+            }
+            console.log('tokencookie:' + tokenCookie);
+
+            const token = tokenCookie.split('=')[1];
+            if (!token) {
+                console.error('Token is malformed or missing.');
+                window.location.href = '/auth.html?section=login';
+                return null;
+            }
+            console.log('token:' + token);
+            const currentTime = Math.floor(Date.now() / 1000);
+            try {
+                const decoded = jwt_decode(token);
+                if (decoded.exp && decoded.exp < currentTime) {
+                    window.location.href = '/auth.html?section=login';
+                } else {
+                    console.log(decoded)
+                    return decoded.id;
+                }
+            } catch (error) {
+                window.location.href = '/auth.html?section=login';
+                console.error('Error decoding token:', error);
+                return null; // Return null if decoding fails
+            }
+        }
+        //edit  profile  popup
+        const editProfilePopup = document.getElementById('editProfilePopup');
+        const cancelButton = document.getElementById('cancelButton');
+
+        function openEditProfilePopup() {
+            editProfilePopup.classList.remove('hidden');
+            setTimeout(() => {
+                editProfilePopup.classList.remove('opacity-0');
+            }, 10);
+        }
+
+        cancelButton.addEventListener('click', () => {
+            editProfilePopup.classList.add('opacity-0');
+            setTimeout(() => {
+                editProfilePopup.classList.add('hidden');
+            }, 500);
+        });
+
+        // edit form  submit
+        document.getElementById('editProfileForm').addEventListener('submit', async (event) => {
+            event.preventDefault();  // Prevent form from submitting the traditional way
+
+            // Collect form data
+            const firstname = document.getElementById('firstname').value.trim();
+            const lastname = document.getElementById('lastname').value.trim();
+            const phoneNumber = document.getElementById('phone-number').value.trim();
+            const phoneRegex = /^[0-9]{11}$/;
+            const formData = {
+                firstname: firstname,
+                lastname: lastname,
+                phoneNumber: phoneNumber,
+            };
+            if (phoneRegex.test(phoneNumber)) {
+                try {
+                    const response = await fetch(`http://localhost:3000/users/${userId}`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        credentials: 'include',
+                        body: JSON.stringify(formData)
+                    });
+
+                    if (response.ok) {
+                        const result = await response.json();
+                        document.getElementById('error-message').textContent = 'Profile Updated Successfully';
+                        document.getElementById('error-message').classList.add('text-green-600');
+                        document.getElementById('error-message').classList.remove('hidden', 'text-red-600');
+                        setTimeout(() => {
+                            editProfilePopup.classList.add('hidden');  // Close popup
+                        }, 500)
+                    } else {
+                        throw new Error('Failed to update profile');
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                }
+            }
+            else {
+                document.getElementById('error-message').textContent = 'Please enter a valid 11-digit phone number!';
+                document.getElementById('error-message').classList.remove('hidden');
+
+            }
+
+
+        });
+
+
+        // Show the upload item popup with ease-in animation
+        const deleteItemPopup = document.getElementById('deleteItemPopup');
+        const updateItemPopup = document.getElementById('updateItemPopup');
+        const uploadItemPopup = document.getElementById('uploadItemPopup');
+        const ItemStatusPage = document.getElementById('ItemStatusPage');
+        const InventoryPage = document.getElementById('InventoryPage');
+        const cancelUploadButton = document.getElementById('cancelUploadButton');
+
+        function openUploadItemPopup() {
+            uploadItemPopup.classList.remove('hidden');
+            ItemStatusPage.classList.add('hidden');
+            InventoryPage.classList.add('hidden');
+            setActiveTab('itemUpload');
+            setTimeout(() => {
+                uploadItemPopup.classList.remove('opacity-0');
+            }, 10);
+        }
+        function openUpdateItemPopup() {
+            updateItemPopup.classList.remove('hidden');
+            
+            setTimeout(() => {
+                uploadItemPopup.classList.remove('opacity-0');
+            }, 10);
+        }
+        function openDeleteItemPopup() {
+            deleteItemPopup.classList.remove('hidden');
+            
+            setTimeout(() => {
+                uploadItemPopup.classList.remove('opacity-0');
+            }, 10);
+        }
+        function openItemStatus() {
+            setActiveTab('itemStatus')
+            ItemStatusPage.classList.remove('hidden');
+            uploadItemPopup.classList.add('hidden');
+            InventoryPage.classList.add('hidden');
+            setTimeout(() => {
+                ItemStatusPage.classList.remove('opacity-0');
+            }, 10);
+        }
+        function openUpInventory() {
+            setActiveTab('Inventory')
+            InventoryPage.classList.remove('hidden');
+            uploadItemPopup.classList.add('hidden');
+            ItemStatusPage.classList.add('hidden');
+            setTimeout(() => {
+                InventoryPage.classList.remove('opacity-0');
+            }, 10);
+        }
+
+        cancelUploadButton.addEventListener('click', () => {
+            uploadItemPopup.classList.add('opacity-0');
+            setTimeout(() => {
+                uploadItemPopup.classList.add('hidden');
+            }, 500);
+        });
+        document.getElementById('cancelUpdateButton').addEventListener('click', () => {
+            updateItemPopup.classList.add('opacity-0');
+            setTimeout(() => {
+                updateItemPopup.classList.add('hidden');
+            }, 500);
+        });
+        document.getElementById('cancelDeleteButton').addEventListener('click', () => {
+            deleteItemPopup.classList.add('opacity-0');
+            setTimeout(() => {
+                deleteItemPopup.classList.add('hidden');
+            }, 500);
+        });
+
+
+        function validateFileCount(input) {
+            const Filecount = 3;
+            const imageError = document.getElementById('imageError');
+            if (input.files.length != Filecount) {
+                imageError.textContent = 'You must upload 3 images for your product';
+                imageError.classList.remove('hidden');
+                input.value = "";
+            } else {
+                imageError.classList.add('hidden');
+            }
+        }
+
+        // Handle the form submission
+        document.getElementById('uploadItemForm').addEventListener('submit', async (event) => {
+            event.preventDefault();
+            console.log('form submission  is ongoing')
+            const url = `http://localhost:3000/items`; // Replace with actual user ID if necessary
+            const formData = new FormData(document.getElementById('uploadItemForm')); // Collect all form data
+            formData.append('userId', userId);
+            console.log([...formData]);
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    body: formData // Send the form data (including images)
+                });
+
+                if (response.ok) {
+                    const result = await response.json();
+                    imageError.textContent = 'Item Successfully Submitted';
+                    imageError.classList.add('text-green-600');
+                    imageError.classList.remove('hidden', 'text-red-600');
+
+                    uploadItemPopup.classList.add('opacity-0');  // Hide the popup
+                    setTimeout(() => {
+                        uploadItemPopup.classList.add('hidden');
+                    }, 500);
+                } else {
+                    const result = await response.json();
+                    console.log(result.message)
+                    throw new Error('Failed to upload item');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                imageError.textContent = 'An error occurred while uploading item';
+                imageError.classList.remove('hidden');
+            }
+        });
+
+        let currentItemId;
+        document.getElementById('updateItemForm').addEventListener('submit', async (event) => {
+            console.log("i  HAVE  ENETEREDDD");
+            event.preventDefault();
+            console.log(currentItemId); 
+            console.log('form submission  is ongoing')
+            const url = `http://localhost:3000/items/${currentItemId}`; 
+            console.log(url)// Replace with actual user ID if necessary
+            const formData = new FormData(document.getElementById('updateItemForm')); // Collect all form data
+            console.log([...formData]);
+            try {
+                const response = await fetch(url, {
+                    method: 'PUT',
+                    credentials:"include",
+                    body: formData // Send the form data (including images)
+                });
+
+                if (response.ok) {
+                    const result = await response.json();
+                    UpdimageError.textContent = 'Item Successfully Updated';
+                    UpdimageError.classList.add('text-green-600');
+                    UpdimageError.classList.remove('hidden', 'text-red-600');
+
+                    updateItemPopup.classList.add('opacity-0');  // Hide the popup
+                    setTimeout(() => {
+                        updateItemPopup.classList.add('hidden');
+                    }, 500);
+                } else {
+                    const result = await response.json();
+                    console.log(result.message)
+                    throw new Error('Failed to update item');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                UpdimageError.textContent = 'An error occurred while updating item';
+                UpdimageError.classList.remove('hidden');
+            }
+        });
+
+        
+        document.getElementById('Delete').addEventListener('click', async (event) => {
+            const url = `http://localhost:3000/items/${currentItemId}`; 
+            try {
+                const response = await fetch(url, {
+                    method: 'DELETE',
+                    credentials:"include"
+                });
+
+                if (response.ok) {
+                    const result = await response.json();
+                    DelimageError.textContent = 'Item Successfully Deleted';
+                    DelimageError.classList.add('text-[#c7ae6a]');
+                    DelimageError.classList.remove('hidden', 'text-red-600');
+
+                    deleteItemPopup.classList.add('opacity-0');  // Hide the popup
+                    setTimeout(() => {
+                        deleteItemPopup.classList.add('hidden');
+                    }, 500);
+                } else {
+                    const result = await response.json();
+                    console.log(result.message)
+                    throw new Error('Failed to update item');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                DelimageError.textContent = 'An error occurred while updating item';
+                DelimageError.classList.remove('hidden');
+            }
+        });
+
+        
+
+        function setActiveTab(tabId) {
+            // Get all list items
+            const tabs = document.querySelectorAll('ul li');
+
+            // Remove the active border class from all tabs
+            tabs.forEach(tab => {
+                tab.classList.remove('border-b-2', 'border-black', 'active');
+            });
+
+            // Add the active border class to the selected tab
+            const activeTab = document.getElementById(tabId);
+            activeTab.classList.add('border-b-2', 'border-black', 'active');
+        }
+
+        // Call setActiveTab on page load to set the default active tab (optional)
+        window.onload = function () {
+            openItemStatus(); // Set the default active tab
+        };
+
+        document.addEventListener('DOMContentLoaded', async function () {
+            try {
+                const response = await fetch('http://localhost:3000/items/items/user', {
+                    method: 'GET',
+                    credentials: "include",
+                    headers: {
+                        'Authorization': `Bearer ${userId}` // Include token in Authorization header
+                    }
+                });
+                console.log(userId)
+                const data = await response.json();
+
+                if (data.success) {
+                    const items = data.data; // Extract the items array
+                    console.log(items)
+                    populateTable(items); // Call the function to populate the table
+                } else {
+                    console.error('Failed to fetch items:', data.message);
+                }
+            } catch (error) {
+                console.error('Error fetching items:', error);
+            }
+            function populateTable(items) {
+                const tableBody = document.getElementById('itemsTableBody');
+                const inventorycount = document.getElementById('inventorycount');
+                const inventory = document.getElementById('inventory');
+                // Clear any existing rows
+                tableBody.innerHTML = '';
+                inventorycount.textContent = items.length;
+                inventory.textContent = '';
+
+
+                // Loop through the items array and create table rows
+                items.forEach(item => {
+                    const row = document.createElement('tr');
+                    row.classList.add('bg-white', 'border-b');
+                    const row2 = document.createElement('tr');
+                    row2.classList.add('bg-white', 'border-b');
+
+                    // Create table cells for Itemname, Description, and AskingPrice
+                    const itemNameCell = document.createElement('td');
+                    itemNameCell.classList.add('px-4', 'py-2');
+                    itemNameCell.innerText = item.Itemname;
+                    const itemNameCell1 = document.createElement('td');
+                    itemNameCell1.classList.add('px-4', 'py-2');
+                    itemNameCell1.innerText = item.Itemname;
+
+                    const priceCell = document.createElement('td');
+                    priceCell.classList.add('px-4', 'py-2');
+                    priceCell.innerText = item.AskingPrice;
+
+                    const statusCell = document.createElement('td');
+                    statusCell.classList.add('px-4', 'py-2');
+                    statusCell.innerText = item.status;
+
+                    const editsection = document.createElement('div');
+                    editsection.classList.add('px-4', 'py-2');
+
+
+                    const UpdateBtn = document.createElement('button');
+                    UpdateBtn.classList.add('px-2', 'mx-1', 'py-2', 'bg-inherit', 'border-2', 'border-green', 'rounded-lg', 'text-green-500');
+                    UpdateBtn.innerText = 'Update';
+                    UpdateBtn.value = item._id;
+                    UpdateBtn.onclick = () => {
+                        currentItemId = item._id;
+                        openUpdateItemPopup();
+                    }
+
+                    const DeleteBtn = document.createElement('button');
+                    DeleteBtn.classList.add('px-2', 'mx-1', 'py-2', 'bg-red-500', 'rounded-lg', 'text-white');
+                    DeleteBtn.innerText = 'Delete';
+                    DeleteBtn.value = item._id;
+                    DeleteBtn.onclick = () => {
+                        currentItemId = item._id;
+                        openDeleteItemPopup();
+                    }
+
+                    const dateperiod = new Date(item.createdAt);
+                    const options = { year: 'numeric', month: 'short', day: 'numeric' };
+                    const date = dateperiod.toLocaleDateString(undefined, options);
+                    const timestampCell = document.createElement('td');
+                    timestampCell.classList.add('px-4', 'py-2');
+                    timestampCell.innerText = date;
+
+                    // Append cells to the row
+                    editsection.appendChild(UpdateBtn);
+                    editsection.appendChild(DeleteBtn);
+                    row.appendChild(itemNameCell);
+                    row.appendChild(priceCell);
+                    row.appendChild(statusCell);
+                    row.appendChild(timestampCell);
+                    row2.appendChild(itemNameCell1);
+                    row2.appendChild(editsection);
+
+                    // Append the row to the table body
+                    tableBody.appendChild(row);
+                    inventory.appendChild(row2);
+                });
+            }
+        })
+    </script>
 </body>
 
 </html>

@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AuctionAce - Events</title>
+  <link rel="icon" href="/favicon.png" type="image/png">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@3.3.0/dist/tailwind.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Reem+Kufi&display=swap"
+    rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Reem Kufi', sans-serif;
+      background: radial-gradient(circle at center, #c9c9c9, #606060);
+      overflow-x: hidden;
+    }
+
+    .event-button.active-filter {
+      background-color: #c7ae6a;
+
+    }
+
+    .fade-in {
+      animation: fadeIn 0.5s ease-in;
+    }
+
+    .navbar {
+      transition: transform 0.5s ease-in-out, opacity 0.5s ease-in-out;
+      box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+      background: linear-gradient(to right, #6d6d6d, #8d8d8d, #b5b5b5);
+      /* Darker gradient for navbar */
+    }
+
+    .nav-link {
+      color: #606060;
+    }
+
+    .nav-link:hover {
+      color: #c7ae6a;
+      /* Hover effect to match palette */
+    }
+
+    .animate-fade {
+      animation: fadeIn 1s ease-in-out;
+    }
+
+    .animate-fade1 {
+      animation: fadeIn 2s ease-in-out;
+    }
+
+    .animate-fade2 {
+      animation: fadeIn 4s ease-in-out;
+    }
+
+    .animate-fade3 {
+      animation: fadeIn 3s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(60px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0px);
+      }
+    }
+
+    @keyframes dropIn {
+      from {
+        opacity: 0;
+        transform: translateY(-30px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0px);
+      }
+    }
+
+    @keyframes gelatine {
+
+      0%,
+      100% {
+        transform: scale(1, 1);
+      }
+
+      25% {
+        transform: scale(0.9, 1.1);
+      }
+
+      50% {
+        transform: scale(1.1, 0.9);
+      }
+
+      75% {
+        transform: scale(0.95, 1.05);
+      }
+    }
+
+    .dropdown-menu {
+      border-radius: 0.5rem;
+      clip-path: inset(-1px -1px 0 -1px round 1rem 1rem 0 0);
+      animation: dropIn 1s ease-in-out;
+    }
+
+    .userprofile {
+      border: solid 2px #e8c943
+    }
+
+    .p-icon:hover {
+      animation: gelatine 1s ease-in-out;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Navbar -->
+  <nav class="navbar py-4 px-6 flex justify-between items-center animate-fade">
+    <img src="/AuctionAceLogo.png" class="w-45 h-24" alt="AuctionAce Logo">
+    <nav class="space-x-6">
+      <a href="#" class="text-lg font-semibold nav-link playfair">Home</a>
+      <a href="#auctions" class="text-lg font-semibold nav-link playfair">Auctions</a>
+      <a href="#features" class="text-lg font-semibold nav-link playfair">Features</a>
+      <a href="#contact" class="text-lg font-semibold nav-link playfair">Contact</a>
+    </nav>
+    <div class="relative">
+      <button class="flex items-center bg-inherit userprofile text-[#606060]  pr-4 rounded-full focus:outline-none">
+        <i class="fas p-icon fa-user text-2xl rounded-full bg-[#c7ae6a] text-[#606060] ml-0 px-2 py-1 mr-2"></i>
+        <span id="username"></span>
+        <i id="profileMenuButton" class="fas fa-chevron-down ml-2"></i>
+      </button>
+      <div id="profileMenu"
+        class="absolute right-0 mt-2 w-48 bg-white border border-gray-300 shadow-lg dropdown-menu hidden overflow-hidden">
+        <a href="/users/profile" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">View Profile</a>
+        <a href="/users/logout" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Logout</a>
+      </div>
+    </div>
+
+  </nav>
+
+  <section class="container mx-auto px-6 py-16 bg-inherit">
+    <!-- Filter Buttons -->
+    <div class="flex justify-start border w-fit mb-8 rounded-lg overflow-hidden">
+      <button onclick="filterEvents('all' , this);"
+        class=" event-button px-2 py-1 border bg-gray-300 hover:bg-[#c7ae6a] text-sm text-gray-900 font-semibold focus:outline-none  active-filter">All</button>
+      <button onclick="filterEvents('Upcoming' , this)"
+        class=" event-button px-2 py-1 border bg-gray-300 hover:bg-[#c7ae6a] text-sm text-gray-900 font-semibold focus:outline-none">Upcoming</button>
+      <button onclick="filterEvents('Ongoing' , this)"
+        class=" event-button px-2 py-1 border bg-gray-300 hover:bg-[#c7ae6a] text-sm text-gray-900 font-semibold focus:outline-none">Ongoing</button>
+      <button onclick="filterEvents('Ended' , this)"
+        class=" event-button px-2 py-1 border bg-gray-300 hover:bg-[#c7ae6a] text-sm text-gray-900 font-semibold focus:outline-none">Ended</button>
+    </div>
+
+    <!-- Event Grid -->
+    <div id="event-grid" class="grid grid-cols-1 md:grid-cols-3 gap-8 animate-fade1">
+      <!-- Sample Event Item -->
+      <div class="bg-white p-6 rounded-lg shadow-md transition-transform transform hover:scale-105 event-item"
+        data-status="Upcoming">
+        <img src="https://via.placeholder.com/300x200" alt="Auction Item"
+          class="w-full h-40 object-cover mb-4 rounded-lg">
+        <h3 class="text-2xl font-semibold mb-2">Upcoming Auction Event</h3>
+        <p class="text-gray-700">Starts soon. Get ready to bid!</p>
+      </div>
+
+      <div class="bg-white p-6 rounded-lg shadow-md transition-transform transform hover:scale-105 event-item"
+        data-status="Ongoing">
+        <img src="https://via.placeholder.com/300x200" alt="Auction Item"
+          class="w-full h-40 object-cover mb-4 rounded-lg">
+        <h3 class="text-2xl font-semibold mb-2">Ongoing Auction Event</h3>
+        <p class="text-gray-700">Bid now while the event is live!</p>
+      </div>
+
+      <div class="bg-white p-6 rounded-lg shadow-md transition-transform transform hover:scale-105 event-item"
+        data-status="Ended">
+        <img src="https://via.placeholder.com/300x200" alt="Auction Item"
+          class="w-full h-40 object-cover mb-4 rounded-lg">
+        <h3 class="text-2xl font-semibold mb-2">Ended Auction Event</h3>
+        <p class="text-gray-700">This auction has ended.</p>
+      </div>
+
+      <!-- Add more event items as needed -->
+    </div>
+  </section>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jwt-decode/build/jwt-decode.min.js"></script>
+  <script>
+    function filterEvents(status, button) {
+      const events = document.querySelectorAll('.event-item');
+      events.forEach(event => {
+        const eventStatus = event.getAttribute('data-status');
+
+        const buttons = document.querySelectorAll('.event-button');
+        buttons.forEach(btn => btn.classList.remove('active-filter'));
+
+        // Add 'active' class to the clicked button
+        button.classList.add('active-filter');
+        // Show event if it matches the filter or if 'all' is selected
+        if (status === 'all' || eventStatus === status) {
+          event.classList.remove('hidden'); // Remove hidden class to show the event
+          event.classList.add('animate-fade1'); // Add animations for showing
+        } else {
+          event.classList.add('hidden', 'animate-fade1');
+        }
+      });
+    }
+
+
+    // profile dropdown
+
+
+    document.getElementById('profileMenuButton').addEventListener('click', function () {
+      var menu = document.getElementById('profileMenu');
+      menu.classList.toggle('hidden');
+    });
+
+
+    // fetch user  details
+    var userId;
+    document.addEventListener('DOMContentLoaded', () => {
+      userId = getUserIdFromToken();
+      if (userId) {
+        fetchUserDetails(userId);
+      } else {
+        console.error('User ID could not be extracted from token.');
+        // Optionally redirect to login if no token is present
+      }
+    });
+
+    async function fetchUserDetails(userId) {
+      try {
+        const response = await fetch(`http://localhost:3000/users/${userId}`, {
+          method: 'GET',
+          credentials: 'include',
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to fetch user details');
+        }
+
+        const user = await response.json();
+        document.getElementById('username').textContent = user.username;
+      } catch (error) {
+        console.error('Error fetching user details:', error);
+      }
+    }
+
+    function getUserIdFromToken() {
+      const tokenCookie = document.cookie.split('; ').find(row => row.startsWith('Btoken='));
+      if (!tokenCookie) {
+        console.error('No token found in cookies.');
+        window.location.href = '/auth.html?section=login';
+        return null; // Token is missing
+      }
+      console.log('tokencookie:' + tokenCookie);
+
+      const token = tokenCookie.split('=')[1];
+      if (!token) {
+        console.error('Token is malformed or missing.');
+        window.location.href = '/auth.html?section=login';
+        return null;
+      }
+      console.log('token:' + token);
+      const currentTime = Math.floor(Date.now() / 1000);
+      try {
+        const decoded = jwt_decode(token);
+        if (decoded.exp && decoded.exp < currentTime) {
+          window.location.href = '/auth.html?section=login';
+        } else {
+          return decoded.id;
+        }
+      } catch (error) {
+        window.location.href = '/auth.html?section=login';
+        console.error('Error decoding token:', error);
+        return null; // Return null if decoding fails
+      }
+    }
+
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      const eventGrid = document.getElementById('event-grid');
+      let currentEventId = null;
+      eventGrid.textContent = '';
+
+      try {
+        const response = await fetch('/events'); // Fetch events from the server
+        const events = await response.json(); // Parse JSON response
+
+        // Loop through each event and create corresponding divs
+        events.forEach(event => {
+          const eventItem = document.createElement('div');
+          eventItem.className = 'bg-white p-6 rounded-lg shadow-md transition-transform transform hover:scale-105 event-item';
+          eventItem.dataset.status = event.status; // Set data-status attribute
+          eventItem.dataset.eventId = event._id; // Store event ID for routing
+          eventItem.onclick = () => {
+            currentEventId = event._id; // Update currentEventId on click
+            window.location.href = `/LiveAuction.html?eventId=${currentEventId}`// You can add routing or other actions here
+            console.log(`Current Event ID: ${currentEventId}`);
+          };
+
+          // Create and append image
+          const img = document.createElement('img');
+          img.src = event.Eventimg; // Use event image URL
+          img.alt = "Auction Item";
+          img.className = "w-full h-40 object-cover mb-4 rounded-lg";
+          eventItem.appendChild(img);
+
+          // Create and append title and description based on event status
+          const title = document.createElement('h3');
+          title.className = "text-2xl font-semibold mb-2";
+          title.innerText = event.Eventname; // Set event name
+          eventItem.appendChild(title);
+
+          const description = document.createElement('p');
+          description.className = "text-gray-700";
+
+          // Set the description based on the event status
+          if (event.status === 'Ended') {
+            description.innerText = "This auction has ended.";
+            // Specific description for ended events
+          } else if (event.status === 'Ongoing') {
+            description.innerText = "Bid now while the event is live!";
+            // Description for ongoing events
+          } else if (event.status === 'Upcoming') {
+            description.innerText = "Starts soon. Get ready to bid!";
+            // Description for upcoming events
+          }
+
+          eventItem.appendChild(description);
+
+          // Append the event item to the grid
+          eventGrid.appendChild(eventItem);
+        });
+      } catch (error) {
+        console.error('Error fetching events:', error);
+      }
+    });
+
+    document.addEventListener('DOMContentLoaded', async function () {
+      const urlParams = new URLSearchParams(window.location.search);
+      console.log(urlParams)
+      const featuredEventId = urlParams.get('featuredEventId');
+      console.log(featuredEventId)
+      setTimeout(function () {
+        if (featuredEventId) {
+          const featuredEventDiv = document.querySelector(`.event-item[data-event-id="${featuredEventId}"]`);
+          console.log(featuredEventDiv)
+          if (featuredEventDiv) {
+            console.log('I  found  the  div')
+            featuredEventDiv.scrollIntoView({ behavior: 'smooth' });
+            featuredEventDiv.classList.add('border-4', 'border-[#c7ae6a]');
+            setTimeout(function () {  
+              featuredEventDiv.classList.remove('border-4', 'border-[#c7ae6a]');
+
+            },4000)
+          }
+        }
+      }, 1000)
+
+
+    });
+  </script>
+</body>
+
+</html>

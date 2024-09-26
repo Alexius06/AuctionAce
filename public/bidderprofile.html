@@ -5,33 +5,42 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Profile Page</title>
-    <link rel="icon" href="./favicon.png"  type="image/png">
+    <link rel="icon" href="/favicon.png" type="image/png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@3.3.0/dist/tailwind.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Reem+Kufi&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Reem+Kufi&display=swap"
+        rel="stylesheet">
     <style>
-        body{
+        body {
             font-family: 'Reem Kufi', sans-serif;
             background: radial-gradient(circle at center, #c9c9c9, #606060);
             overflow-x: hidden;
         }
+
         .nav-link:hover {
-        color: #c7ae6a;
+            color: #c7ae6a;
         }
+
         .page::-webkit-scrollbar {
-            width: 8px; /* Slim scrollbar width */
+            width: 8px;
+            /* Slim scrollbar width */
         }
 
         .page::-webkit-scrollbar-track {
-            background: transparent; /* Hide the track */
+            background: transparent;
+            /* Hide the track */
         }
 
         .page::-webkit-scrollbar-thumb {
-            background: #bfa75d; /* Gold color */
-            border-radius: 4px; /* Rounded scrollbar */
+            background: #bfa75d;
+            /* Gold color */
+            border-radius: 4px;
+            /* Rounded scrollbar */
         }
 
         .page::-webkit-scrollbar-thumb:hover {
-            background: #a68e4d; /* Darker gold on hover */
+            background: #a68e4d;
+            /* Darker gold on hover */
         }
     </style>
 </head>
@@ -44,47 +53,87 @@
             <div class="absolute top-0 left-0 w-full h-64 bg-gray-300 opacity-50 transform scale-125 -rotate-6"></div>
 
             <!-- Navbar (Assumed to be included) -->
-            <nav class="absolute top-0 w-full bg-transparent px-6 py-4">
+            <nav class="absolute top-0 w-full bg-transparent px-6 py-4 z-50">
                 <ul class="flex space-x-4 text-white">
-                    <li><a href="#" class="hover:underline text-[#606060] nav-link">Home</a></li>
+                    <li><a href="/home.html" class="hover:underline text-[#606060] nav-link">Home</a></li>
+                    <button onclick="openEditProfilePopup()"
+                        class="absolute top-4 right-4 text-[#606060] px-4 py-2 rounded-full shadow-md hover:shadow-xl bg-[#c7ae6a]">Edit</button>
                     <!-- Add more navbar items here -->
                 </ul>
             </nav>
+            <!-- edit profile section -->
+            <div id="editProfilePopup"
+                class="hidden fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center transition-opacity duration-500 ease-in-out z-50">
+                <div
+                    class="bg-white rounded-lg shadow-lg p-6 w-96 transform transition-transform duration-500 ease-in-out scale-95">
+                    <h2 class="text-xl font-bold mb-4">Edit Profile</h2>
+                    <form id="editProfileForm">
+                        <div class="mb-4">
+                            <label for="firstname" class="block text-sm font-medium text-gray-700">First Name</label>
+                            <input type="text" id="firstname" name="firstname"
+                                class="mt-1 block w-full p-2 border border-gray-300 rounded-md" required>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="lastname" class="block text-sm font-medium text-gray-700">Last Name</label>
+                            <input type="text" id="lastname" name="lastname"
+                                class="mt-1 block w-full p-2 border border-gray-300 rounded-md" required>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="phonenumber" class="block text-sm font-medium text-gray-700">Phone
+                                Number</label>
+                            <input type="text" id="phone-number" name="phonenumber"
+                                class="mt-1 block w-full p-2 border border-gray-300 rounded-md" required>
+                        </div>
+                        <p id="error-message" class="text-red-600  text-center hidden"></p>
+                        <div class="flex justify-end">
+                            <button type="button" id="cancelButton"
+                                class="mr-2 bg-gray-500 text-white px-4 py-2 rounded-md">Cancel</button>
+                            <button type="submit" class="bg-[#c7ae6a] text-white px-4 py-2 rounded-md">Save</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
 
             <!-- User Info Section -->
             <div class="relative z-10 pt-24 flex flex-col items-left pl-[8rem] overflow-y-scroll page">
                 <!-- Profile Image -->
-                <div class="w-32 h-32 rounded-full bg-[#c7ae6a] bg-opacity-30 flex text-3xl font-bold justify-center items-center text-center overflow-hidden">
+                <div id="profileicon"
+                    class="w-32 h-32 rounded-full bg-[#c7ae6a] bg-opacity-30 flex text-3xl font-bold justify-center items-center text-center overflow-hidden cursor-pointer ">
                     T
                 </div>
 
                 <!-- User Details -->
                 <div class="text-left mt-4">
-                    <h1 class="text-2xl font-semibold">Tania Opuama</h1>
-                    <p class="text-gray-600">@dfw.taniaa</p>
+                    <h1 id="fullname" class="text-2xl font-semibold"></h1>
+                    <p id="username" class="text-gray-600"><i class="fa-light fa-at"></i>user</p>
                     <p class="text-sm mt-2">Bidder</p>
                     <p class="flex items-center text-sm text-gray-500 mt-2">
-                        <span class="mr-2">📞</span> 07066139073
+                        <span id="phonenumber"><i class="fa-duotone fa-solid fa-phone mr-2"></i>0000000</span>
                     </p>
                     <p class="flex items-center text-sm text-gray-500 mt-2">
-                        <span class="mr-2">📍</span> 57 Brains & Hammers City,lifecamp, Abuja
+                        <span id="email"><i class="fa-regular fa-envelope mr-2"></i>your@example.com</span>
                     </p>
                     <p class="flex items-center text-sm text-gray-500 mt-2">
-                        <span class="mr-2">📅</span> Joined 16 Sept 2024
+                        <span id="joined"><i class="mr-2 fa-solid fa-calendar"></i>datetime</span>
                     </p>
                 </div>
 
                 <!-- Edit Button -->
-                <button
-                    class="absolute top-4 right-4 text-[#606060] px-4 py-2 rounded-full shadow-md hover:shadow-xl bg-[#c7ae6a]">Edit</button>
+
 
                 <!-- Tabs -->
                 <div class="mt-8 w-full pr-[10rem]">
                     <ul class="flex border-b-2 border-gray-200 text-sm">
-                        <li class="mr-4 pb-2 border-b-2 border-black">Auction History</li>
-                        <li class="mr-4 pb-2">Won Auctions</li>
-                        <li class="pb-2">Payments</li>
+                        <li id="AuctionHistory" onclick="setActiveTab('AuctionHistory')"
+                            class="mr-4 pb-2 cursor-pointer transition-colors duration-300 ease-in-out">Auction History</li>
+                        <li id="WonAuctions" onclick="setActiveTab('WonAuctions')"
+                            class="mr-4 pb-2 cursor-pointer transition-colors duration-300 ease-in-out">Won Auctions</li>
+                        <li id="Payments" onclick="setActiveTab('Payments')"
+                            class="pb-2 cursor-pointer transition-colors duration-300 ease-in-out">Payments</li>
                     </ul>
+                    
 
                     <!-- Table Section -->
                     <div class="mt-4">
@@ -99,7 +148,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr class="bg-white border-b">
+                                <tr class="bg-white border-b"  id="itemsTableBody" class="max-h-[122px] overflow-y-scroll"></tr>>
                                     <td class="px-4 py-2">Moro Chickens Co.</td>
                                     <td class="px-4 py-2">40 Acres</td>
                                     <td class="px-4 py-2">Mando</td>
@@ -112,9 +161,175 @@
                     </div>
                 </div>
             </div>
+
+
+
+
+
         </div>
     </div>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jwt-decode/build/jwt-decode.min.js"></script>
+    <script>
+        // fetch user  details
+        var userId;
+        document.addEventListener('DOMContentLoaded', () => {
+            userId = getUserIdFromToken();
+            if (userId) {
+                fetchUserDetails(userId);
+            } else {
+                console.error('User ID could not be extracted from token.');
+                // Optionally redirect to login if no token is present
+            }
+        });
+
+        async function fetchUserDetails(userId) {
+            try {
+                const response = await fetch(`http://localhost:3000/users/${userId}`, {
+                    method: 'GET',
+                    credentials: 'include',
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to fetch user details');
+                }
+
+                const user = await response.json();
+                const firstLetter = user.firstname.charAt(0);
+                const dateperiod = new Date(user.createdAt);
+                const options = { year: 'numeric', month: 'short', day: 'numeric' };
+                const date = dateperiod.toLocaleDateString(undefined, options);
+
+                document.getElementById('profileicon').textContent = firstLetter;
+                document.getElementById('fullname').textContent = user.firstname + ' ' + user.lastname;
+                document.getElementById('username').childNodes[1].nodeValue = user.username;
+                document.getElementById('phonenumber').childNodes[1].nodeValue = user.phoneNumber;
+                document.getElementById('email').childNodes[1].nodeValue = user.email;
+                document.getElementById('joined').childNodes[1].nodeValue = `Joined  ${date}`;
+
+
+            } catch (error) {
+                console.error('Error fetching user details:', error);
+            }
+        }
+
+
+        function getUserIdFromToken() {
+            const tokenCookie = document.cookie.split('; ').find(row => row.startsWith('Btoken='));
+            if (!tokenCookie) {
+                console.error('No token found in cookies.');
+                window.location.href = '/auth.html?section=login';
+                return null; // Token is missing
+            }
+            console.log('tokencookie:' + tokenCookie);
+
+            const token = tokenCookie.split('=')[1];
+            if (!token) {
+                console.error('Token is malformed or missing.');
+                window.location.href = '/auth.html?section=login';
+                return null;
+            }
+            console.log('token:' + token);
+            const currentTime = Math.floor(Date.now() / 1000);
+            try {
+                const decoded = jwt_decode(token);
+                if (decoded.exp && decoded.exp < currentTime) {
+                    window.location.href = '/auth.html?section=login';
+                } else {
+                    return decoded.id;
+                }
+            } catch (error) {
+                window.location.href = '/auth.html?section=login';
+                console.error('Error decoding token:', error);
+                return null; // Return null if decoding fails
+            }
+        }
+
+        //edit  profile  popup
+        const editProfilePopup = document.getElementById('editProfilePopup');
+        const cancelButton = document.getElementById('cancelButton');
+
+        function openEditProfilePopup() {
+            editProfilePopup.classList.remove('hidden');
+            setTimeout(() => {
+                editProfilePopup.classList.remove('opacity-0');
+            }, 10);
+        }
+
+        cancelButton.addEventListener('click', () => {
+            editProfilePopup.classList.add('opacity-0');
+            setTimeout(() => {
+                editProfilePopup.classList.add('hidden');
+            }, 500);
+        });
+
+        // edit form  submit
+        document.getElementById('editProfileForm').addEventListener('submit', async (event) => {
+            event.preventDefault();  // Prevent form from submitting the traditional way
+
+            const firstname = document.getElementById('firstname').value.trim();
+            const lastname = document.getElementById('lastname').value.trim();
+            const phoneNumber = document.getElementById('phone-number').value.trim();
+            const phoneRegex = /^[0-9]{11}$/;
+            const formData = {
+                firstname: firstname,
+                lastname: lastname,
+                phoneNumber: phoneNumber,
+            };
+            if (phoneRegex.test(phoneNumber)) {
+
+                try {
+                    const response = await fetch(`http://localhost:3000/users/${userId}`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        credentials: 'include',
+                        body: JSON.stringify(formData)
+                    });
+
+                    if (response.ok) {
+                        const result = await response.json();
+                        document.getElementById('error-message').textContent = 'Profile Updated Successfully';
+                        document.getElementById('error-message').classList.add('text-green-600');
+                        document.getElementById('error-message').classList.remove('hidden', 'text-red-600');
+                        setTimeout(() => {
+                            editProfilePopup.classList.add('hidden');  // Close popup
+                        }, 500)
+                    } else {
+                        throw new Error('Failed to update profile');
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('An error occurred while updating the profile.');
+                }
+            }
+            else {
+                document.getElementById('error-message').textContent = 'Please enter a valid 11-digit phone number!';
+                document.getElementById('error-message').classList.remove('hidden');
+
+            }
+        });
+
+
+        function setActiveTab(tabId) {
+            // Get all list items
+            const tabs = document.querySelectorAll('ul li');
+
+            // Remove the active border class from all tabs
+            tabs.forEach(tab => {
+                tab.classList.remove('border-b-2', 'border-black');
+            });
+
+            // Add the active border class to the selected tab
+            const activeTab = document.getElementById(tabId);
+            activeTab.classList.add('border-b-2', 'border-black');
+        }
+
+        // Call setActiveTab on page load to set the default active tab (optional)
+        window.onload = function () {
+            setActiveTab('itemUpload'); // Set the default active tab
+        };
+
+    </script>
 </body>
 
 </html>

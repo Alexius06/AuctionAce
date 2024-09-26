@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>AuctionAce - Auth</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="icon" href="./favicon.png">
+  <link rel="icon" href="/favicon.png">
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Reem+Kufi&display=swap"
     rel="stylesheet">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
@@ -322,8 +322,8 @@
     // multi-step registration visibility toggle
     document.getElementById('1streg').addEventListener('click', function () {
       if (validateregForm()) {
-        document.getElementById('error-message2').textContent = '';
-        document.getElementById('error-message2').classList.add('hidden');
+        document.getElementById('regerror-message').textContent = '';
+        document.getElementById('regerror-message').classList.add('hidden');
         document.getElementById('roleblock').classList.remove('hidden');
         document.getElementById('regblock').classList.add('hidden');
       }

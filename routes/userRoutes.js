@@ -5,11 +5,13 @@ const authController = require('../controllers/authController');
 
 
 router.get('/', authController.authenticate, authController.authorize(['admin']), userController.getAllUsers);
-router.get('/:id', authController.authenticate, userController.getUserById);
+router.get('/logout', authController.logout);
+router.get('/profile', authController.authenticate, authController.getProfilePage);
 router.post('/', userController.createUser);
 router.post('/register', authController.register);
 router.post('/login', authController.login);
-router.put('/:id', authController.authenticate, authController.authorize(['admin']), userController.updateUser);
+router.get('/:id', authController.authenticate, userController.getUserById);
+router.put('/:id', authController.authenticate, userController.updateUser);
 router.delete('/:id', authController.authenticate, authController.authorize(['admin']), userController.deleteUser);
 
 module.exports = router;

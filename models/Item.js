@@ -38,9 +38,10 @@ const ItemSchema = new schema({
         type: Date,
         default: Date.now
     },
-    verified: { 
-        type: Boolean, 
-        default: false 
+    status: { 
+        type: String, 
+        enum: ['verified', 'pending', 'unverified'  ],  
+        default: 'pending' 
     } 
 })
 const Item = mongoose.model('Item', ItemSchema,'Items');    

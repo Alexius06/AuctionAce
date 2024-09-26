@@ -1,12 +1,12 @@
 const express = require('express');
 const router = express.Router();
-const authController = require('../controllers/authController');
 
+const path = require('path');   
 
-router.post('/register', authController.register);  
+// router.get('/', (req, res) => { 
+//     res.sendFile(path.join(__dirname, '../public/auth.html'));     
+// }); 
 
-
-router.post('/login', authController.login);
 
 module.exports = router;
 

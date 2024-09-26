@@ -64,3 +64,4 @@ EventSchema.pre('save',function(next){
 
 const Event = mongoose.model('Event', EventSchema,'Auction Events');    
 module.exports = Event;  
+

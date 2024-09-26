@@ -23,7 +23,7 @@ const BidSchema = new schema({
         required: true,
     },
     bidAmount: {
-        type: Number,
+        type: String,
         required: true,
     },
     createdAt: {
