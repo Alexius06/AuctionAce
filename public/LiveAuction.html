@@ -58,7 +58,6 @@
         /* Live chat */
         .live-chat {
             resize: vertical;
-            overflow-y: auto;
             max-height: 40vh;
             padding: 10px;
             background-color: #f3f3f3;
@@ -85,6 +84,7 @@
         .nav-link {
             color: #606060;
         }
+
 
         .nav-link:hover {
             color: #c7ae6a;
@@ -130,24 +130,24 @@
             height: 100%;
         }
 
-        .current-bids #bidsList::-webkit-scrollbar {
+        .page::-webkit-scrollbar {
             width: 8px;
             /* Slim scrollbar width */
         }
 
-        .current-bids #bidsList::-webkit-scrollbar-track {
+        .page::-webkit-scrollbar-track {
             background: transparent;
             /* Hide the track */
         }
 
-        .current-bids #bidsList::-webkit-scrollbar-thumb {
+        .page::-webkit-scrollbar-thumb {
             background: #bfa75d;
             /* Gold color */
             border-radius: 4px;
             /* Rounded scrollbar */
         }
 
-        .current-bids #bidsList::-webkit-scrollbar-thumb:hover {
+        .page::-webkit-scrollbar-thumb:hover {
             background: #a68e4d;
             /* Darker gold on hover */
         }
@@ -196,6 +196,24 @@
 
         .p-icon:hover {
             animation: gelatine 1s ease-in-out;
+        }
+
+        .message-box {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 10px;
+            background-color: #e0f7fa;
+            position: relative;
+        }
+
+        .sender {
+            font-weight: bold;
+        }
+
+        .timestamp {
+            font-size: 0.5em;
+            color: #888;
+
         }
     </style>
 </head>
@@ -263,7 +281,7 @@
                 <p class="text-gray-700 mb-6" id="asking-price"></p>
                 <div class="current-bids mb-6 ">
                     <h4 class="text-xl font-bold text-gray-800 mb-2">Current Bids</h4>
-                    <ul class="list-disc list-inside h-[48px] overflow-y-scroll" id="bidsList">
+                    <ul class="list-disc list-inside h-[48px] overflow-y-scroll  page" id="bidsList">
                         <li>JohnDoe: $500</li>
                         <li>JaneSmith: $450</li>
                     </ul>
@@ -279,7 +297,7 @@
                 <button onclick="addBid()"
                     class="bg-[#c7ae6a] text-black px-6 py-2 rounded-md hover:bg-[#a99254] w-full">Place Bid</button>
                 <button onclick="deletePreviousBid()"
-                    class="bg-red-500 text-white px-6 py-2 rounded-md hover:bg-red-700 w-full">Delete Previous
+                    class="bg-red-500 text-white px-6 py-2 hidden rounded-md hover:bg-red-700 w-full">Delete Previous
                     Bid</button>
             </div>
         </div>
@@ -287,23 +305,39 @@
 
     <!-- Live Chat Section -->
     <section class="container mx-auto mb-8">
-        <div class="bg-white p-6 shadow-lg live-chat">
+        <div class="bg-white p-6 shadow-lg live-chat ">
             <h3 class="text-2xl font-bold text-gray-800 mb-4">Live Chat</h3>
-            <div id="chat-box" class="overflow-auto max-h-72">
-                <p><strong>JohnDoe:</strong> Excited to see the final bid!</p>
-                <p><strong>JaneSmith:</strong> This is a great item.</p>
+            <div id="chat-box" class="flex-1 overflow-y-scroll h-[7.5rem] page">
+
             </div>
-            <div class="mt-4 relative">
+            <div id="context-menu" class="hidden absolute z-50 bg-gray-200 shadow-lg rounded-lg p-2">
+                <ul>
+                    <li id="update-message" class="p-2 hover:bg-gray-400 rounded-lg cursor-pointer"><i
+                            class="fa-solid fa-pen-nib"></i>Update</li>
+                    <li id="delete-message" class="p-2 hover:bg-gray-400 rounded-lg cursor-pointer"><i
+                            class="fa-solid fa-trash-can"></i>Delete</li>
+                </ul>
+            </div>
+
+            <div class="mt-4 relative flex items-center">
                 <input type="text" id="chat-message" class="chat-input border border-gray-300 rounded-md px-4 py-2"
                     placeholder="Type a message...">
-                <i
-                    class="fas fa-paper-plane bg-[#c7ae6a]  text-center  pr-1 text-xl send-icon h-7 w-7 rounded-full hover:bg-[#a99254] cursor-pointer"></i>
+                <i id="send-btn"
+                    class="fas fa-paper-plane bg-[#c7ae6a]  text-center  pr-1 text-xl send-icon h-7 w-7 rounded-full hover:bg-[#d7bf7d] hover:scale-110 cursor-pointer"></i>
             </div>
         </div>
     </section>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/jwt-decode/build/jwt-decode.min.js"></script>
+    <script src="https://cdn.socket.io/4.6.1/socket.io.min.js"
+        integrity="sha384-KA7m0DwgQGmeRC6Xre3hJO+ZxpanOauVh4Czdqbg8lDKJ3bZZYVYmP+y4F31x40L"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+
+
     <script>
+
+
 
 
 
@@ -357,7 +391,7 @@
             changeImage(images[currentImageIndex].id);
         }, 5000);
 
-
+        const socket = io();  // Automatically connects to the server
         // exchange rate  and  bid  price calculation
 
         let exchangeRate;
@@ -394,13 +428,16 @@
         }
 
         async function addBid() {
+            console.log(`Itemid: ${currentItemId}`)
+            console.log(`ItemOwnerid: ${currentItemOwnerId}`)
+            console.log(`UserId: ${userId}`)
             const bidAmount = parseFloat(document.getElementById("bidInput").value) || 0;
             const currency = document.getElementById("currency").value;
-            const bidderName =username; // Replace with actual bidder name
+            const bidderName = username; // Replace with actual bidder name
             const askingPriceElement = document.getElementById('asking-price').innerText.trim();
-            console.log(askingPriceElement )    
+            console.log(askingPriceElement)
             const askingPrice = parseFloat(askingPriceElement.slice(15)); // Get the number part
-            console.log(askingPrice)            
+            console.log(askingPrice)
             const askingPriceCurrency = askingPriceElement[13]; // Get the first character (currency symbol)
             console.log(askingPriceCurrency)
             const ConvertedAP = await convertToNaira(askingPrice, askingPriceCurrency);
@@ -412,11 +449,27 @@
                 const bidInNaira = await convertToNaira(bidAmount, currency);
                 if (bidInNaira >= ConvertedAP) {
 
+                    if (userId === currentItemOwnerId) { // Ensure userId and itemOwnerId are defined correctly
+                        alert("You cannot place a bid on your own item.");
+                        return;
+                    }
+
                     // Generate a unique ID for the bid
                     const bidId = Date.now(); // Use the current timestamp as a unique ID
 
                     // Store the bid and its conversion in the bids array with a unique ID
                     bids.push({ id: bidId, bidderName: bidderName, amount: bidAmount, currency: currency, bidInNaira: bidInNaira });
+
+                    const bidData = {
+                        itemId: currentItemId, // Assuming you have the current item
+                        userId: userId, // Get current user ID
+                        eventId: eventId, // Current event ID
+                        bidAmount: `${currency}${bidAmount}`,
+                        bidInNaira: bidInNaira // Currency + amount as string
+                    };
+
+                    // Emit the bid via socket
+                    socket.emit('newBid', bidData);
 
                     // Remember the ID of the last bid placed
                     lastBidId = bidId;
@@ -427,13 +480,13 @@
                     document.getElementById("bidInput").value = '';
 
                     // Update the displayed bid list
-                    displayBids();
+                    // displayBids();
                     bids.forEach(bid => {
                         console.log(`Amount: ${bid.amount}, Currency: ${bid.currency}, Bid in Naira: ${bid.bidInNaira}`);
                     });
                 }
                 else {
-                    alert("Bid amount must be greater than or equal to the asking price."); 
+                    alert("Bid amount must be greater than or equal to the asking price.");
                 }
             }
         }
@@ -444,47 +497,69 @@
             const sortedBids = [...bids].sort((a, b) => b.bidInNaira - a.bidInNaira);
 
             sortedBids.forEach(bid => {
+                const createdAtFormatted = moment(bid.createdAt).format('HH:mm:ss A');
                 const bidItem = document.createElement("li");
-                bidItem.textContent = `${bid.bidderName}: ${bid.currency === '$' ? '$' : '₦'}${bid.amount.toLocaleString()}`;
+                bidItem.textContent = `${bid.bidderName}: ${bid.currency === '$' ? '$' : '₦'}${bid.amount}    ${createdAtFormatted}`;
                 bidsList.appendChild(bidItem);
             });
         }
 
-        function deletePreviousBid() {
-            if (lastBidId !== null && bids.length > 0) {
-                // Log the current bids for debugging
-                console.log("Bids before deletion:", bids);
+        socket.on('bidAdded', (newBid) => {
+            // Add the new bid to local bids array
+            bids.push(newBid);
+            // Update the displayed bid list
+            displayBids();
+        });
 
-                // Find the bid index of the last placed bid
-                const bidIndex = bids.findIndex(bid => bid.id === lastBidId);
+        // async function fetchBids(itemId) {
+        //     const response = await fetch(`/bids/${itemId}/${eventId}`);
+        //     if (response.ok) {
+        //         const fetchedBids = await response.json();
+        //         bids = fetchedBids; // Update the local bids array
+        //         displayBids(); // Display fetched bids
+        //     } else {
+        //         console.error("Failed to fetch bids.");
+        //     }
+        // }
 
-                // Check if the bid exists in the array
-                if (bidIndex !== -1) {
-                    // Remove the bid with the found index
-                    const removedBid = bids.splice(bidIndex, 1); // Removing the bid
-                    console.log(`Removed bid: `, removedBid); // Log the removed bid
+        // // Call fetchBids when the item changes (assuming itemId is available)
+        // fetchBids(currentItemId);
 
-                    // Update the lastBidId to the next most recent one
-                    if (bids.length > 0) {
-                        // Find the last placed bid, i.e., the most recent one
-                        lastBidId = bids[bids.length - 1].id;
-                        console.log(`Updated lastBidId: ${lastBidId}`); // Log the new lastBidId
-                    } else {
-                        // If no bids remain, set lastBidId to null
-                        lastBidId = null;
-                        console.log("No more bids left. lastBidId set to null.");
-                    }
+        // function deletePreviousBid() {
+        //     if (lastBidId !== null && bids.length > 0) {
+        //         // Log the current bids for debugging
+        //         console.log("Bids before deletion:", bids);
 
-                    // Update the displayed bid list
-                    displayBids();
+        //         // Find the bid index of the last placed bid
+        //         const bidIndex = bids.findIndex(bid => bid.id === lastBidId);
 
-                } else {
-                    console.log("Bid with lastBidId not found in the array.");
-                }
-            } else {
-                console.log("No bids to delete or lastBidId is null.");
-            }
-        }
+        //         // Check if the bid exists in the array
+        //         if (bidIndex !== -1) {
+        //             // Remove the bid with the found index
+        //             const removedBid = bids.splice(bidIndex, 1); // Removing the bid
+        //             console.log(`Removed bid: `, removedBid); // Log the removed bid
+
+        //             // Update the lastBidId to the next most recent one
+        //             if (bids.length > 0) {
+        //                 // Find the last placed bid, i.e., the most recent one
+        //                 lastBidId = bids[bids.length - 1].id;
+        //                 console.log(`Updated lastBidId: ${lastBidId}`); // Log the new lastBidId
+        //             } else {
+        //                 // If no bids remain, set lastBidId to null
+        //                 lastBidId = null;
+        //                 console.log("No more bids left. lastBidId set to null.");
+        //             }
+
+        //             // Update the displayed bid list
+        //             displayBids();
+
+        //         } else {
+        //             console.log("Bid with lastBidId not found in the array.");
+        //         }
+        //     } else {
+        //         console.log("No bids to delete or lastBidId is null.");
+        //     }
+        // }
         // sidebar
         const sidebar = document.getElementById('sidebar');
         // const mainContent = document.getElementById('main-content');
@@ -541,7 +616,7 @@
 
                 const user = await response.json();
                 document.getElementById('username').textContent = user.username;
-                username = user.username;   
+                username = user.username;
             } catch (error) {
                 console.error('Error fetching user details:', error);
             }
@@ -585,8 +660,10 @@
         }
 
         // On page load, fetch event details
+        var eventId;
+
         document.addEventListener('DOMContentLoaded', async () => {
-            const eventId = getQueryParam('eventId');
+            eventId = getQueryParam('eventId');
 
             if (eventId) {
                 try {
@@ -600,8 +677,10 @@
             }
         });
         let currentItemId;
+        let currentItemOwnerId;
         async function displayAuctionItems(ItemIDs) {
             currentItemId = ItemIDs[0];
+            socket.emit('itemChanged', { itemId: currentItemId, eventId: eventId });
 
             const sidebar = document.getElementById('sidebar');
             sidebar.innerHTML = '';
@@ -620,6 +699,7 @@
             `;
                     itemli.onclick = function () {
                         currentItemId = ItemID; // Set the current item ID
+                        socket.emit('itemChanged', { itemId: currentItemId, eventId: eventId });
                         updateItemDetails(itemData); // Update the page contents with item details
                     };
 
@@ -641,9 +721,9 @@
         async function updateItemDetails(itemData) {
             // Assuming you have elements in your HTML with these IDs
             document.getElementById('item-name').innerText = itemData.Itemname;
-            document.getElementById('item-description').innerText = itemData.Description;   
+            document.getElementById('item-description').innerText = itemData.Description;
             document.getElementById('asking-price').innerText = `Asking price:${itemData.AskingPrice}`;
-
+            currentItemOwnerId = itemData.Userid;
             const carousel = document.getElementById('small-frames'); // Adjust this as needed
             carousel.innerHTML = ''; // Clear existing images
             let count = 0;
@@ -659,11 +739,262 @@
                 imgElement.onclick = () => {
                     changeImage(imgElement.id);
                 }
+                imgElement.onload = () => {
+                    changeImage(imgElement.id);
+                }
+
                 imgdiv.appendChild(imgElement);
                 carousel.appendChild(imgdiv);
             });
         }
 
+        // sending chats
+
+        setTimeout(() => {
+            socket.emit('join event', eventId);
+            console.log(eventId);
+        }, 1000)
+        // Listen for chat messages
+        socket.on('chat message', (msgData) => {
+            console.log(msgData);
+            displayMessage(msgData);
+        });
+
+
+
+        function displayMessage(msgData) {
+            let longPressTimer;
+            // Create parent container for the message
+            const messageContainer = document.createElement('div');
+            messageContainer.classList.add('message-container', 'mb-1', 'flex', 'flex-col');
+            // console.log(msgData._id);
+            messageContainer.setAttribute('data-id', msgData._id);
+
+
+            // Create the sender element
+            const senderElement = document.createElement('p');
+            senderElement.innerText = msgData.sender;
+
+            // Create the message box element
+            const messageElement = document.createElement('div');
+            messageElement.classList.add('message-box', 'p-3', 'rounded-lg', 'max-w-xs', 'break-words', 'shadow-md', 'h-fit');
+
+            // Apply styles based on whether the message is from the current user
+            if (msgData.senderId === userId) {
+                senderElement.classList.add('sender', 'text-sm', 'font-semibold', 'self-end', 'hidden');
+                messageElement.classList.add('bg-[#c7ae6a]', 'text-black', 'self-end'); // Message on the right
+                messageElement.addEventListener('contextmenu', (e) => {
+                    e.preventDefault();
+                    showContextMenu(e.pageX, e.pageY, messageElement);
+                });
+
+                messageElement.addEventListener('touchstart', (e) => {
+                    longPressTimer = setTimeout(() => {
+                        showContextMenu(e.touches[0].pageX, e.touches[0].pageY, messageElement);
+                    }, 500);
+                });
+
+                messageElement.addEventListener('touchend', () => {
+                    clearTimeout(longPressTimer);
+                });
+            } else {
+                senderElement.classList.add('sender', 'text-sm', 'font-semibold', 'self-start');
+                messageElement.classList.add('bg-gray-200', 'text-gray-800', 'self-start'); // Message on the left
+            }
+
+            // Add message text to the message box
+            const messageContent = document.createElement('div');
+            messageContent.classList.add('message-content')
+            messageContent.innerText = msgData.message;
+
+            // Add timestamp to the message box
+            const timestamp = document.createElement('div');
+            timestamp.classList.add('timestamp', 'text-right', 'mr-0', 'text-gray-500'); //   
+            timestamp.innerText = msgData.time; // Display the time
+
+            // Append message content and timestamp to the message box
+            messageElement.appendChild(messageContent);
+            messageElement.appendChild(timestamp);
+
+            // Append sender and message box to the container
+            messageContainer.appendChild(senderElement);
+            messageContainer.appendChild(messageElement);
+
+            // Finally, append the message container to the chat box
+            document.getElementById('chat-box').appendChild(messageContainer);
+
+
+
+        }
+
+
+
+
+        // Hide the menu when clicking elsewhere
+        document.addEventListener('click', () => {
+            hideContextMenu();
+        });
+
+        function showContextMenu(x, y, messageElement) {
+            const contextMenu = document.getElementById('context-menu');
+            contextMenu.classList.remove('hidden');
+            contextMenu.style.top = `${y}px`;
+            contextMenu.style.left = `${x - messageElement.offsetWidth - 20}px`;
+
+            // Add update and delete event handlers
+            const updateOption = document.getElementById('update-message');
+            const deleteOption = document.getElementById('delete-message');
+
+            updateOption.onclick = () => {
+                updateMessage(messageElement);
+                hideContextMenu();
+            };
+
+            deleteOption.onclick = () => {
+                deleteMessage(messageElement);
+                hideContextMenu();
+            };
+        }
+
+        function hideContextMenu() {
+            const contextMenu = document.getElementById('context-menu');
+            contextMenu.classList.add('hidden');
+        }
+        async function deleteMessage(messageElement) {
+            const messageId = messageElement.parentElement.getAttribute('data-id'); // Retrieve the data-id attribute
+            console.log(messageId);
+            try {
+                const response = await fetch(`/messages/${messageId}`, { method: 'DELETE' });
+                const result = await response.json();
+
+                if (result.success) {
+                    messageElement.parentElement.remove();
+                    socket.emit('delete-message', messageId);  // Remove the message from the UI
+                } else {
+                    console.error('Failed to delete message:', result.message); // Handle the error case
+                }
+            } catch (error) {
+                console.error('Error deleting message:', error);
+            }
+        }
+        async function updateMessage(messageElement) {
+            const messageId = messageElement.parentElement.getAttribute('data-id'); // Get the data-id from the parent element
+            const oldMessage = messageElement.querySelector('.message-content').innerText; // Assuming you have a class 'message-content' for the message text
+
+            // Set the old message in the input field for editing
+            const msgInput = document.getElementById('chat-message');
+            msgInput.value = oldMessage; // Show the old message in the input field
+
+            // Change the send button to the check icon
+            const sendButton = document.getElementById('send-btn');
+            sendButton.classList.remove('fas', 'fa-paper-plane'); // Remove the original class for the send icon
+            sendButton.classList.add('fa-solid', 'fa-check');
+            msgInput.onkeydown = (event) => {
+                if (event.key === 'Enter') {
+                    event.preventDefault();
+                    updateprocess();
+                }
+            };
+            // Handle the send button click for updating the message
+            const updateprocess = async () => {
+                const newMessage = msgInput.value; // Get the new message from the input field
+
+                if (newMessage && newMessage.trim() !== '') {
+                    try {
+                        const response = await fetch(`/messages/${messageId}`, {
+                            method: 'PUT',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ message: newMessage }),
+                        });
+
+                        const result = await response.json();
+                        if (result.success) {
+                            console.log(newMessage);
+                            messageElement.querySelector('.message-content').innerText = newMessage;
+
+                            socket.emit('update-message', { messageId, message: newMessage });
+                        } else {
+                            console.error('Update failed:', result.message);
+                        }
+                    } catch (error) {
+                        console.error('Error updating message:', error);
+                    }
+                }
+
+                // Reset the input field and revert the send button back to normal
+                msgInput.value = ''; // Clear the input field
+                sendButton.classList.remove('fa-solid', 'fa-check'); // Remove the check icon
+                sendButton.classList.add('fas', 'fa-paper-plane'); // Revert to the original send button icon
+
+                // Reassign the send button to its original function (sending new messages)
+                sendButton.onclick = () => sendMessage();
+
+                // Reassign the Enter key to trigger sendMessage again
+                msgInput.onkeydown = (event) => {
+                    if (event.key === 'Enter') {
+                        event.preventDefault();
+                        sendMessage();
+                    }
+                };
+            };
+
+            // Assign the update process to the send button click
+            sendButton.onclick = updateprocess;
+
+            // Override the Enter key event to trigger the update process
+            msgInput.addEventListener('keydown', function (e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    sendButton.onclick(); // Trigger the update when Enter is pressed
+                }
+            });
+        }
+        socket.on('message-deleted', (messageId) => {
+            const messageElement = document.querySelector(`[data-id="${messageId}"]`);
+            if (messageElement) {
+                messageElement.remove(); // Remove the message from the DOM
+            }
+        });
+
+        socket.on('message-updated', ({ messageId, message }) => {
+            console.log('I  am  here')
+            console.log(message)
+            const messageElement = document.querySelector(`[data-id="${messageId}"] .message-content`);
+            if (messageElement) {
+                console.log('im  here')
+                messageElement.textContent = message; // Update the message in the DOM
+            }
+        });
+
+
+        socket.on('previous messages', (messages) => {
+            messages.forEach((msgData) => {
+
+                displayMessage(msgData);
+            });
+        });
+
+        function sendMessage() {
+            const msgInput = document.getElementById('chat-message');
+            const message = msgInput.value;
+            if (message && message.trim() !== '') {
+                const senderId = userId;
+                const EventId = eventId;
+                const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                const msgData = { senderId, EventId, message, time };
+                socket.emit('chat message', msgData);
+                msgInput.value = ''; // Clear input
+            }
+
+        }
+        document.getElementById('send-btn').onclick = () => {
+            sendMessage();
+        }
+        document.getElementById('chat-message').addEventListener('keydown', function (e) {
+            if (e.key === 'Enter') {
+                document.getElementById('send-btn').onclick();
+            }
+        });
 
 
     </script>

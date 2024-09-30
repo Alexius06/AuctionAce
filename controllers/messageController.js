@@ -52,7 +52,7 @@ exports.updateMessage = async (req, res) => {
         if (!message) {
             return res.status(404).json({ message: 'Message not found' });
         }
-        res.status(200).json({ message: 'Message updated successfully', message });
+        res.status(200).json({ success: 'Message updated successfully', message });
     } catch (error) {
         res.status(500).json({ message: 'Failed to update message', error });
     }
@@ -66,7 +66,7 @@ exports.deleteMessage = async (req, res) => {
         if (!message) {
             return res.status(404).json({ message: 'Message not found' });
         }
-        res.status(200).json({ message: 'Message deleted successfully',message });
+        res.status(200).json({ success: 'Message deleted successfully',message });
     } catch (error) {
         res.status(500).json({ message: 'Failed to delete message', error });
     }

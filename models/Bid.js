@@ -2,11 +2,6 @@ const mongoose = require('mongoose');
 const schema = mongoose.Schema;
 
 const BidSchema = new schema({
-    // id: {
-    //     type: Number,
-    //     required: true,
-    //     unique: true,
-    // },
     userId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
@@ -17,13 +12,17 @@ const BidSchema = new schema({
         ref: 'Item',
         required: true,
     },
-    EventId: {
+    eventId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Event',
         required: true,
     },
     bidAmount: {
         type: String,
+        required: true,
+    },
+    bidInNaira: {
+        type: Number,
         required: true,
     },
     createdAt: {
