@@ -279,6 +279,7 @@
                     exquisite craftsmanship.
                     Don't miss the chance to own this one-of-a-kind item.</p>
                 <p class="text-gray-700 mb-6" id="asking-price"></p>
+                <p class="text-gray-700 mb-6" id="exchange-rate"></p>
                 <div class="current-bids mb-6 ">
                     <h4 class="text-xl font-bold text-gray-800 mb-2">Current Bids</h4>
                     <ul class="list-disc list-inside h-[48px] overflow-y-scroll  page" id="bidsList">
@@ -294,6 +295,8 @@
                     <input type="text" id="bidInput" class="border border-gray-300 rounded-r-md px-4 py-2 w-full"
                         placeholder="Enter your bid..." oninput="validateBid()" />
                 </div>
+                <div id="error-message" class="text-red-500 hidden"></div>
+
                 <button onclick="addBid()"
                     class="bg-[#c7ae6a] text-black px-6 py-2 rounded-md hover:bg-[#a99254] w-full">Place Bid</button>
                 <button onclick="deletePreviousBid()"
@@ -455,10 +458,10 @@
                     }
 
                     // Generate a unique ID for the bid
-                    const bidId = Date.now(); // Use the current timestamp as a unique ID
+                    // const bidId = Date.now(); // Use the current timestamp as a unique ID
 
-                    // Store the bid and its conversion in the bids array with a unique ID
-                    bids.push({ id: bidId, bidderName: bidderName, amount: bidAmount, currency: currency, bidInNaira: bidInNaira });
+                    // // Store the bid and its conversion in the bids array with a unique ID
+                    // bids.push({ id: bidId, bidderName: bidderName, amount: bidAmount, currency: currency, bidInNaira: bidInNaira });
 
                     const bidData = {
                         itemId: currentItemId, // Assuming you have the current item
@@ -472,7 +475,7 @@
                     socket.emit('newBid', bidData);
 
                     // Remember the ID of the last bid placed
-                    lastBidId = bidId;
+                    // lastBidId = bidId;
 
 
 
@@ -499,16 +502,51 @@
             sortedBids.forEach(bid => {
                 const createdAtFormatted = moment(bid.createdAt).format('HH:mm:ss A');
                 const bidItem = document.createElement("li");
-                bidItem.textContent = `${bid.bidderName}: ${bid.currency === '$' ? '$' : '₦'}${bid.amount}    ${createdAtFormatted}`;
+                const bidInfoSpan = document.createElement("span");
+                bidInfoSpan.textContent = `${bid.bidder}: ${bid.bidAmount}`;
+
+                const timeSpan = document.createElement("span");
+                timeSpan.textContent = createdAtFormatted;
+                  // Add a class for styling
+
+                // Set bidItem to use flexbox for alignment
+                bidItem.classList.add("flex",'justify-between');  // Add a class for styling
+                bidItem.appendChild(bidInfoSpan);
+                bidItem.appendChild(timeSpan);
+
                 bidsList.appendChild(bidItem);
             });
         }
 
         socket.on('bidAdded', (newBid) => {
             // Add the new bid to local bids array
+            console.log(newBid)
             bids.push(newBid);
-            // Update the displayed bid list
+            bids = bids.sort((a, b) => b.bidInNaira - a.bidInNaira);
+
+            // Display the updated bid list
             displayBids();
+        });
+        socket.on('currentBids', (storedBids) => {
+            console.log(storedBids);
+            bids = storedBids;
+
+            // Sort bids by bidInNaira in descending order
+            bids = bids.sort((a, b) => b.bidInNaira - a.bidInNaira);
+
+            // Display the sorted bids 
+            displayBids();
+
+        });
+        socket.on('bidError', (errorMessage) => {
+            const errorDiv = document.getElementById('error-message');
+            if (errorDiv) {
+                errorDiv.textContent = errorMessage;
+                errorDiv.classList.remove('hidden');
+                setTimeout(() => {
+                    errorDiv.classList.add('hidden');
+                }, 1500)
+            }
         });
 
         // async function fetchBids(itemId) {
@@ -720,9 +758,12 @@
         }
         async function updateItemDetails(itemData) {
             // Assuming you have elements in your HTML with these IDs
+            exchangeRate = await getDollarToNairaRate();
             document.getElementById('item-name').innerText = itemData.Itemname;
             document.getElementById('item-description').innerText = itemData.Description;
             document.getElementById('asking-price').innerText = `Asking price:${itemData.AskingPrice}`;
+            document.getElementById('exchange-rate').innerText = `Exchange-rate of the day: 1  USD : ${exchangeRate}NGN`;
+
             currentItemOwnerId = itemData.Userid;
             const carousel = document.getElementById('small-frames'); // Adjust this as needed
             carousel.innerHTML = ''; // Clear existing images

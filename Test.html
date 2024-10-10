@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TEST</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.0.3/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0/dist/css/select2.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <style>
+        .page::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+            /* Slim scrollbar width */
+        }
+
+        .page::-webkit-scrollbar-track {
+            background: transparent;
+            /* Hide the track */
+        }
+
+        .page::-webkit-scrollbar-thumb {
+            background: #bfa75d;
+            /* Gold color */
+            border-radius: 4px;
+            /* Rounded scrollbar */
+        }
+
+        .page::-webkit-scrollbar-thumb:hover {
+            background: #a68e4d;
+            /* Darker gold on hover */
+        }
+
+        .custom-checkbox {
+            appearance: none;
+            background-color: #fff;
+            border: 2px solid #ccc;
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .custom-checkbox:checked {
+            background-color: #c7ae6a;
+            /* Custom background color when checked */
+            border-color: #c7ae6a;
+        }
+
+        .custom-checkbox:checked::after {
+            content: '';
+            position: absolute;
+            width: 6px;
+            height: 12px;
+            border: solid white;
+            border-width: 0 2px 2px 0;
+            top: 1px;
+            left: 5px;
+            transform: rotate(45deg);
+        }
+    </style>
+
+</head>
+
+<body class="bg-gray-100">
+
+    <div class="container mx-auto py-8">
+        <h1 class="text-3xl font-bold mb-8 text-center">Admin Dashboard</h1>
+
+        <!-- Section for Items Management -->
+        <section class="mb-12">
+            <h2 class="text-2xl font-semibold mb-4">Items</h2>
+            <ul id="itemsList" class="bg-white p-4 shadow rounded">
+                <!-- Item rows will be dynamically inserted here -->
+            </ul>
+        </section>
+
+        <!-- Section for Event Creation -->
+        <section>
+            <h2 class="text-2xl font-semibold mb-4">Create Auction Event</h2>
+            <form id="eventForm" class="bg-white p-6 shadow rounded">
+                <label class="block mb-2">Event Title</label>
+                <input type="text" id="eventTitle" class="border p-2 w-full mb-4" placeholder="Enter event title">
+
+                <label class="block mb-2">Start Date</label>
+                <input type="date" id="startDate" class="border p-2 w-full mb-4">
+
+                <label class="block mb-2">End Date</label>
+                <input type="date" id="endDate" class="border p-2 w-full mb-4">
+
+                <label class="block mb-2">Verified Items (Select Items to Assign)</label>
+                <div id="verifiedItems" class="flex flex-wrap mb-4">
+                    <!-- Verified items checkboxes will be dynamically inserted here -->
+                </div>
+
+                <button type="submit" class="bg-blue-500 text-white p-2 rounded">Create Event</button>
+            </form>
+        </section>
+    </div>
+
+
+    <form id="createEventForm" class="space-y-4 p-4 bg-white rounded-lg shadow-md" enctype="multipart/form-data">
+        <div>
+            <label for="eventname" class="block text-sm font-medium text-gray-700">Event Name</label>
+            <input type="text" id="eventname" name="eventname"
+                class="mt-1 block w-full border border-gray-300 rounded-md p-2" required />
+        </div>
+
+        <div>
+            <label for="description" class="block text-sm font-medium text-gray-700">Description</label>
+            <textarea id="description" name="description"
+                class="mt-1 block w-full border border-gray-300 rounded-md p-2" rows="3" required></textarea>
+        </div>
+
+        <div>
+            <label for="eventimg" class="block text-sm font-medium text-gray-700">Event Image</label>
+            <input type="file" id="eventimg" name="eventimg" accept="image/*"
+                class="mt-1 block w-full text-sm text-gray-700" required />
+        </div>
+
+        <div>
+            <label for="starttime" class="block text-sm font-medium text-gray-700">Start Time</label>
+            <input type="datetime-local" id="starttime" name="starttime"
+                class="  flatpickr mt-1 block w-full border border-gray-300 rounded-lg p-3 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                required />
+
+        </div>
+
+        <div>
+            <label for="endtime" class="block text-sm font-medium text-gray-700">End Time</label>
+            <input type="text" id="endtime" name="endtime"
+                class="flatpickr mt-1 block w-full border border-gray-300 rounded-lg p-3 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                placeholder="Select End Time" />
+        </div>
+
+        <div>
+            <label for="itemids" class="block text-sm font-medium text-gray-700">Items (Verified)</label>
+            <select id="itemids" name="itemids" multiple
+                class="mt-1 block w-full border border-gray-300 rounded-md p-2">
+                <!-- Options dynamically populated with verified items -->
+                <option value="66e312240b23a0a6a091732c">Item 1</option>
+                <option value="66f3919a1f4b630293b9863c">Item 2</option>
+                <option value="66f39c93c4ea6e123e1c4f2c">Item 3</option>
+            </select>
+        </div>
+
+        <input type="hidden" id="createdby" name="createdby" value="66e0440ad722ab9b6de2272e" />
+        <!-- Automatically set to current user -->
+
+        <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-md">Create Event</button>
+    </form>
+
+
+    <form id="updateEventForm" class="space-y-4 p-4 bg-white rounded-lg shadow-md" enctype="multipart/form-data">
+        <div>
+            <label for="eventname-update" class="block text-sm font-medium text-gray-700">Event Name</label>
+            <input type="text" id="eventname-update" name="eventname"
+                class="mt-1 block w-full border border-gray-300 rounded-md p-2" required />
+        </div>
+
+        <div>
+            <label for="description-update" class="block text-sm font-medium text-gray-700">Description</label>
+            <textarea id="description-update" name="description"
+                class="mt-1 block w-full border border-gray-300 rounded-md p-2" rows="3" required></textarea>
+        </div>
+
+        <div>
+            <label for="eventimg-update" class="block text-sm font-medium text-gray-700">Event Image</label>
+            <input type="file" id="eventimg-update" name="eventimg" accept="image/*"
+                class="mt-1 block w-full text-sm text-gray-700" />
+        </div>
+
+        <div>
+            <label for="starttime-update" class="block text-sm font-medium text-gray-700">Start Time</label>
+            <input type="datetime-local" id="starttime-update" name="starttime"
+                class="mt-1 block w-full border border-gray-300 rounded-md p-2" required />
+        </div>
+
+        <div>
+            <label for="endtime-update" class="block text-sm font-medium text-gray-700">End Time</label>
+            <input type="datetime-local" id="endtime-update" name="endtime"
+                class="mt-1 block w-full border border-gray-300 rounded-md p-2" required />
+        </div>
+        
+        <div class="container mx-auto ml-0">
+            <label for="itemids" class="block text-sm   font-medium text-gray-700">Verified Items</label>
+            <!-- Item Selection Section -->
+            <div class="item-selection ml-24 space-x-4  overflow-x-scroll page">
+                <!-- Item Row -->
+                <div class=" flex w-[140rem] space-x-4 overflow-x-scroll page">
+                    <!-- Example of an item with image and checkbox -->
+                    <div class="relative item cursor-pointer" data-item-id="66e312240b23a0a6a091732c">
+                        <!-- Checkbox -->
+                        <input type="checkbox" class="absolute top-2 left-2 z-10 item-checkbox custom-checkbox" />
+                        <!-- Item Image -->
+                        <img src="https://picsum.photos/160/160" alt="Item 1"
+                            class="item-image border-2 border-transparent rounded-lg w-40 h-40 object-cover cursor-pointer" />
+                    </div>
+
+                    <div class="relative item cursor-pointer" data-item-id="66f3919a1f4b630293b9863c">
+                        <input type="checkbox" class="absolute top-2 left-2 z-10 item-checkbox custom-checkbox" />
+                        <img src="https://via.placeholder.com/160" alt="Item 2"
+                            class="item-image border-2 border-transparent rounded-lg w-40 h-40 object-cover cursor-pointer" />
+                    </div>
+
+                    <div class="relative item cursor-pointer" data-item-id="66f39c93c4ea6e123e1c4f2c">
+                        <input type="checkbox" class="absolute top-2 left-2 z-10 item-checkbox custom-checkbox" />
+                        <img src="https://picsum.photos/160/160" alt="Item 3"
+                            class="item-image border-2 border-transparent rounded-lg w-40 h-40 object-cover cursor-pointer" />
+                    </div>
+                    <div class="relative item cursor-pointer" data-item-id="66f39c93c4ea6e123e1c4f2c">
+                        <input type="checkbox" class="absolute top-2 left-2 z-10 item-checkbox custom-checkbox" />
+                        <img src="https://picsum.photos/160/160" alt="Item 3"
+                            class="item-image border-2 border-transparent rounded-lg w-40 h-40 object-cover cursor-pointer" />
+                    </div>
+                    <div class="relative item cursor-pointer" data-item-id="66f39c93c4ea6e123e1c4f2c">
+                        <input type="checkbox" class="absolute top-2 left-2 z-10 item-checkbox custom-checkbox" />
+                        <img src="https://picsum.photos/160/160" alt="Item 3"
+                            class="item-image border-2 border-transparent rounded-lg w-40 h-40 object-cover cursor-pointer" />
+                    </div>
+                    <div class="relative item cursor-pointer" data-item-id="66f39c93c4ea6e123e1c4f2c">
+                        <input type="checkbox" class="absolute top-2 left-2 z-10 item-checkbox custom-checkbox" />
+                        <img src="https://picsum.photos/160/160" alt="Item 3"
+                            class="item-image border-2 border-transparent rounded-lg w-40 h-40 object-cover cursor-pointer" />
+                    </div>
+                    <div class="relative item cursor-pointer" data-item-id="66f39c93c4ea6e123e1c4f2c">
+                        <input type="checkbox" class="absolute top-2 left-2 z-10 item-checkbox custom-checkbox" />
+                        <img src="https://picsum.photos/160/160" alt="Item 3"
+                            class="item-image border-2 border-transparent rounded-lg w-40 h-40 object-cover cursor-pointer" />
+                    </div>
+                    <div class="relative item cursor-pointer" data-item-id="66f39c93c4ea6e123e1c4f2c">
+                        <input type="checkbox" class="absolute top-2 left-2 z-10 item-checkbox custom-checkbox" />
+                        <img src="https://picsum.photos/160/160" alt="Item 3"
+                            class="item-image border-2 border-transparent rounded-lg w-40 h-40 object-cover cursor-pointer" />
+                    </div>
+                    <div class="relative item cursor-pointer" data-item-id="66f39c93c4ea6e123e1c4f2c">
+                        <input type="checkbox" class="absolute top-2 left-2 z-10 item-checkbox custom-checkbox" />
+                        <img src="https://picsum.photos/160/160" alt="Item 3"
+                            class="item-image border-2 border-transparent rounded-lg w-40 h-40 object-cover cursor-pointer" />
+                    </div>
+                    <div class="relative item cursor-pointer" data-item-id="66f39c93c4ea6e123e1c4f2c">
+                        <input type="checkbox" class="absolute top-2 left-2 z-10 item-checkbox custom-checkbox" />
+                        <img src="https://picsum.photos/160/160" alt="Item 3"
+                            class="item-image border-2 border-transparent rounded-lg w-40 h-40 object-cover cursor-pointer" />
+                    </div>
+                    <div class="relative item cursor-pointer" data-item-id="66f39c93c4ea6e123e1c4f2c">
+                        <input type="checkbox" class="absolute top-2 left-2 z-10 item-checkbox custom-checkbox" />
+                        <img src="https://picsum.photos/160/160" alt="Item 3"
+                            class="item-image border-2 border-transparent rounded-lg w-40 h-40 object-cover cursor-pointer" />
+                    </div>
+                    <div class="relative item cursor-pointer" data-item-id="66f39c93c4ea6e123e1c4f2c">
+                        <input type="checkbox" class="absolute top-2 left-2 z-10 item-checkbox custom-checkbox" />
+                        <img src="https://picsum.photos/160/160" alt="Item 3"
+                            class="item-image border-2 border-transparent rounded-lg w-40 h-40 object-cover cursor-pointer" />
+                    </div>
+                    <div class="relative item cursor-pointer" data-item-id="66f39c93c4ea6e123e1c4f2c">
+                        <input type="checkbox" class="absolute top-2 left-2 z-10 item-checkbox custom-checkbox" />
+                        <img src="https://picsum.photos/160/160" alt="Item 3"
+                            class="item-image border-2 border-transparent rounded-lg w-40 h-40 object-cover cursor-pointer" />
+                    </div>
+                </div>
+            </div>
+
+
+
+        </div>
+
+        <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-md">Update Event</button>
+    </form>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0/dist/js/select2.min.js"></script>
+
+    <!-- <script>
+        $(document).ready(function () {
+            $('.select2').select2();
+        });
+    </script> -->
+    <script>
+        flatpickr("#starttime", {
+            enableTime: true,
+            dateFormat: "Y-m-d H:i",
+            time_24hr: true,
+            minDate: new Date(),
+            onChange: function (selectedDates, dateStr, instance) {
+                // Get the selected start time
+                let startTime = selectedDates[0];
+
+                // Add 10 minutes to the selected start time
+                let minEndTime = new Date(startTime.getTime() + 30 * 60000);
+
+                // Update the End Time picker with the new minimum date
+                endTimePicker.set('minDate', minEndTime);
+            }
+        });
+
+        // Initialize End Time Flatpickr
+        const endTimePicker = flatpickr("#endtime", {
+            enableTime: true,
+            dateFormat: "Y-m-d H:i",
+            time_24hr: true,
+            minDate: new Date(), // Initially, minDate is the current date/time
+        });
+    </script>
+    <script>
+        // Array to store selected item IDs
+        let selectedItemIds = [];
+
+        document.querySelectorAll('.item').forEach(itemElement => {
+            const checkbox = itemElement.querySelector('.item-checkbox');
+            const image = itemElement.querySelector('.item-image');
+
+            image.addEventListener('click', function () {
+                checkbox.checked = !checkbox.checked;
+                toggleSelection(itemElement, checkbox.checked);
+            });
+
+            checkbox.addEventListener('change', function () {
+                toggleSelection(itemElement, checkbox.checked);
+            });
+        });
+
+        function toggleSelection(itemElement, isChecked) {
+            const itemId = itemElement.getAttribute('data-item-id');
+            const image = itemElement.querySelector('.item-image');
+
+            if (isChecked) {
+                image.classList.add('border-[#c7ae6a]');
+                selectedItemIds.push(itemId);
+            } else {
+                image.classList.remove('border-[#c7ae6a]');
+                selectedItemIds = selectedItemIds.filter(id => id !== itemId);
+            }
+        }
+
+    </script>
+    <script>
+        const itemsList = document.getElementById('itemsList');
+        const verifiedItemsDiv = document.getElementById('verifiedItems');
+        const eventForm = document.getElementById('eventForm');
+
+        // Fetch items and display them
+        async function fetchItems() {
+            const response = await fetch('/admin/items', {
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('adminToken')}` // Assuming you store the token here
+                }
+            });
+            const items = await response.json();
+
+            itemsList.innerHTML = ''; // Clear previous items
+            verifiedItemsDiv.innerHTML = ''; // Clear previous checkboxes
+
+            items.forEach(item => {
+                const listItem = document.createElement('li');
+                listItem.classList.add('flex', 'justify-between', 'p-2', 'border-b');
+                listItem.textContent = `${item.name} - Verified: ${item.isVerified}`;
+
+                // If the item is not verified, add a "Verify" button
+                if (!item.isVerified) {
+                    const verifyButton = document.createElement('button');
+                    verifyButton.textContent = 'Verify';
+                    verifyButton.classList.add('bg-green-500', 'text-white', 'px-2', 'py-1', 'rounded');
+                    verifyButton.onclick = () => verifyItem(item._id);
+                    listItem.appendChild(verifyButton);
+                } else {
+                    // If verified, add it to the list of available items for events
+                    const checkbox = document.createElement('input');
+                    checkbox.type = 'checkbox';
+                    checkbox.value = item._id;
+                    checkbox.classList.add('mr-2');
+                    verifiedItemsDiv.appendChild(checkbox);
+                    verifiedItemsDiv.append(`${item.name} `);
+                }
+
+                itemsList.appendChild(listItem);
+            });
+        }
+
+        // Verify an item
+        async function verifyItem(itemId) {
+            const response = await fetch(`/admin/items/${itemId}/verify`, {
+                method: 'PUT',
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('adminToken')}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            if (response.ok) {
+                alert('Item verified successfully');
+                fetchItems(); // Refresh the list
+            } else {
+                alert('Error verifying item');
+            }
+        }
+
+        // Create a new event
+        eventForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const selectedItems = Array.from(verifiedItemsDiv.querySelectorAll('input:checked')).map(input => input.value);
+            const eventTitle = document.getElementById('eventTitle').value;
+            const startDate = document.getElementById('startDate').value;
+            const endDate = document.getElementById('endDate').value;
+
+            const response = await fetch('/admin/events', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('adminToken')}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    title: eventTitle,
+                    startDate,
+                    endDate,
+                    itemIds: selectedItems
+                })
+            });
+
+            if (response.ok) {
+                alert('Event created successfully');
+                eventForm.reset();
+            } else {
+                alert('Error creating event');
+            }
+        });
+
+        // Initial fetch to load items
+        // fetchItems();
+    </script>
+</body>
+
+</html>

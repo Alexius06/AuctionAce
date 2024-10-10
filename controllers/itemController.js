@@ -1,4 +1,5 @@
 const Item = require('../models/Item');
+const Event = require('../models/Event');
 const cloudinary = require('../cloudinaryConfig');
 const fs = require('fs');
 
@@ -139,7 +140,7 @@ exports.updateItem = async (req, res) => {
             Userid: UserId,
             Itemimgs: uploadedImages.length > 0 ? uploadedImages : undefined // Only update images if new ones were uploaded
         };
-        console.log(updateData);    
+        console.log(updateData);
 
         // Update the item in the database
         const updatedItem = await Item.findByIdAndUpdate(id, updateData, { new: true, overwrite: true });
@@ -149,10 +150,10 @@ exports.updateItem = async (req, res) => {
             return res.status(404).json({ message: 'Item not found' });
         }
 
-        res.status(200).json({success: true,data: updatedItem});
+        res.status(200).json({ success: true, data: updatedItem });
     } catch (error) {
         console.error('Error updating item:', error);
-        return res.status(500).json({success: false,message: 'Failed to update item',error: error.message});
+        return res.status(500).json({ success: false, message: 'Failed to update item', error: error.message });
     }
 };
 
@@ -172,6 +173,17 @@ exports.getUserItems = async (req, res) => {
     }
 };
 
+
+exports.getPendingItems = async (req, res) => {
+    try {
+        const items = await Item.find({ status: 'pending' }); // Find items with matching user ID
+
+        res.status(200).json({ success: true, data: items });
+    } catch (error) {
+        console.error('retrievind user itemss  failed:', error);
+        res.status(500).json({ success: false, message: 'Failed to retrieve items', error: error.message });
+    }
+};
 // Delete an item by ID
 exports.deleteItem = async (req, res) => {
     const id = req.params.id;
@@ -211,5 +223,72 @@ exports.unverifyItem = async (req, res) => {
         res.status(500).json({ message: err.message });
     }
 };
+
+
+exports.getVerifiedItems = async (req, res) => {
+    try {
+        // Step 1: Retrieve all verified items
+        const verifiedItems = await Item.find({ status: 'verified' });
+
+        // Step 2: Retrieve all events and get their assigned ItemIDs
+        const events = await Event.find({}, 'ItemIDs'); // Retrieve only ItemIDs from events
+
+        // Step 3: Extract all assigned ItemIDs into a single array
+        const assignedItemIds = events.reduce((acc, event) => {
+            return acc.concat(event.ItemIDs); // Accumulate all ItemIDs into one array
+        }, []);
+
+        // Step 4: Filter verified items to exclude the ones that are assigned to an event
+        const availableItems = verifiedItems.filter(item => !assignedItemIds.includes(item._id.toString()));
+
+        // Step 5: Return the available verified items
+        res.status(200).json({ success: true, data: availableItems });
+    } catch (error) {
+        console.error('Retrieving verified items failed:', error);
+        res.status(500).json({ success: false, message: 'Failed to retrieve items', error: error.message });
+    }
+};
+
+exports.getEventForUpdate = async (req, res) => {
+    try {
+        const eventId = req.params.id;
+
+        // Step 1: Retrieve the event being updated
+        const event = await Event.findById(eventId).populate('ItemIDs');
+
+        if (!event) {
+            return res.status(404).json({ success: false, message: 'Event not found' });
+        }
+
+        // Step 2: Retrieve all verified items
+        const verifiedItems = await Item.find({ status: 'verified' });
+
+        // Step 3: Retrieve all events (excluding the current event being updated)
+        const otherEvents = await Event.find({ _id: { $ne: eventId } }, 'ItemIDs'); // Fetch ItemIDs excluding the current event
+
+        // Step 4: Extract all ItemIDs already assigned to other events
+        const assignedItemIds = otherEvents.reduce((acc, otherEvent) => {
+            return acc.concat(otherEvent.ItemIDs);
+        }, []);
+
+        // Step 5: Filter verified items to get unassigned items (not in any other event)
+        const availableItems = verifiedItems.filter(item => !assignedItemIds.includes(item._id.toString()));
+
+        // Step 6: Send response with event-specific items (checked) and available items (unchecked)
+        res.status(200).json({
+            success: true,
+            data: {
+                event,              // Event data including previously assigned items
+                assignedItems: event.ItemIDs, // Pre-selected items for the event
+                availableItems      // Free, unassigned items for the selection
+            }
+        });
+
+    } catch (error) {
+        console.error('Error fetching event for update:', error);
+        res.status(500).json({ success: false, message: 'Failed to retrieve event for update', error: error.message });
+    }
+};
+
 
 

@@ -113,7 +113,7 @@ io.on('connection', (socket) => {
           _id: msg._id // The ID of the user who sent it
         };
       });
-      console.log(formattedMessages);
+      // console.log(formattedMessages);
       // Emit the formatted messages to the client
       socket.emit('previous messages', formattedMessages);
     } catch (err) {
@@ -168,7 +168,7 @@ io.on('connection', (socket) => {
   });
 
   socket.on('update-message', async ({ messageId, message }) => {
-    console.log(messageId, message)
+    // console.log(messageId, message)
     io.emit('message-updated', { messageId, message });
   });
 
@@ -179,15 +179,22 @@ io.on('connection', (socket) => {
       // Check if the user is the item owner
       console.log(bidData)
       const Item = await item.findById(bidData.itemId);
+      console.log(Item.Userid)
+      console.log(bidData.userId)
       if (Item && Item.Userid.toString() === bidData.userId) {
         console.log('bidError', 'You cannot bid on your own item.');
         socket.emit('bidError', 'You cannot bid on your own item.');
         return;
       }
+      else {
+        console.log('They are not the item owner')
+      }
 
       // Check if the bid is greater than the current highest bid
-      const highestBid = await bid.find({ itemId: bidData.itemId }).sort({ bidinNaira: -1 });
-      if (highestBid && bidData.bidinNaira <= highestBid.bidinNaira) {
+      const highestBid = await bid.findOne({ itemId: bidData.itemId }).sort({ bidInNaira: -1 });
+      console.log(highestBid)
+
+      if (highestBid && bidData.bidInNaira <= highestBid.bidInNaira) {
         console.log('bidError', 'Your bid must be higher than the current highest bid.');
         socket.emit('bidError', 'Your bid must be higher than the current highest bid.');
         return;
@@ -196,9 +203,16 @@ io.on('connection', (socket) => {
       // Create and save the new bid
       const newBid = new bid(bidData);
       await newBid.save();
+      const user = await User.findById(bidData.userId);
+
+      const Bidtosend = {
+        ...newBid.toObject(), // Convert Mongoose document to a plain object
+        bidder: user.username // Add the bidder's username
+
+      };
 
       // Broadcast the new bid to all connected clients
-      io.emit('bidAdded', newBid);
+      io.emit('bidAdded', Bidtosend);
 
     } catch (error) {
       console.error('Error placing bid:', error);
@@ -206,33 +220,24 @@ io.on('connection', (socket) => {
     }
   });
 
+  // Listen for when itemId changes on the frontend
   socket.on('itemChanged', async ({ itemId, eventId }) => {
     console.log(`Client switched to item: ${itemId} for event: ${eventId}`);
 
-    // Fetch bids for the new itemId and eventId
-    try {
-      const bids = await bid.find({ itemId, eventId });
+    // Fetch the current bids for the new itemId and eventId
+    const bids = await bid.find({ itemId, eventId }).sort({ bidinNaira: -1 }).populate('userId', 'username');  // Populate bidderId to get the username
 
-      // Optionally, sort bids by magnitude (as discussed earlier)
-      const sortedBids = await sortBidsByMagnitude(bids);
+    // Transform bids to include 'bidder' as username directly in the bid object
+    const updatedBids = bids.map(bid => ({
+      ...bid.toObject(),  // Convert Mongoose document to plain JS object
+      bidder: bid.userId.username  // Map the amount to bidAmount for consistency
+    }));
 
-      // Emit the sorted bids to the client
-      console.log(sortedBids)
-      socket.emit('bidsFetched', sortedBids);
-    } catch (error) {
-      console.error('Error fetching bids:', error);
-      socket.emit('bidError', 'Error fetching bids.');
-    }
+    console.log(updatedBids);
+
+    // Emit the transformed bids to the client
+    socket.emit('currentBids', updatedBids);
   });
-
-  // Helper function to convert and sort bids by magnitude
-  async function sortBidsByMagnitude(bids) {
-    return bids.sort(async (a, b) => {
-      const aAmount = a.bidinNaira;
-      const bAmount = b.bidinNaira;
-      return bAmount - aAmount;  // Sort in descending order (highest first)
-    });
-  }
 
   // Handle user disconnect
   socket.on('disconnect', () => {

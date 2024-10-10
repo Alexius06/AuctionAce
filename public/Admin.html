@@ -9,7 +9,130 @@
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@3.3.0/dist/tailwind.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Reem+Kufi&display=swap"
         rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+
     <style>
+        :root {
+            --blue: #2a2185;
+            --white: #fff;
+            --gray: #f5f5f5;
+            --black1: #222;
+            --black2: #999;
+        }
+
+        input:focus {
+            border-color: #bfa75d;
+            outline: none;
+        }
+
+        .input-group label {
+            position: absolute;
+            top: 14px;
+            left: 15px;
+            font-size: 16px;
+            color: #838181;
+            transition: 0.2s ease all;
+        }
+
+        .input-group input:focus+label,
+        .input-group input:not(:placeholder-shown)+label {
+            top: -18px;
+            font-size: 12px;
+            color: #bfa75d;
+        }
+
+
+
+        .navigation.active {
+            width: 80px;
+        }
+
+
+        .navigation ul li:nth-child(0),
+        .navigation ul li:nth-child(1) {
+            margin-top: 35px;
+            margin-bottom: 40px;
+            pointer-events: none;
+        }
+
+        .navigation ul li {
+            position: relative;
+            width: 100%;
+            list-style: none;
+            border-top-left-radius: 50px;
+            border-bottom-left-radius: 50px;
+        }
+
+        .navigation ul li:hover,
+        .navigation ul li.hovered {
+            background-color: #F2F3F5;
+        }
+
+        .navigation ul li a {
+            position: relative;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            color: #F2F3F5;
+        }
+
+        .navigation ul li:hover a,
+        .navigation ul li.hovered a {
+            color: #c7ae6a;
+        }
+
+        .navigation ul li a .icon {
+            position: relative;
+            display: block;
+            min-width: 60px;
+            height: 60px;
+            line-height: 75px;
+            text-align: center;
+        }
+
+        .navigation ul li a .title {
+            position: relative;
+            display: block;
+            padding: 0 10px;
+            height: 60px;
+            line-height: 60px;
+            text-align: start;
+
+        }
+
+        /* --------- curve outside ---------- */
+        .navigation ul li:hover a::before,
+        .navigation ul li.hovered a::before {
+            content: "";
+            position: absolute;
+            right: 0;
+            top: -50px;
+            width: 50px;
+            height: 50px;
+            background-color: transparent;
+            border-radius: 50%;
+            box-shadow: 35px 35px 0 10px #F2F3F5;
+            pointer-events: none;
+        }
+
+        .navigation ul li:hover a::after,
+        .navigation ul li.hovered a::after {
+            content: "";
+            position: absolute;
+            right: 0;
+            bottom: -50px;
+            width: 50px;
+            height: 50px;
+            background-color: transparent;
+            border-radius: 50%;
+            box-shadow: 35px -35px 0 10px #F2F3F5;
+            pointer-events: none;
+        }
+
+
         .sidebar {
             height: 100vh;
             transition: width 0.5s;
@@ -23,10 +146,7 @@
             width: 16rem;
         }
 
-        .dashboard-header {
-            background-color: #6d6d6d;
-            color: white;
-        }
+
 
         .active-menu {
             background-color: #c7ae6a;
@@ -51,6 +171,18 @@
                 opacity: 1;
                 transform: translateY(0);
             }
+        }
+
+        .btn-hover {
+            transition: all 0.3s ease;
+            border-radius: 30px;
+        }
+
+        .btn-hover:hover {
+            background-color: #bfa75d;
+            color: white;
+            transform: translateY(-5px);
+            box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.2);
         }
 
         .modal {
@@ -83,131 +215,725 @@
             cursor: pointer;
         }
 
-        .hidden {
-            display: none;
+        .page::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+            /* Slim scrollbar width */
+        }
+
+        .page::-webkit-scrollbar-track {
+            background: transparent;
+            /* Hide the track */
+        }
+
+        .page::-webkit-scrollbar-thumb {
+            background: #bfa75d;
+            /* Gold color */
+            border-radius: 4px;
+            /* Rounded scrollbar */
+        }
+
+        .page::-webkit-scrollbar-thumb:hover {
+            background: #a68e4d;
+            /* Darker gold on hover */
+        }
+
+        .custom-checkbox {
+            appearance: none;
+            background-color: #fff;
+            border: 2px solid #ccc;
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .custom-checkbox:checked {
+            background-color: #c7ae6a;
+            /* Custom background color when checked */
+            border-color: #c7ae6a;
+        }
+
+        .custom-checkbox:checked::after {
+            content: '';
+            position: absolute;
+            width: 6px;
+            height: 12px;
+            border: solid white;
+            border-width: 0 2px 2px 0;
+            top: 1px;
+            left: 5px;
+            transform: rotate(45deg);
+        }
+
+        .material-symbols-outlined {
+            vertical-align: middle;
         }
     </style>
 </head>
 
-<body class="font-ReemKufi bg-gray-100">
+<body class="font-ReemKufi bg-gray-100 select-none sm:overflow-x-hidden">
 
-    <!-- Sidebar -->
-    <div class="sidebar sidebar-expanded fixed top-0 left-0 bg-gray-800 text-white flex flex-col space-y-4 px-4 py-6">
-        <button class="text-lg font-semibold hover:text-yellow-500" onclick="toggleSidebar()">☰ Menu</button>
-        <a href="#dashboard" class="text-lg font-semibold hover:text-yellow-500 active-menu">Dashboard</a>
-        <a href="#verify-items" class="text-lg font-semibold hover:text-yellow-500">Verify Items</a>
-        <a href="#content-editor" class="text-lg font-semibold hover:text-yellow-500">Content Editor</a>
-        <a href="#manage-users" class="text-lg font-semibold hover:text-yellow-500">Manage Users</a>
-        <a href="#site-settings" class="text-lg font-semibold hover:text-yellow-500">Site Settings</a>
-        <a href="#transaction-history" class="text-lg font-semibold hover:text-yellow-500">Transaction History</a>
+    <div
+        class="navigation z-50 fixed w-[300px] h-full bg-[#6d6d6d] top-0 rounded-r-lg   border-l-[10px] border-[#6d6d6d] transition-all duration-500 overflow-hidden">
+        <ul class="absolute top-0 left-0 w-full">
+            <!-- Sidebar items with Material Symbols Icons -->
+            <li class="bg-[#6d6d6d]  select-none ">
+                <a href="#">
+                    <span class="icon material-symbols-outlined"><img src="/favicon.png"
+                            class="h-12  w-12 m-1 rounded-lg" srcset=""></span>
+                    <span class="title">AuctionAce</span>
+                </a>
+            </li>
+
+            <li class="ml-2 ">
+                <a href="#" id="dashboard-tab" class="ml-0 flex items-center space-x-2 scroll-to"
+                    data-target="dashboard">
+                    <span class="icon material-symbols-outlined">browse</span>
+                    <span class="title">Dashboard</span>
+                </a>
+            </li>
+
+
+            <li class="ml-2">
+                <a href="#" id="verify-tab" class="ml-0 scroll-to flex items-center" data-target="verify">
+                    <span class="icon material-symbols-outlined flex items-center h-full">approval_delegation</span>
+                    <span class="title">Verify Items</span>
+                </a>
+            </li>
+
+            <li class="ml-2">
+                <a href="#" id="events-tab" class="ml-0 scroll-to" data-target="events">
+                    <span class="icon material-symbols-outlined">edit_calendar</span>
+                    <span class="title">Manage Events</span>
+                </a>
+            </li>
+
+            <li class="ml-2">
+                <a href="#" id="users-tab" class="ml-0 scroll-to" data-target="users">
+                    <span class="icon material-symbols-outlined">manage_accounts</span>
+                    <span class="title">Manage Users</span>
+                </a>
+            </li>
+
+            <li class="ml-2">
+                <a href="#" id="Admins-tab" class="ml-0 scroll-to grid place-items-center" data-target="Admins">
+                    <span class="icon material-symbols-outlined">payments</span>
+                    <span class="title">Admin</span>
+                </a>
+            </li>
+
+            <li class="ml-2">
+                <a href="/users/logout" id="logout-tab" class="ml-0">
+                    <span class="icon material-symbols-outlined">logout</span>
+                    <span class="title">Log Out</span>
+                </a>
+            </li>
+        </ul>
     </div>
 
-    <!-- Main Dashboard Content -->
-    <div class="ml-64 p-8 dashboard-section">
 
-        <!-- Dashboard Header -->
-        <header class="dashboard-header p-6 mb-8 shadow-lg rounded-lg">
-            <h1 class="text-3xl font-semibold">Admin Dashboard</h1>
-            <p>Manage auctions, content, users, and site settings.</p>
-        </header>
+    <!-- Dashboard Header -->
+
+
+    <header
+        class="dashboard-header ml-[20rem] transition-all duration-500 bg-[#6d6d6d] mr-8  text-white mt-4 p-6  shadow-lg rounded-lg"
+        id="dashboard-header">
+        <div class="toggle z-50 cursor-pointer">
+            <span class="material-symbols-outlined select-none">menu</span>
+        </div>
+        <h1 class="text-3xl font-semibold">Admin Dashboard</h1>
+        <p>Manage auctions, content, users, and site settings.</p>
+    </header>
+
+    <!-- Main Dashboard Content -->
+    <main class="ml-34 p-8 dashboard-section transition-all duration-500" id="dashboard">
 
         <!-- Dashboard Overview Section -->
-        <section id="dashboard" class="fade-in">
+        <section id="dashboard-section" class="fade-in">
             <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
                 <div class="bg-white p-6 rounded-lg shadow-md">
                     <h2 class="text-xl font-semibold mb-4">Total Auctions</h2>
                     <p class="text-4xl font-bold">150</p>
                     <p>Ongoing: 30 | Upcoming: 70 | Ended: 50</p>
-                    <button class="mt-4 px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600"
-                        onclick="showModal('viewAuctionDetails')">View Details</button>
                 </div>
                 <div class="bg-white p-6 rounded-lg shadow-md">
                     <h2 class="text-xl font-semibold mb-4">Registered Users</h2>
                     <p class="text-4xl font-bold">2,300</p>
-                    <p>Active: 500 | Bidders: 1500</p>
-                    <button class="mt-4 px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600"
-                        onclick="showModal('viewUserDetails')">View Details</button>
+                    <p>Merchants: 500 | Bidders: 1500</p>
                 </div>
                 <div class="bg-white p-6 rounded-lg shadow-md">
-                    <h2 class="text-xl font-semibold mb-4">Messages Sent</h2>
+                    <h2 class="text-xl font-semibold mb-4">Items Uploaded</h2>
                     <p class="text-4xl font-bold">5,780</p>
                     <p>Last 24 hours: 200</p>
                 </div>
                 <div class="bg-white p-6 rounded-lg shadow-md">
                     <h2 class="text-xl font-semibold mb-4">Total Earnings</h2>
-                    <p class="text-4xl font-bold">$50,000</p>
-                    <p>This Month: $5,000</p>
-                    <button class="mt-4 px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600"
-                        onclick="showModal('viewEarningsDetails')">View Details</button>
+                    <p class="text-4xl font-bold">&#8358;50,000</p>
+                    <p>This Month: &#8358;5,000</p>
                 </div>
             </div>
         </section>
 
-        <!-- Verify Auction Items Section -->
-        <section id="verify-items" class="fade-in mt-16">
-            <h2 class="text-2xl font-semibold mb-4">Verify Items for Auction</h2>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <!-- Example Item -->
-                <div class="bg-white p-6 rounded-lg shadow-md">
-                    <h3 class="text-xl font-semibold mb-2">Item 1: Diamond Necklace</h3>
-                    <p>Seller: John Doe</p>
-                    <p>Status: <span class="text-yellow-500">Pending Verification</span></p>
-                    <button class="mt-4 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
-                        onclick="verifyItem(1)">Verify</button>
-                    <button class="mt-4 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
-                        onclick="rejectItem(1)">Reject</button>
-                    <button class="mt-4 px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600"
-                        onclick="showModal('viewItemDetails')">View Details</button>
+        <section class="grid grid-cols-1  md:grid-cols-3 gap-6 mt-4">
+
+            <!-- Item Verification Widget -->
+            <div
+                class="widget bg-yellow-100 p-6 rounded-lg shadow-md hover:bg-yellow-200 md:col-start-1 md:row-start-1 cursor-pointer transition-all duration-300">
+                <div class="icon text-4xl mb-4 text-yellow-600">
+                    <i class="fas fa-box-open"></i>
                 </div>
+                <h3 class="text-xl font-bold">Pending Item Verification</h3>
+                <p class="text-gray-600">X items are awaiting approval</p>
+                <a data-target="verify"
+                    class="bg-[#c7ae6a] w-fit block text-white p-2 mt-4 scroll-to rounded-md hover:bg-[#b29559] transition-all duration-300">Verify
+                    Now</a>
             </div>
+
+            <!-- Event Management Widget -->
+            <div
+                class="widget bg-blue-100 p-6 rounded-lg shadow-md hover:bg-blue-200 cursor-pointer  md:col-span-2 md:row-start-2 transition-all duration-300">
+                <div class="icon text-4xl mb-4 text-blue-600">
+                    <i class="fas fa-calendar-alt"></i>
+                </div>
+                <h3 class="text-xl font-bold">Upcoming Auction Events</h3>
+                <p class="text-gray-600">X upcoming, Y ongoing events</p>
+                <a data-target="events"
+                    class="bg-[#c7ae6a] w-fit block text-white p-2 mt-4 rounded-md hover:bg-[#b29559] scroll-to transition-all duration-300">Manage
+                    Events</a>
+            </div>
+
+            <!-- User Management Widget -->
+            <div
+                class="widget bg-green-100 p-6 rounded-lg shadow-md hover:bg-green-200 md:col-start-2 md:row-start-1 cursor-pointer transition-all duration-300">
+                <div class="icon text-4xl mb-4 text-green-600">
+                    <i class="fas fa-users"></i>
+                </div>
+                <h3 class="text-xl font-bold">User Management</h3>
+                <p class="text-gray-600">Total Users: X, Suspended: Y</p>
+                <a data-target="users"
+                    class="bg-[#c7ae6a] w-fit block text-white p-2 mt-4 rounded-md hover:bg-[#b29559] scroll-to transition-all duration-300">View
+                    Users</a>
+            </div>
+
+            <!-- Admin Management Widget -->
+            <div
+                class="widget bg-orange-100 p-6 rounded-lg shadow-md hover:bg-orange-200  md:col-start-3 md:row-span-2 cursor-pointer transition-all duration-300">
+                <div class="icon text-4xl mb-4 text-orange-600">
+                    <i class="fas fa-user-shield"></i>
+                </div>
+                <h3 class="text-xl font-bold">Admin Management</h3>
+                <p class="text-gray-600">X active admins</p>
+                <a data-target="Admins"
+                    class="bg-[#c7ae6a]  w-fit block text-white p-2 mt-4 rounded-md hover:bg-[#b29559] scroll-to transition-all duration-300">Manage
+                    Admins</a>
+            </div>
+
         </section>
 
-        <!-- Content Editor Section -->
-        <section id="content-editor" class="fade-in mt-16">
-            <h2 class="text-2xl font-semibold mb-4">Content Editor</h2>
-            <div class="bg-white p-6 rounded-lg shadow-md">
-                <h3 class="text-xl font-semibold mb-4">Homepage Content</h3>
-                <textarea id="homepage-content" class="w-full h-48 p-4 border border-gray-300 rounded-md"
-                    placeholder="Edit homepage content..."></textarea>
-                <button class="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-                    onclick="saveContent('homepage')">Save Changes</button>
+
+
+    </main>
+
+    <!-- Item Verification -->
+    <main class="ml-34 p-8 dashboard-section transition-all duration-500" id="verify">
+        <section class="mt-4 transition-opacity duration-500 ease-in-out" id="ItemStatusPage">
+            <div class="h-[35rem] overflow-y-scroll page">
+                <table class="table-auto w-full text-left text-gray-500">
+                    <thead class="mb-1">
+                        <tr class="text-xs uppercase text-gray-400 sticky top-0 bg-gray-200">
+                            <th class="px-4 py-2">ItemName</th>
+                            <th class="px-4 py-2">Seller</th>
+                            <th class="px-4 py-2">Status</th>
+                            <th class="px-4 py-2">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="itemsTableBody">
+                        <tr class="bg-white border-b">
+                            <td class="px-4 py-2">FERRRRRRRRR</td>
+                            <td class="px-4 py-2">$ 1504</td>
+                            <td class="px-4 py-2">pending</td>
+                            <td class="px-4 py-2">
+                                <button
+                                    class="px-2 mx-1 py-2 bg-inherit border-2 border-green rounded-lg text-green-500"
+                                    value="66f3919a1f4b630293b9863c">Verify</button>
+                                <button class="px-2 mx-1 py-2 bg-red-500 rounded-lg text-white"
+                                    value="66f3919a1f4b630293b9863c">Unverify</button>
+                            </td>
+                        </tr>
+
+
+                    </tbody>
+                </table>
             </div>
         </section>
+    </main>
+    <!-- Event Management -->
+    <main class="ml-34 p-8 dashboard-section transition-all duration-500" id="events">
+        <section class="fade-in grid grid-cols-1 md:grid-cols-2 gap-8">
+            <section class="">
+                <h3 class="text-xl font-semibold mb-2">Create a new Event</h3>
+                <div class="bg-white p-6 rounded-lg shadow-md h-[40rem] page overflow-y-scroll">
+                    <form id="createEventForm" class="space-y-4 p-4 bg-white rounded-lg shadow-md"
+                        enctype="multipart/form-data">
+                        <div>
+                            <label for="eventname" class="block text-sm font-medium text-gray-700">Event Name</label>
+                            <input type="text" id="eventname" name="eventname"
+                                class="mt-1 block w-full border border-gray-300 rounded-md p-2" required />
+                        </div>
 
-        <!-- Manage Users Section -->
-        <section id="manage-users" class="fade-in mt-16">
-            <h2 class="text-2xl font-semibold mb-4">Manage Users</h2>
-            <div class="bg-white p-6 rounded-lg shadow-md">
-                <h3 class="text-xl font-semibold mb-2">User: John Doe</h3>
-                <p>Email: johndoe@example.com</p>
-                <p>Status: <span class="text-green-500">Active</span></p>
-                <button class="mt-4 px-4 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600">Suspend</button>
-                <button class="mt-4 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600">Delete</button>
-                <button class="mt-4 px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600"
-                    onclick="showModal('viewUserActions')">View User History</button>
+                        <div>
+                            <label for="description" class="block text-sm font-medium text-gray-700">Description</label>
+                            <textarea id="description" name="description"
+                                class="mt-1 block w-full border border-gray-300 rounded-md p-2" rows="3"
+                                required></textarea>
+                        </div>
+
+                        <div>
+                            <label for="eventimg" class="block text-sm font-medium text-gray-700">Event Image</label>
+                            <input type="file" id="eventimg" name="eventimg" accept="image/*"
+                                class="mt-1 block w-full text-sm text-gray-700" required />
+                        </div>
+
+                        <div>
+                            <label for="starttime" class="block text-sm font-medium text-gray-700">Start Time</label>
+                            <input type="datetime-local" id="starttime" name="starttime"
+                                class="  flatpickr mt-1 block w-full border border-gray-300 rounded-lg p-3 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                                required />
+
+                        </div>
+
+                        <div>
+                            <label for="endtime" class="block text-sm font-medium text-gray-700">End Time</label>
+                            <input type="text" id="endtime" name="endtime"
+                                class="flatpickr mt-1 block w-full border border-gray-300 rounded-lg p-3 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                                placeholder="Select End Time" />
+                        </div>
+
+                        <div class="container mx-auto ml-0">
+                            <label for="itemids" class="block text-sm   font-medium text-gray-700">(Verified)
+                                Items</label>
+                            <!-- Item Selection Section -->
+                            <div class="item-selection space-x-4  overflow-x-scroll page">
+                                <!-- Item Row -->
+                                <div class=" flex w-[140rem] space-x-4 overflow-x-scroll page">
+                                    <!-- Example of an item with image and checkbox -->
+                                    <div class="relative item cursor-pointer" data-item-id="66e312240b23a0a6a091732c">
+                                        <!-- Checkbox -->
+                                        <input type="checkbox"
+                                            class="absolute top-2 left-2 z-10 item-checkbox custom-checkbox" />
+                                        <!-- Item Image -->
+                                        <img src="https://picsum.photos/160/160" alt="Item 1"
+                                            class="item-image border-2 border-transparent rounded-lg w-40 h-40 object-cover cursor-pointer" />
+                                    </div>
+
+                                    <div class="relative item cursor-pointer" data-item-id="66f3919a1f4b630293b9863c">
+                                        <input type="checkbox"
+                                            class="absolute top-2 left-2 z-10 item-checkbox custom-checkbox" />
+                                        <img src="https://via.placeholder.com/160" alt="Item 2"
+                                            class="item-image border-2 border-transparent rounded-lg w-40 h-40 object-cover cursor-pointer" />
+                                    </div>
+
+                                    <div class="relative item cursor-pointer" data-item-id="66f39c93c4ea6e123e1c4f2c">
+                                        <input type="checkbox"
+                                            class="absolute top-2 left-2 z-10 item-checkbox custom-checkbox" />
+                                        <img src="https://picsum.photos/160/160" alt="Item 3"
+                                            class="item-image border-2 border-transparent rounded-lg w-40 h-40 object-cover cursor-pointer" />
+                                    </div>
+                                    <div class="relative item cursor-pointer" data-item-id="66f39c93c4ea6e123e1c4f2c">
+                                        <input type="checkbox"
+                                            class="absolute top-2 left-2 z-10 item-checkbox custom-checkbox" />
+                                        <img src="https://picsum.photos/160/160" alt="Item 3"
+                                            class="item-image border-2 border-transparent rounded-lg w-40 h-40 object-cover cursor-pointer" />
+                                    </div>
+                                    <div class="relative item cursor-pointer" data-item-id="66f39c93c4ea6e123e1c4f2c">
+                                        <input type="checkbox"
+                                            class="absolute top-2 left-2 z-10 item-checkbox custom-checkbox" />
+                                        <img src="https://picsum.photos/160/160" alt="Item 3"
+                                            class="item-image border-2 border-transparent rounded-lg w-40 h-40 object-cover cursor-pointer" />
+                                    </div>
+                                    <div class="relative item cursor-pointer" data-item-id="66f39c93c4ea6e123e1c4f2c">
+                                        <input type="checkbox"
+                                            class="absolute top-2 left-2 z-10 item-checkbox custom-checkbox" />
+                                        <img src="https://picsum.photos/160/160" alt="Item 3"
+                                            class="item-image border-2 border-transparent rounded-lg w-40 h-40 object-cover cursor-pointer" />
+                                    </div>
+                                    <div class="relative item cursor-pointer" data-item-id="66f39c93c4ea6e123e1c4f2c">
+                                        <input type="checkbox"
+                                            class="absolute top-2 left-2 z-10 item-checkbox custom-checkbox" />
+                                        <img src="https://picsum.photos/160/160" alt="Item 3"
+                                            class="item-image border-2 border-transparent rounded-lg w-40 h-40 object-cover cursor-pointer" />
+                                    </div>
+                                    <div class="relative item cursor-pointer" data-item-id="66f39c93c4ea6e123e1c4f2c">
+                                        <input type="checkbox"
+                                            class="absolute top-2 left-2 z-10 item-checkbox custom-checkbox" />
+                                        <img src="https://picsum.photos/160/160" alt="Item 3"
+                                            class="item-image border-2 border-transparent rounded-lg w-40 h-40 object-cover cursor-pointer" />
+                                    </div>
+                                    <div class="relative item cursor-pointer" data-item-id="66f39c93c4ea6e123e1c4f2c">
+                                        <input type="checkbox"
+                                            class="absolute top-2 left-2 z-10 item-checkbox custom-checkbox" />
+                                        <img src="https://picsum.photos/160/160" alt="Item 3"
+                                            class="item-image border-2 border-transparent rounded-lg w-40 h-40 object-cover cursor-pointer" />
+                                    </div>
+                                    <div class="relative item cursor-pointer" data-item-id="66f39c93c4ea6e123e1c4f2c">
+                                        <input type="checkbox"
+                                            class="absolute top-2 left-2 z-10 item-checkbox custom-checkbox" />
+                                        <img src="https://picsum.photos/160/160" alt="Item 3"
+                                            class="item-image border-2 border-transparent rounded-lg w-40 h-40 object-cover cursor-pointer" />
+                                    </div>
+                                    <div class="relative item cursor-pointer" data-item-id="66f39c93c4ea6e123e1c4f2c">
+                                        <input type="checkbox"
+                                            class="absolute top-2 left-2 z-10 item-checkbox custom-checkbox" />
+                                        <img src="https://picsum.photos/160/160" alt="Item 3"
+                                            class="item-image border-2 border-transparent rounded-lg w-40 h-40 object-cover cursor-pointer" />
+                                    </div>
+                                    <div class="relative item cursor-pointer" data-item-id="66f39c93c4ea6e123e1c4f2c">
+                                        <input type="checkbox"
+                                            class="absolute top-2 left-2 z-10 item-checkbox custom-checkbox" />
+                                        <img src="https://picsum.photos/160/160" alt="Item 3"
+                                            class="item-image border-2 border-transparent rounded-lg w-40 h-40 object-cover cursor-pointer" />
+                                    </div>
+                                    <div class="relative item cursor-pointer" data-item-id="66f39c93c4ea6e123e1c4f2c">
+                                        <input type="checkbox"
+                                            class="absolute top-2 left-2 z-10 item-checkbox custom-checkbox" />
+                                        <img src="https://picsum.photos/160/160" alt="Item 3"
+                                            class="item-image border-2 border-transparent rounded-lg w-40 h-40 object-cover cursor-pointer" />
+                                    </div>
+                                </div>
+                            </div>
+
+
+
+                        </div>
+
+                        <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-md">Create Event</button>
+                    </form>
+                </div>
+            </section>
+            <!-- update an  item -->
+            <section class="absolute mx-auto z-50 ">
+                <div id="updateEventModal"
+                    class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center page">
+                    <div
+                        class="bg-white p-6 rounded-lg shadow-md w-full max-w-4xl relative h-[45rem] overflow-y-scroll">
+                        <h3 class="text-xl font-semibold mb-2">Update Event</h3>
+
+                        <!-- Close Button -->
+                        <button id="closeModal"
+                            class="absolute top-4 right-4 bg-red-500 text-white px-4 py-2 rounded-full">X</button>
+
+                        <form id="updateEventForm" class="space-y-4 p-4 bg-white rounded-lg shadow-md"
+                            enctype="multipart/form-data">
+                            <div>
+                                <label for="eventname" class="block text-sm font-medium text-gray-700">Event
+                                    Name</label>
+                                <input type="text" id="eventname" name="eventname" value="Sample Event Name"
+                                    class="mt-1 block w-full border border-gray-300 rounded-md p-2" required />
+                            </div>
+
+                            <div>
+                                <label for="description"
+                                    class="block text-sm font-medium text-gray-700">Description</label>
+                                <textarea id="description" name="description"
+                                    class="mt-1 block w-full border border-gray-300 rounded-md p-2" rows="3"
+                                    required>Sample description here.</textarea>
+                            </div>
+
+                            <div>
+                                <label for="eventimg" class="block text-sm font-medium text-gray-700">Event
+                                    Image</label>
+                                <input type="file" id="eventimg" name="eventimg" accept="image/*"
+                                    class="mt-1 block w-full text-sm text-gray-700" />
+                            </div>
+
+                            <div>
+                                <label for="starttime" class="block text-sm font-medium text-gray-700">Start
+                                    Time</label>
+                                <input type="datetime-local" id="starttime" name="starttime" value="2024-10-01T10:00"
+                                    class="flatpickr mt-1 block w-full border border-gray-300 rounded-lg p-3 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                                    required />
+                            </div>
+
+                            <div>
+                                <label for="endtime" class="block text-sm font-medium text-gray-700">End Time</label>
+                                <input type="datetime-local" id="endtime" name="endtime" value="2024-10-01T12:00"
+                                    class="flatpickr mt-1 block w-full border border-gray-300 rounded-lg p-3 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                                    required />
+                            </div>
+
+                            <div class="container mx-auto ml-0">
+                                <label for="itemids" class="block text-sm font-medium text-gray-700">(Verified)
+                                    Items</label>
+                                <!-- Item Selection Section -->
+                                <div class="item-selection space-x-4 overflow-x-scroll">
+                                    <div class="flex w-[140rem] space-x-4">
+                                        <!-- Example of an item with image and checkbox -->
+                                        <div class="relative item cursor-pointer"
+                                            data-item-id="66e312240b23a0a6a091732c">
+                                            <input type="checkbox"
+                                                class="absolute top-2 left-2 z-10  item-checkbox custom-checkbox"
+                                                checked />
+                                            <img src="https://picsum.photos/160/160" alt="Item 1"
+                                                class="item-image border-2 border-blue-500 rounded-lg w-40 h-40 object-cover cursor-pointer" />
+                                        </div>
+                                        <div class="relative item cursor-pointer"
+                                            data-item-id="66f3919a1f4b630293b9863c">
+                                            <input type="checkbox"
+                                                class="absolute top-2 left-2 z-10 item-checkbox item-checkbox custom-checkbox" />
+                                            <img src="https://via.placeholder.com/160" alt="Item 2"
+                                                class="item-image border-2 border-transparent rounded-lg w-40 h-40 object-cover cursor-pointer" />
+                                        </div>
+                                        <!-- Add more items here... -->
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Submit Button for updating the event -->
+                            <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-md">Update
+                                Event</button>
+                        </form>
+                    </div>
+                </div>
+
+            </section>
+            <section>
+                <h3 class="text-xl font-semibold mb-2">Event details</h3>
+                <div class="events h-[40rem] page overflow-y-scroll border shadow-md bg-white">
+                    <div class="event px-2">
+                        <h3 class="text-xl font-semibold mb-2 ">Event 1</h3>
+                        <div class="bg-[#6d6d6d] p-6 rounded-lg shadow-md mx-3">
+                            <p>Description: Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+                            <p>Date: 2022-01-01</p>
+                            <p>Time: 10:00 AM</p>
+                            <div class="flex justify-between">
+                                <!-- Left-aligned buttons -->
+                                <button class="mt-4 px-4 py-2 bg-blue-500 text-white rounded-l-lg hover:bg-blue-600"
+                                    onclick="editEvent(1)">Edit</button>
+                                <button class="mt-4 px-4 py-2 bg-red-500 text-white rounded-r-lg hover:bg-red-600"
+                                    onclick="deleteEvent(1)">Delete</button>
+
+                                <!-- Right-aligned buttons -->
+                                <button
+                                    class="mt-4 px-4 py-2 bg-blue-500 text-white rounded-l-lg hover:bg-blue-600 ml-auto"
+                                    onclick="editEvent(1)">Start</button>
+                                <button class="mt-4 px-4 py-2 bg-red-500 text-white rounded-r-lg hover:bg-red-600"
+                                    onclick="deleteEvent(1)">Stop</button>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="event px-2">
+                        <h3 class="text-xl font-semibold mb-2 ">Event 1</h3>
+                        <div class="bg-[#6d6d6d] p-6 rounded-lg shadow-md mx-3">
+                            <p>Description: Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+                            <p>Date: 2022-01-01</p>
+                            <p>Time: 10:00 AM</p>
+                            <div class="flex justify-between">
+                                <!-- Left-aligned buttons -->
+                                <button class="mt-4 px-4 py-2 bg-blue-500 text-white rounded-l-lg hover:bg-blue-600"
+                                    onclick="editEvent(1)">Edit</button>
+                                <button class="mt-4 px-4 py-2 bg-red-500 text-white rounded-r-lg hover:bg-red-600"
+                                    onclick="deleteEvent(1)">Delete</button>
+
+                                <!-- Right-aligned buttons -->
+                                <button
+                                    class="mt-4 px-4 py-2 bg-blue-500 text-white rounded-l-lg hover:bg-blue-600 ml-auto"
+                                    onclick="editEvent(1)">Start</button>
+                                <button class="mt-4 px-4 py-2 bg-red-500 text-white rounded-r-lg hover:bg-red-600"
+                                    onclick="deleteEvent(1)">Stop</button>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="event px-2">
+                        <h3 class="text-xl font-semibold mb-2 ">Event 1</h3>
+                        <div class="bg-[#6d6d6d] p-6 rounded-lg shadow-md mx-3">
+                            <p>Description: Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+                            <p>Date: 2022-01-01</p>
+                            <p>Time: 10:00 AM</p>
+                            <div class="flex justify-between">
+                                <!-- Left-aligned buttons -->
+                                <button class="mt-4 px-4 py-2 bg-blue-500 text-white rounded-l-lg hover:bg-blue-600"
+                                    onclick="editEvent(1)">Edit</button>
+                                <button class="mt-4 px-4 py-2 bg-red-500 text-white rounded-r-lg hover:bg-red-600"
+                                    onclick="deleteEvent(1)">Delete</button>
+
+                                <!-- Right-aligned buttons -->
+                                <button
+                                    class="mt-4 px-4 py-2 bg-blue-500 text-white rounded-l-lg hover:bg-blue-600 ml-auto"
+                                    onclick="editEvent(1)">Start</button>
+                                <button class="mt-4 px-4 py-2 bg-red-500 text-white rounded-r-lg hover:bg-red-600"
+                                    onclick="deleteEvent(1)">Stop</button>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="event px-2">
+                        <h3 class="text-xl font-semibold mb-2 ">Event 1</h3>
+                        <div class="bg-[#6d6d6d] p-6 rounded-lg shadow-md mx-3">
+                            <p>Description: Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+                            <p>Date: 2022-01-01</p>
+                            <p>Time: 10:00 AM</p>
+                            <div class="flex justify-between">
+                                <!-- Left-aligned buttons -->
+                                <button class="mt-4 px-4 py-2 bg-blue-500 text-white rounded-l-lg hover:bg-blue-600"
+                                    onclick="editEvent(1)">Edit</button>
+                                <button class="mt-4 px-4 py-2 bg-red-500 text-white rounded-r-lg hover:bg-red-600"
+                                    onclick="deleteEvent(1)">Delete</button>
+
+                                <!-- Right-aligned buttons -->
+                                <button
+                                    class="mt-4 px-4 py-2 bg-blue-500 text-white rounded-l-lg hover:bg-blue-600 ml-auto"
+                                    onclick="editEvent(1)">Start</button>
+                                <button class="mt-4 px-4 py-2 bg-red-500 text-white rounded-r-lg hover:bg-red-600"
+                                    onclick="deleteEvent(1)">Stop</button>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </section>
+    </main>
+    <!-- Manage Accounts -->
+    <main class="ml-34 p-8 dashboard-section transition-all duration-500" id="users">
+        <section class="mt-4 transition-opacity duration-500 ease-in-out" id="ItemStatusPage">
+            <div class="h-[35rem] overflow-y-scroll page">
+                <table class="table-auto w-full text-left text-gray-500">
+                    <thead class="mb-1">
+                        <tr class="text-xs uppercase text-gray-400 sticky top-0 bg-gray-200">
+                            <th class="px-4 py-2">Username</th>
+                            <th class="px-4 py-2">Email</th>
+                            <th class="px-4 py-2">Role</th>
+                            <th class="px-4 py-2">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="itemsTableBody">
+                        <tr class="bg-white border-b">
+                            <td class="px-4 py-2">lex001</td>
+                            <td class="px-4 py-2">benedictosadolor@gmail.com</td>
+                            <td class="px-4 py-2">bidder</td>
+                            <td class="px-4 py-2">
+                                <button class="px-2 mx-1 py-2 bg-red-500 rounded-lg text-white text-center"
+                                    value="66f3919a1f4b630293b9863c"><span
+                                        class="material-symbols-outlined">warning</span>Send Warning</button>
+                            </td>
+                        </tr>
+
+
+                    </tbody>
+                </table>
             </div>
         </section>
+    </main>
+    <!-- Admin Management -->
+    <main class="ml-34 p-8 dashboard-section transition-all duration-500" id="Admins">
+        <section>
+            <section>
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-2xl font-semibold">Admin Management</h2>
+                    <button class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+                        onclick="openModal('Add Admin')">Add Admin</button>
+                </div>
+            </section>
+            <section id="register" class="w-full  justify-center grid md:grid-cols-2 grid-cols-1 ease-in">
+                <div
+                    class="bg-white p-10 rounded-lg shadow-2xl max-w-lg w-full animate-fade register-form-container overflow-auto max-h-50 flex flex-col">
 
-        <!-- Site Settings Section -->
-        <section id="site-settings" class="fade-in mt-16">
-            <h2 class="text-2xl font-semibold mb-4">Site Settings</h2>
-            <div class="bg-white p-6 rounded-lg shadow-md">
-                <h3 class="text-xl font-semibold mb-4">Update Site Settings</h3>
-                <label for="site-name" class="block font-semibold mb-2">Site Name</label>
-                <input id="site-name" type="text" class="w-full p-2 border border-gray-300 rounded-md mb-4"
-                    value="AuctionAce">
-                <label for="site-email" class="block font-semibold mb-2">Contact Email</label>
-                <input id="site-email" type="email" class="w-full p-2 border border-gray-300 rounded-md mb-4"
-                    value="contact@auctionace.com">
-                <button class="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-                    onclick="saveSettings()">Save Changes</button>
-            </div>
+                    <form id="register-form" class="space-y-6">
+                        <div id="regblock" class="space-y-6">
+                            <h1 class="text-4xl font-bold text-center text-[#bfa75d] mb-8">Register Admin!
+                            </h1>
+                            <div class="input-group relative">
+                                <input type="text" id="First-name" name="firstname"
+                                    class="w-full px-5 py-4 border border-[#838181] rounded-lg focus:ring focus:ring-[#bfa75d]"
+                                    placeholder=" " required>
+                                <label for="First-name">First Name</label>
+                            </div>
+                            <div class="input-group relative">
+                                <input type="text" id="Last-name" name="lastname"
+                                    class="w-full px-5 py-4 border border-[#838181] rounded-lg focus:ring focus:ring-[#bfa75d]"
+                                    placeholder=" " required>
+                                <label for="Last-name">Last Name</label>
+                            </div>
+                            <div class="input-group relative">
+                                <input type="text" id="Username" name="username"
+                                    class="w-full px-5 py-4 border border-[#838181] rounded-lg focus:ring focus:ring-[#bfa75d]"
+                                    placeholder=" " required>
+                                <label for="Username">UserName</label>
+                            </div>
+                            <div class="input-group relative">
+                                <input type="email" id="email" name="email"
+                                    class="w-full px-5 py-4 border border-[#838181] rounded-lg focus:ring focus:ring-[#bfa75d]"
+                                    placeholder=" " required>
+                                <label for="email">Email Address</label>
+                            </div>
+                            <div class="input-group relative">
+                                <input type="number" id="phonenumber" name="phoneNumber"
+                                    class="w-full px-5 py-4 border border-[#838181] rounded-lg focus:ring focus:ring-[#bfa75d]"
+                                    placeholder=" " required>
+                                <label for="phonenumber">Phone Number</label>
+                            </div>
+                            <div class="input-group relative">
+                                <input type="password" id="password" name="password" min="8"
+                                    class="w-full px-5 py-4 border border-[#838181] rounded-lg focus:ring focus:ring-[#bfa75d]"
+                                    placeholder=" " required>
+                                <label for="password">Password</label>
+                                <span id="togglepwd1" onclick="togglePasswordVisibility('password', 'togglepwd1')"
+                                    class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500 cursor-pointer">
+                                    👁️
+                                </span>
+                            </div>
+                            <div class="input-group relative">
+                                <input type="password" id="confirm-password" name="confirm-password" min="8"
+                                    class="w-full px-5 py-4 border border-[#838181] rounded-lg focus:ring focus:ring-[#bfa75d]"
+                                    placeholder=" " required>
+                                <label for="confirm-password">Confirm Password</label>
+                                <span id="togglepwd2"
+                                    onclick="togglePasswordVisibility('confirm-password', 'togglepwd2')"
+                                    class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500 cursor-pointer">
+                                    👁️
+                                </span>
+                            </div>
+                            <p id="error-message" class="text-red-600  text-center hidden"></p>
+                        </div>
+
+                        <input type="hidden" id="role" name="role" value='admin'>
+                        <div class="mt-6 flex justify-between">
+                            <a id="2ndreg"
+                                class="btn-back-hover  text-[#606060]  hover:text-[#bfa75d] text-center flex items-center text-lg font-semibold">Back</a>
+                            <button type="submit"
+                                class="w-1/2 btn-hover bg-[#bfa75d] text-white py-4 font-semibold">Sign
+                                Up</button>
+
+                        </div>
+
+
+
+                    </form>
+
+                </div>
+            </section>
+            <section>
+                <div class="flex flex-col">
+                    <div class="overflow-y-scroll h-[35rem]">
+                        <table class="table-auto w-full text-left text-gray-500">
+                            <thead class="mb-1">
+                                <tr class="text-xs uppercase text-gray-400 sticky top-0 bg-gray-200">
+                                    <th class="px-4 py-2">Name</th>
+                                    <th class="px-4 py-2">Email</th>
+                                    <th class="px-4 py-2">Role</th>
+                                </tr>
+                            </thead>
+                            <tbody id="adminsTableBody"></tbody>
+            </section>
         </section>
-
-    </div>
+    </main>
 
     <!-- Modal Template -->
-    <div id="modal" class="modal">
+    <section id="modal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
                 <h2 class="text-xl font-semibold" id="modal-title">Modal Title</h2>
@@ -221,15 +947,177 @@
                     onclick="closeModal()">Close</button>
             </div>
         </div>
-    </div>
+    </section>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/jwt-decode/build/jwt-decode.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <!-- <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script> -->
     <script>
-        function toggleSidebar() {
-            const sidebar = document.querySelector('.sidebar');
-            sidebar.classList.toggle('sidebar-collapsed');
-            sidebar.classList.toggle('sidebar-expanded');
+
+
+
+
+        // Register  an Admin
+
+        const usernameinput = document.getElementById('Username');
+
+        usernameinput.addEventListener('input', function () {
+            if (!this.value.startsWith('Admin')) {
+                this.value = 'Admin ' + this.value;
+            }
+        });
+        //=============  update modal ============
+
+        // const openmodal = document.getElementById('openModal');
+        const closemodal = document.getElementById('closeModal');
+        const Modal = document.getElementById('updateEventModal');
+
+        // Open modal
+        // openModal.addEventListener('click', () => {
+        //     Modal.classList.remove('hidden');
+        // });
+
+        // Close modal
+        closemodal.addEventListener('click', () => {
+            Modal.classList.add('hidden');
+        });
+
+        // Form submission
+        document.getElementById('updateEventForm').addEventListener('submit', (e) => {
+            e.preventDefault(); // Prevent default form submission
+            // Your logic to handle form submission and update event
+            alert('Event Updated Successfully!'); // Show confirmation for demo purposes
+            Modal.classList.add('hidden'); // Close the modal after submission
+        });
+
+
+        // =========  Sticky Headers =================  
+        let lastScrollTop = 0;  // Variable to store the last scroll position
+        let isNavigating = false;
+        window.addEventListener('scroll', function () {
+            if (!isNavigating) {
+                let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                let header = document.getElementById('dashboard-header');
+                if (scrollTop < lastScrollTop) {
+                    // Scroll up - show sticky navbar
+                    header.classList.add('sticky', 'top-0', 'z-50');
+                    header.style.transform = 'translateY(0)';
+                    header.style.opacity = 0.95;
+                } else if (scrollTop > lastScrollTop) {
+                    // Scroll down - hide sticky navbar
+                    header.style.transform = 'translateY(-100%)';
+                    header.style.opacity = '0';
+
+                }
+
+                lastScrollTop = scrollTop;
+            }
+        });
+
+        // ========  Section Navigation  =============
+        document.querySelectorAll('.scroll-to').forEach(link => {
+            link.addEventListener('click', function (event) {
+                isNavigating = true;
+                event.preventDefault();  // Prevent default link behavior
+
+                // Get the target section's id
+                const targetId = this.getAttribute('data-target');
+                console.log(targetId)
+                const targetSection = document.getElementById(targetId);
+
+                // Hide all sections
+                document.querySelectorAll('main').forEach(section => {
+                    section.classList.add('hidden');
+                });
+
+                // Remove 'hidden' class from the target section to show it
+                targetSection.classList.remove('hidden');
+                setActiveTab(document.getElementById(`${targetId}-tab`));
+
+
+                // Scroll to the target section with smooth behavior
+
+                targetSection.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+                let header = document.getElementById('dashboard-header');
+                header.classList.add('sticky', 'fixed', 'top-4', 'z-50');  // Ensure the header is sticky and visible
+                header.style.transform = 'translateY(0)';
+                header.style.opacity = 0.95;
+                setTimeout(() => {
+                    isNavigating = false; // Re-enable scroll-based header hiding
+                }, 500);
+            });
+        });
+
+
+
+        // ===============  Sidebar  ===============   
+        let toggle = document.querySelector(".toggle");
+        let navigation = document.querySelector(".navigation");
+        let mains = document.querySelectorAll('main');
+        let header = document.getElementById('dashboard-header');
+        console.log(header);
+
+        window.onload = () => {
+            console.log(header);
+            if (navigation.classList.contains("active")) {
+                mains.forEach(main => { main.style.marginLeft = '5rem'; }) // If the sidebar is collapsed
+                header.style.marginLeft = '7rem'; // If the sidebar is collapsed
+            } else {
+                mains.forEach(main => { main.style.marginLeft = '18rem'; })// If the sidebar is expanded
+                header.style.marginLeft = '20rem'; // If the sidebar is expanded
+            }
+            ;
+            setActiveTab(document.getElementById('dashboard-tab'));
+            document.querySelectorAll('main').forEach(section => {
+                section.classList.add('hidden');
+            });
+
+            // Remove 'hidden' class from the target section to show it
+            document.querySelector('.dashboard-section').classList.remove('hidden');
+        };
+
+        toggle.onclick = async () => {
+            navigation.classList.toggle("active");
+            // Check if the navigation is active, and adjust the dashboard margin
+            if (navigation.classList.contains("active")) {
+                mains.forEach(main => { main.style.marginLeft = '5rem'; }) // Collapsed sidebar margin
+                header.style.marginLeft = '7rem'; // Collapsed sidebar margin
+            } else {
+                mains.forEach(main => { main.style.marginLeft = '18rem'; }) // Full sidebar margin
+                header.style.marginLeft = '20rem'; // Full sidebar margin
+            }
+        };
+
+
+        // // Set active tab with glowing border and scaling effect
+        function setActiveTab(clickedElement) {
+            // Remove active class and custom styles from all tabs
+            document.querySelectorAll('.navigation ul li a').forEach(item => {
+                item.parentElement.classList.remove('hovered');
+                item.classList.remove('border-4', 'rounded-l-[50px]', 'border-[#c7ae6a]');
+
+            });
+
+            // Add active class and custom styles to the clicked tab
+            clickedElement.parentElement.classList.add('hovered');
+            clickedElement.classList.add('border-4', 'rounded-l-[50px]', 'border-[#c7ae6a]');
         }
+
+        // Example: Setting active tab on load (Replace with dynamic logic if needed)
+
+
+        // Add event listeners to all tabs for click events
+        document.querySelectorAll('.navigation ul li a').forEach(item => {
+            item.addEventListener('click', function () {
+                setActiveTab(this);
+            });
+        });
+
+
 
         function showModal(modalType) {
             const modal = document.getElementById('modal');
@@ -285,7 +1173,7 @@
         function rejectItem(itemId) {
             alert('Item ' + itemId + ' has been rejected.');
         }
-        // fetch user  details
+        // ==================  Fetch user  details  ====================
         var userId;
         document.addEventListener('DOMContentLoaded', () => {
             userId = getUserIdFromToken();
@@ -309,7 +1197,7 @@
                 }
 
                 const user = await response.json();
-                document.getElementById('username').textContent = user.username;
+                // document.getElementById('username').textContent = user.username;
             } catch (error) {
                 console.error('Error fetching user details:', error);
             }
@@ -343,6 +1231,64 @@
                 window.location.href = '/auth.html?section=login';
                 console.error('Error decoding token:', error);
                 return null; // Return null if decoding fails
+            }
+        }
+
+        // ===========  flatpickr and itemid selection =================    
+
+
+        flatpickr("#starttime", {
+            enableTime: true,
+            dateFormat: "Y-m-d H:i",
+            time_24hr: true,
+            minDate: new Date(),
+            onChange: function (selectedDates, dateStr, instance) {
+                // Get the selected start time
+                let startTime = selectedDates[0];
+
+                // Add 10 minutes to the selected start time
+                let minEndTime = new Date(startTime.getTime() + 30 * 60000);
+
+                // Update the End Time picker with the new minimum date
+                endTimePicker.set('minDate', minEndTime);
+            }
+        });
+
+        // Initialize End Time Flatpickr
+        const endTimePicker = flatpickr("#endtime", {
+            enableTime: true,
+            dateFormat: "Y-m-d H:i",
+            time_24hr: true,
+            minDate: new Date(), // Initially, minDate is the current date/time
+        });
+
+        // Array to store selected item IDs
+        let selectedItemIds = [];
+
+        document.querySelectorAll('.item').forEach(itemElement => {
+            const checkbox = itemElement.querySelector('.item-checkbox');
+            const image = itemElement.querySelector('.item-image');
+
+            image.addEventListener('click', function () {
+                checkbox.checked = !checkbox.checked;
+                toggleSelection(itemElement, checkbox.checked);
+            });
+
+            checkbox.addEventListener('change', function () {
+                toggleSelection(itemElement, checkbox.checked);
+            });
+        });
+
+        function toggleSelection(itemElement, isChecked) {
+            const itemId = itemElement.getAttribute('data-item-id');
+            const image = itemElement.querySelector('.item-image');
+
+            if (isChecked) {
+                image.classList.add('border-[#c7ae6a]');
+                selectedItemIds.push(itemId);
+            } else {
+                image.classList.remove('border-[#c7ae6a]');
+                selectedItemIds = selectedItemIds.filter(id => id !== itemId);
             }
         }
     </script>
