@@ -1,7 +1,6 @@
 const Item = require('../models/Item');
 const Event = require('../models/Event');
 const cloudinary = require('../cloudinaryConfig');
-const fs = require('fs');
 
 
 
