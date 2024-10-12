@@ -5,6 +5,8 @@ const authController = require('../controllers/authController');
 
 
 router.get('/', authController.authenticate, authController.authorize(['admin']), userController.getAllUsers);
+router.get('/admins', authController.authenticate, authController.authorize(['admin']), userController.getAdmins);
+router.post('/sendwarning/:id', authController.authenticate, authController.authorize(['admin']), userController.sendwarning);
 router.get('/logout', authController.logout);
 router.get('/profile', authController.authenticate, authController.getProfilePage);
 router.post('/', userController.createUser);

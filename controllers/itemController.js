@@ -1,5 +1,6 @@
 const Item = require('../models/Item');
 const Event = require('../models/Event');
+const User = require('../models/User');
 const cloudinary = require('../cloudinaryConfig');
 
 
@@ -175,7 +176,7 @@ exports.getUserItems = async (req, res) => {
 
 exports.getPendingItems = async (req, res) => {
     try {
-        const items = await Item.find({ status: 'pending' }); // Find items with matching user ID
+        const items = await Item.find({ status: 'pending' }).populate('Userid', 'username'); // Find items with matching user ID
 
         res.status(200).json({ success: true, data: items });
     } catch (error) {

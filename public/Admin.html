@@ -270,6 +270,16 @@
         .material-symbols-outlined {
             vertical-align: middle;
         }
+
+        .popup-hidden {
+            transform: translateY(-100%);
+            opacity: 0;
+        }
+
+        .popup-visible {
+            transform: translateY(0);
+            opacity: 1;
+        }
     </style>
 </head>
 
@@ -346,6 +356,11 @@
         <h1 class="text-3xl font-semibold">Admin Dashboard</h1>
         <p>Manage auctions, content, users, and site settings.</p>
     </header>
+
+    <div id="popupMessage"
+        class="fixed top-0 mx-auto w-full bg-green-500 text-white p-4 text-center shadow-md  popup-hidden z-50 transition-transform duration-500">
+        <span id="popupContent"></span>
+    </div>
 
     <!-- Main Dashboard Content -->
     <main class="ml-34 p-8 dashboard-section transition-all duration-500" id="dashboard">
@@ -445,6 +460,7 @@
                         <tr class="text-xs uppercase text-gray-400 sticky top-0 bg-gray-200">
                             <th class="px-4 py-2">ItemName</th>
                             <th class="px-4 py-2">Seller</th>
+                            <th class="px-4 py-2">Asking Price</th>
                             <th class="px-4 py-2">Status</th>
                             <th class="px-4 py-2">Action</th>
                         </tr>
@@ -629,14 +645,14 @@
                             <div>
                                 <label for="eventname" class="block text-sm font-medium text-gray-700">Event
                                     Name</label>
-                                <input type="text" id="eventname" name="eventname" value="Sample Event Name"
+                                <input type="text" id="updeventname" name="eventname" value="Sample Event Name"
                                     class="mt-1 block w-full border border-gray-300 rounded-md p-2" required />
                             </div>
 
                             <div>
                                 <label for="description"
                                     class="block text-sm font-medium text-gray-700">Description</label>
-                                <textarea id="description" name="description"
+                                <textarea id="upddescription" name="description"
                                     class="mt-1 block w-full border border-gray-300 rounded-md p-2" rows="3"
                                     required>Sample description here.</textarea>
                             </div>
@@ -644,21 +660,21 @@
                             <div>
                                 <label for="eventimg" class="block text-sm font-medium text-gray-700">Event
                                     Image</label>
-                                <input type="file" id="eventimg" name="eventimg" accept="image/*"
+                                <input type="file" id="updeventimg" name="eventimg" accept="image/*"
                                     class="mt-1 block w-full text-sm text-gray-700" />
                             </div>
 
                             <div>
                                 <label for="starttime" class="block text-sm font-medium text-gray-700">Start
                                     Time</label>
-                                <input type="datetime-local" id="starttime" name="starttime" value="2024-10-01T10:00"
+                                <input type="datetime-local" id="updstarttime" name="starttime" value="2024-10-01T10:00"
                                     class="flatpickr mt-1 block w-full border border-gray-300 rounded-lg p-3 shadow-sm focus:border-blue-500 focus:ring-blue-500"
                                     required />
                             </div>
 
                             <div>
                                 <label for="endtime" class="block text-sm font-medium text-gray-700">End Time</label>
-                                <input type="datetime-local" id="endtime" name="endtime" value="2024-10-01T12:00"
+                                <input type="datetime-local" id="updendtime" name="endtime" value="2024-10-01T12:00"
                                     class="flatpickr mt-1 block w-full border border-gray-300 rounded-lg p-3 shadow-sm focus:border-blue-500 focus:ring-blue-500"
                                     required />
                             </div>
@@ -810,7 +826,7 @@
                             <th class="px-4 py-2">Action</th>
                         </tr>
                     </thead>
-                    <tbody id="itemsTableBody">
+                    <tbody id="usersTableBody">
                         <tr class="bg-white border-b">
                             <td class="px-4 py-2">lex001</td>
                             <td class="px-4 py-2">benedictosadolor@gmail.com</td>
@@ -829,18 +845,19 @@
         </section>
     </main>
     <!-- Admin Management -->
-    <main class="ml-34 p-8 dashboard-section transition-all duration-500" id="Admins">
+    <main class="ml-34 p-8 dashboard-section transition-all duration-500 page" id="Admins">
         <section>
             <section>
                 <div class="flex justify-between items-center mb-4">
                     <h2 class="text-2xl font-semibold">Admin Management</h2>
-                    <button class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-                        onclick="openModal('Add Admin')">Add Admin</button>
+                    <button id="addAdminButton" class="px-4 py-2 bg-[#c7ae6a] text-white rounded hover:bg-blue-600">Add
+                        Admin</button>
                 </div>
             </section>
-            <section id="register" class="w-full  justify-center grid md:grid-cols-2 grid-cols-1 ease-in">
+            <section id="register"
+                class="w-full admin-reg justify-center  bg-black inset-0 bg-opacity-50 z-50 grid h-full  md:grid-cols-2 grid-cols-1 hidden  fixed items-center transition-all duration-500 ease-in-out  ">
                 <div
-                    class="bg-white p-10 rounded-lg shadow-2xl max-w-lg w-full animate-fade register-form-container overflow-auto max-h-50 flex flex-col">
+                    class="bg-white p-10 rounded-lg shadow-2xl z-50 max-w-lg w-full absolute left-1/2 transform -translate-x-1/2 ml-4 mx-auto my-auto animate-fade register-form-container transition-all duration-500 overflow-y-scroll page h-50 flex flex-col page  ">
 
                     <form id="register-form" class="space-y-6">
                         <div id="regblock" class="space-y-6">
@@ -902,7 +919,7 @@
 
                         <input type="hidden" id="role" name="role" value='admin'>
                         <div class="mt-6 flex justify-between">
-                            <a id="2ndreg"
+                            <a id="cancelAdminButton"
                                 class="btn-back-hover  text-[#606060]  hover:text-[#bfa75d] text-center flex items-center text-lg font-semibold">Back</a>
                             <button type="submit"
                                 class="w-1/2 btn-hover bg-[#bfa75d] text-white py-4 font-semibold">Sign
@@ -917,8 +934,8 @@
                 </div>
             </section>
             <section>
-                <div class="flex flex-col">
-                    <div class="overflow-y-scroll h-[35rem]">
+                <div class="flex flex-col ">
+                    <div class="overflow-y-scroll page h-[35rem]">
                         <table class="table-auto w-full text-left text-gray-500">
                             <thead class="mb-1">
                                 <tr class="text-xs uppercase text-gray-400 sticky top-0 bg-gray-200">
@@ -957,16 +974,6 @@
 
 
 
-
-        // Register  an Admin
-
-        const usernameinput = document.getElementById('Username');
-
-        usernameinput.addEventListener('input', function () {
-            if (!this.value.startsWith('Admin')) {
-                this.value = 'Admin ' + this.value;
-            }
-        });
         //=============  update modal ============
 
         // const openmodal = document.getElementById('openModal');
@@ -1059,10 +1066,9 @@
         let navigation = document.querySelector(".navigation");
         let mains = document.querySelectorAll('main');
         let header = document.getElementById('dashboard-header');
-        console.log(header);
+
 
         window.onload = () => {
-            console.log(header);
             if (navigation.classList.contains("active")) {
                 mains.forEach(main => { main.style.marginLeft = '5rem'; }) // If the sidebar is collapsed
                 header.style.marginLeft = '7rem'; // If the sidebar is collapsed
@@ -1070,14 +1076,16 @@
                 mains.forEach(main => { main.style.marginLeft = '18rem'; })// If the sidebar is expanded
                 header.style.marginLeft = '20rem'; // If the sidebar is expanded
             }
-            ;
             setActiveTab(document.getElementById('dashboard-tab'));
-            document.querySelectorAll('main').forEach(section => {
-                section.classList.add('hidden');
+            mains.forEach(main => {
+                main.classList.add('hidden');
             });
 
             // Remove 'hidden' class from the target section to show it
             document.querySelector('.dashboard-section').classList.remove('hidden');
+            fetchPendingItems();
+            fetchAllUsers();
+            fetchAdmins();
         };
 
         toggle.onclick = async () => {
@@ -1291,6 +1299,361 @@
                 selectedItemIds = selectedItemIds.filter(id => id !== itemId);
             }
         }
+
+        // ================  popup =============    
+        function showPopup(message) {
+            const popup = document.getElementById('popupMessage');
+            const popupContent = document.getElementById('popupContent');
+            console.log(message)
+            // Set the message content
+            if (message.includes('Failed')) { 
+                popup.classList.remove('bg-green-500');
+                popup.classList.add('bg-red-500');  
+            } else {
+                popup.classList.remove('bg-red-500');
+                popup.classList.add('bg-green-500'); 
+            }
+            popupContent.textContent = message;
+
+            // Show the popup with the transition effect
+            popup.classList.remove('popup-hidden');
+            popup.classList.add('popup-visible');
+
+            // Automatically hide the popup after 1 second
+            setTimeout(() => {
+                hidePopup();
+            }, 3000);
+        }
+
+        // Hide the popup when anywhere on the page is clicked
+        document.body.addEventListener('click', hidePopup);
+
+        // Hide the popup
+        function hidePopup() {
+            const popup = document.getElementById('popupMessage');
+            popup.classList.remove('popup-visible');
+            popup.classList.add('popup-hidden');
+        }
+
+        //===============  fetch  pending items/verify & unverify  item6=s  ================\
+        async function fetchPendingItems() {
+            try {
+                const response = await fetch('/items/items/pending');
+                const items = await response.json(); // Parse JSON response
+                console.log(items)
+
+                // Get the table body element
+                const itemsTableBody = document.getElementById('itemsTableBody');
+                itemsTableBody.innerHTML = ''; // Clear existing rows
+
+                // Create a row for each item
+                items.data.forEach(item => {
+                    const row = document.createElement('tr');
+                    row.className = 'bg-white border-b';
+
+                    row.innerHTML = `
+                <td class="px-4 py-2">${item.Itemname}</td>
+                <td class="px-4 py-2">${item.Userid.username}</td>
+                <td class="px-4 py-2">${item.AskingPrice}</td>
+                <td class="px-4 py-2">${item.status}</td>
+                <td class="px-4 py-2">
+                    <button class="px-2 mx-1 py-2 bg-inherit border-2 border-green rounded-lg text-green-500"
+                            value="${item._id}" onclick="verifyItem('${item._id}')">Verify</button>
+                    <button class="px-2 mx-1 py-2 bg-red-500 rounded-lg text-white"
+                            value="${item._id}" onclick="unverifyItem('${item._id}')">Unverify</button>
+                </td>
+            `;
+
+                    // Append the row to the table body
+                    itemsTableBody.appendChild(row);
+                });
+            } catch (error) {
+                console.error('Error fetching pending items:', error);
+            }
+        }
+
+        async function verifyItem(itemId) {
+            try {
+                const response = await fetch(`/items/${itemId}/verify`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log(data.message);
+                    // Optionally refresh the table or the data displayed
+                    fetchPendingItems(); // Re-fetch pending items to update the UI
+                } else {
+                    const errorData = await response.json();
+                    console.error('Error verifying item:', errorData.message);
+                }
+            } catch (error) {
+                console.error('Error verifying item:', error);
+            }
+        }
+
+        async function unverifyItem(itemId) {
+            try {
+                const response = await fetch(`/items/${itemId}/unverify`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log(data.message);
+                    // Optionally refresh the table or the data displayed
+                    fetchPendingItems(); // Re-fetch pending items to update the UI
+                } else {
+                    const errorData = await response.json();
+                    console.error('Error un-verifying item:', errorData.message);
+                }
+            } catch (error) {
+                console.error('Error un-verifying item:', error);
+            }
+        }
+
+        // ================= fetch all users & admins ================= 
+        async function fetchAllUsers() {
+            try {
+                // Fetch users from your API endpoint (excluding admins if needed)
+                const response = await fetch('/users');  // Adjust the API endpoint as needed
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const users = await response.json(); // Parse JSON response
+                console.log(users);  // Check the structure of the users data
+
+                const usersTableBody = document.getElementById('usersTableBody');
+                usersTableBody.innerHTML = '';  // Clear any existing rows
+
+                // Loop through the users array and create rows dynamically
+                users.forEach(user => {
+                    const row = document.createElement('tr');
+                    row.className = 'bg-white border-b';
+
+                    // Populate the row with user data and action buttons
+                    row.innerHTML = `
+                <td class="px-4 py-2">${user.username}</td>
+                <td class="px-4 py-2">${user.email}</td>
+                <td class="px-4 py-2">${user.role}</td>
+                <td class="px-4 py-2">
+                    <button class="px-2 mx-1 py-2 bg-red-500 rounded-lg text-white text-center"
+                            value="${user._id}" onclick="sendWarning('${user._id}')">
+                        <span class="material-symbols-outlined">warning</span>Send Warning
+                    </button>
+                </td>
+            `;
+
+                    // Append the row to the table body
+                    usersTableBody.appendChild(row);
+                });
+            } catch (error) {
+                console.error('Error fetching users:', error);
+            }
+        }
+
+        async function sendWarning(userId) {
+            try {
+                // Make an API request to send the warning email
+                console.log(userId)
+                const response = await fetch(`/users/sendwarning/${userId}`, {
+                    method: 'POST',
+                    credentials: "include",
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Error: ${response.statusText}`);
+                }
+
+                const data = await response.json();
+                console.log(data.message);
+                showPopup(data.message)  // Log the success message
+                // Optionally show an alert
+            } catch (error) {
+                console.error('Error sending warning email:', error);
+                showPopup('Failed to send warning email. Please try again.');  // Optionally show an error message
+            }
+        }
+
+
+        // Call the fetchUsers function when the page loads
+
+
+
+        async function fetchAdmins() {
+            try {
+                // Fetch users from your API endpoint (excluding admins if needed)
+                const response = await fetch('/users/admins');  // Adjust the API endpoint as needed
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const admins = await response.json(); // Parse JSON response
+                console.log(admins);  // Check the structure of the users data
+
+                const adminsTableBody = document.getElementById('adminsTableBody');
+                adminsTableBody.innerHTML = '';  // Clear any existing rows
+
+                // Loop through the users array and create rows dynamically
+                admins.forEach(admin => {
+                    const row = document.createElement('tr');
+                    row.className = 'bg-white border-b';
+
+                    // Populate the row with user data and action buttons
+                    row.innerHTML = `
+                <td class="px-4 py-2">${admin.username}</td>
+                <td class="px-4 py-2">${admin.email}</td>
+                <td class="px-4 py-2">${admin.role}</td>    `;
+
+                    // Append the row to the table body
+                    adminsTableBody.appendChild(row);
+                });
+            } catch (error) {
+                console.error('Error fetching users:', error);
+            }
+        }
+
+        // Call the fetchUsers function when the page loads
+        
+
+        // ============== Admin Registration =============================  
+        const regform = document.getElementById('register-form');
+        const password = document.getElementById('password');
+        const confirmPassword = document.getElementById('confirm-password');
+        const errorMessage = document.getElementById('error-message');
+
+
+
+        regform.addEventListener('submit', async function (event) {
+            event.preventDefault();
+            const selectedRole = document.getElementById('role').value;
+            if (validateregForm()) {
+                if (selectedRole) {
+                    document.getElementById('error-message').textContent = '';
+                    document.getElementById('error-message').classList.add('hidden');
+
+                    const formData = new FormData(event.target);
+                    const data = Object.fromEntries(formData.entries());
+                    console.log('DATA:', data);
+
+
+                    try {
+                        const response = await fetch('http://localhost:3000/users/register', {
+                            method: 'POST',
+                            credentials: 'include',
+                            headers: { 'Content-Type': 'application/json' }, // You also need headers
+                            body: JSON.stringify(data) // Send JSON string of form data
+                        });
+
+                        const result = await response.json();
+                        console.log('RESPONSE:', result);
+
+
+                        if (response.ok) {
+                            document.getElementById('error-message').classList.add('text-green-600', 'appear');
+                            document.getElementById('error-message').textContent = 'Registration Successful!';
+                            document.getElementById('error-message').classList.remove('text-red-600', 'hidden');
+                            document.querySelector('.admin-reg').classList.add('hidden');
+                            fetchAdmins()
+                        } else {
+                            document.getElementById('error-message').textContent = result.message;
+                            document.getElementById('error-message').classList.remove('hidden');
+
+                        }
+
+                    } catch (error) {
+                        console.log('Error:', error); // Log any error that occurs
+                    }
+
+                }
+                else {
+
+                    event.preventDefault();
+                    document.getElementById('error-message').textContent = 'Please select a role before submitting!';
+                    document.getElementById('error-message').classList.remove('hidden');
+                }
+            }
+
+
+        });
+        function togglePasswordVisibility(passwordFieldid, togglePwdIconid) {
+            const passwordField = document.getElementById(passwordFieldid);
+            const togglePwdIcon = document.getElementById(togglePwdIconid);
+
+            togglePwdIcon.addEventListener('click', function () {
+                if (passwordField.getAttribute('type') === 'password') {
+                    passwordField.setAttribute('type', 'text');
+                    this.textContent = '🙈';
+                } else {
+                    passwordField.setAttribute('type', 'password');
+                    this.textContent = '👁️';
+                }
+            })
+        }
+        function validateregForm() {
+            const firstName = document.getElementById('First-name').value.trim();
+            const lastName = document.getElementById('Last-name').value.trim();
+            const username = document.getElementById('Username').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const phoneNumber = document.getElementById('phonenumber').value.trim();
+            const password = document.getElementById('password').value.trim();
+            const confirmPassword = document.getElementById('confirm-password').value.trim();
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            const phoneRegex = /^[0-9]{11}$/;
+            const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
+
+            if (!firstName || !lastName || !username || !email || !phoneNumber || !password || !confirmPassword) {
+                document.getElementById('error-message').textContent = 'All fields must be filled out!';
+                document.getElementById('error-message').classList.remove('hidden');
+                return false;
+            }
+
+            if (!emailRegex.test(email)) {
+                document.getElementById('error-message').textContent = 'Please enter a valid email address!';
+                document.getElementById('error-message').classList.remove('hidden');
+                return false;
+            }
+
+            if (!phoneRegex.test(phoneNumber)) {
+                document.getElementById('error-message').textContent = 'Please enter a valid 11-digit phone number!';
+                document.getElementById('error-message').classList.remove('hidden');
+                return false;
+            }
+            if (!passwordRegex.test(password)) {
+                document.getElementById('error-message').textContent = 'Your password must be at least 8 characters and contain at least one character and number';
+                document.getElementById('error-message').classList.remove('hidden');
+                return false;
+            }
+            if (password !== confirmPassword) {
+                document.getElementById('error-message').textContent = 'Passwords do not match!';
+                document.getElementById('error-message').classList.remove('hidden');
+                return false;
+            }
+
+            return true;
+        }
+        document.getElementById('addAdminButton').onclick = function () {
+            const adminRegSection = document.querySelector('.admin-reg');
+            adminRegSection.classList.remove('hidden');  // Remove hidden class
+        };
+
+        document.getElementById('cancelAdminButton').onclick = function () {
+            const adminRegSection = document.querySelector('.admin-reg');
+            adminRegSection.classList.add('hidden');  // Add hidden class back
+        };
+
     </script>
 </body>
 
