@@ -57,7 +57,8 @@
                 <ul class="flex space-x-4 text-white">
                     <li><a href="/home.html" class="hover:underline text-[#606060] nav-link">Home</a></li>
                     <button onclick="openEditProfilePopup()"
-                        class="absolute top-4 right-4 text-[#606060] px-4 py-2 rounded-full shadow-md hover:shadow-xl bg-[#c7ae6a]"><i class="fa-thin fa-user-pen"></i>Edit</button>
+                        class="absolute top-4 right-4 text-[#606060] px-4 py-2 rounded-full shadow-md hover:shadow-xl bg-[#c7ae6a]"><i
+                            class="fa-thin fa-user-pen"></i>Edit</button>
                     <!-- Add more navbar items here -->
                 </ul>
             </nav>
@@ -125,39 +126,46 @@
 
                 <!-- Tabs -->
                 <div class="mt-8 w-full pr-[10rem]">
-                    <ul class="flex border-b-2 border-gray-200 text-sm">
+                    <ul class="flex  border-b-2 border-gray-200 text-sm">
                         <li id="AuctionHistory" onclick="setActiveTab('AuctionHistory')"
-                            class="mr-4 pb-2 cursor-pointer transition-colors duration-300 ease-in-out">Auction History</li>
-                        <li id="WonAuctions" onclick="setActiveTab('WonAuctions')"
-                            class="mr-4 pb-2 cursor-pointer transition-colors duration-300 ease-in-out">Won Auctions</li>
-                        <li id="Payments" onclick="setActiveTab('Payments')"
-                            class="pb-2 cursor-pointer transition-colors duration-300 ease-in-out">Payments</li>
+                            class="mr-4 pb-2 cursor-pointer transition-colors duration-300 ease-in-out">Auction History
+                        </li>
+                        <li id="WonItems" onclick="setActiveTab('WonItems')"
+                            class="mr-4 pb-2 cursor-pointer transition-colors duration-300 ease-in-out">Won Items</li>
+                        <li id="PaymentHistory" onclick="setActiveTab('PaymentHistory')"
+                            class="mr-4 pb-2 cursor-pointer transition-colors duration-300 ease-in-out">Payment History</li>
+                        <li id="Review" onclick="setActiveTab('Review')"
+                            class="pb-2 cursor-pointer transition-colors duration-300 ease-in-out">Review</li>
                     </ul>
-                    
+
 
                     <!-- Table Section -->
-                    <div class="mt-4">
-                        <table class="table-auto w-full text-left text-gray-500">
-                            <thead>
-                                <tr class="text-xs uppercase text-gray-400">
-                                    <th class="px-4 py-2">Name</th>
-                                    <th class="px-4 py-2">Size</th>
-                                    <th class="px-4 py-2">Location</th>
-                                    <th class="px-4 py-2">Status</th>
-                                    <th class="px-4 py-2">Last Modified</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr class="bg-white border-b"  id="itemsTableBody" class="max-h-[122px] overflow-y-scroll"></tr>>
+                    <div class="mt-4 transition-opacity duration-500 ease-in-out">
+                        <div class="h-[122px] overflow-y-scroll page">
+                            <table class="table-auto w-full text-left text-gray-500">
+                                <thead class="mb-1">
+                                    <tr class="text-xs uppercase text-gray-400 sticky top-0 bg-gray-200">
+                                        <th class="px-4 py-2">Name</th>
+                                        <th class="px-4 py-2">Size</th>
+                                        <th class="px-4 py-2">Location</th>
+                                        <th class="px-4 py-2">Status</th>
+                                        <th class="px-4 py-2">Last Modified</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="bg-white border-b" id="itemsTableBody"
+                                        class="max-h-[122px] overflow-y-scroll"></tr>>
                                     <td class="px-4 py-2">Moro Chickens Co.</td>
                                     <td class="px-4 py-2">40 Acres</td>
                                     <td class="px-4 py-2">Mando</td>
                                     <td class="px-4 py-2 text-red-500">Pending</td>
                                     <td class="px-4 py-2">16 Sept 2024</td>
-                                </tr>
-                                <!-- More rows as needed -->
-                            </tbody>
-                        </table>
+                                    </tr>
+                                    <!-- More rows as needed -->
+                                </tbody>
+                            </table>
+                        </div>
+
                     </div>
                 </div>
             </div>
@@ -321,12 +329,13 @@
 
             // Add the active border class to the selected tab
             const activeTab = document.getElementById(tabId);
+            console.log(activeTab)
             activeTab.classList.add('border-b-2', 'border-black');
         }
 
         // Call setActiveTab on page load to set the default active tab (optional)
         window.onload = function () {
-            setActiveTab('itemUpload'); // Set the default active tab
+            setActiveTab('AuctionHistory'); // Set the default active tab
         };
 
     </script>

@@ -522,7 +522,7 @@
         document.getElementById('uploadItemForm').addEventListener('submit', async (event) => {
             event.preventDefault();
             console.log('form submission  is ongoing')
-            const url = `http://localhost:3000/items`; // Replace with actual user ID if necessary
+            const url = `http://localhost:3000/items`; 
             const formData = new FormData(document.getElementById('uploadItemForm')); // Collect all form data
             formData.append('userId', userId);
             console.log([...formData]);
@@ -531,7 +531,7 @@
                     method: 'POST',
                     body: formData // Send the form data (including images)
                 });
-
+            
                 if (response.ok) {
                     const result = await response.json();
                     imageError.textContent = 'Item Successfully Submitted';
@@ -541,7 +541,8 @@
                     uploadItemPopup.classList.add('opacity-0');  // Hide the popup
                     setTimeout(() => {
                         uploadItemPopup.classList.add('hidden');
-                    }, 500);
+                    }, 1000);
+                    
                 } else {
                     const result = await response.json();
                     console.log(result.message)

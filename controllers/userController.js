@@ -99,9 +99,9 @@ exports.sendwarning = async (req, res) => {
 
         // Send the email using Nodemailer
         const mailOptions = {
-            from: 'auction.ace.0@gmail.com',   // Sender address (your email)
-            to: user.email,                 // Receiver address (user's email)
-            subject: 'Warning Notification', // Subject line
+            from: 'auction.ace.0@gmail.com',   
+            to: user.email,                 
+            subject: 'Warning Notification', 
             text: `Hello ${user.username},\n\nThis is a warning regarding your account activity.\nPlease contact support if you have any questions.\n\nBest regards,\nAuctionAce Team`  // Email content
         };
 

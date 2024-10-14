@@ -1,7 +1,8 @@
 const Event = require('../models/Event');
-
+const cloudinary = require('../cloudinaryConfig');
+const fs = require('fs');
 const cron = require('node-cron');
-const scheduledJobs={}; 
+const scheduledJobs = {};
 // Get all events
 exports.getAllEvents = async (req, res) => {
     try {
@@ -28,23 +29,73 @@ exports.getEventById = async (req, res) => {
 
 // Create a new event
 exports.createEvent = async (req, res) => {
-    const { Eventname, Description,Eventimg, StartTime, EndTime, status, ItemIDs, createdby } = req.body;
+    const UserId = req.user ? req.user.id : req.body.userId;
+    const { Eventname, Description, StartTime, EndTime, ItemIDs } = req.body;
+    console.log(req.body);  
+    console.log(req.files)
 
     try {
-        const newEvent = new Event({
-            Eventname,
-            Description,
-            Eventimg,   
-            StartTime,
-            EndTime,
-            status,
-            ItemIDs,
-            createdby
-        });
+        if (req.files.eventimg.length = 0) {
 
-        await newEvent.save();
-        scheduleEvent(newEvent);
-        res.status(201).json({ message: 'Event created successfully', newEvent });
+            return res.status(400).json({
+                success: false,
+                message: 'You must upload an image.',
+            });
+        }
+        let uploadedImages;
+
+        try {
+            const files = Array.isArray(req.files.eventimg) ? req.files.eventimg : [req.files.eventimg];
+            // Upload each image to Cloudinary
+            console.log(files);
+
+            for (const file of files) {
+                console.log(file.tempFilePath)
+
+                if (!fs.existsSync(file.tempFilePath)) {
+                    console.error('Temp file does not exist:', file.tempFilePath);
+                    continue;
+                }
+
+                const result = await cloudinary.uploader.upload(file.tempFilePath, {
+                    transformation: [
+                        { width: 1000, crop: 'scale' },   // Resize and crop
+                        { quality: 'auto:best' },              // Adjust quality
+                        { fetch_format: 'auto' }          // Convert format
+                    ],
+                    folder: 'event_images' // Folder in Cloudinary
+                });
+
+                console.log('how  are  you  today')
+                uploadedImages = result.secure_url; // Push the secure URL to the array
+                console.log(uploadedImages)
+            }
+
+
+
+            const newEvent = new Event({
+                Eventname,
+                Description,
+                Eventimg: uploadedImages ,
+                StartTime,
+                EndTime,
+                status:'Upcoming',
+                ItemIDs,
+                createdby: UserId
+            });
+
+            await newEvent.save();
+            scheduleEvent(newEvent);
+            res.status(201).json({ message: 'Event created successfully', newEvent });
+        }
+        catch (error) {
+            console.error('Cloudinary Upload Failed:', error);
+            return res.status(500).json({
+                success: false,
+                message: 'Image upload to Cloudinary failed',
+                error: error.message
+            });
+        }
     } catch (error) {
         res.status(400).json({ message: 'Failed to create event', error });
     }
@@ -68,7 +119,7 @@ const scheduleEvent = (event) => {
             console.log(`Starting event ${_id}`);
             await startEvent(_id);
         }
-        if (now >= endTimeDate) {
+        else if (now >= endTimeDate) {
             console.log(`Closing event ${_id}`);
             await closeEvent(_id);
         }
@@ -102,18 +153,70 @@ const closeEvent = async (eventId) => {
 
 // Update an event
 exports.updateEvent = async (req, res) => {
+    const UserId = req.user ? req.user.id : req.body.userId;
     const id = req.params.id;
-    const { Eventname, Description, StartTime, EndTime, status, ItemIDs, createdby } = req.body;
+    const { Eventname, Description, StartTime, EndTime, ItemIDs } = req.body;
 
+
+    const event = await Event.findById(req.params.id)
+
+    let uploadedImages;
+    let updateData;
     try {
-        const updatedEvent = await Event.findByIdAndUpdate(
-            id,
-            { Eventname, Description,Eventimg, StartTime, EndTime, status, ItemIDs, createdby },
-            { new: true } // To return the updated document
-        );
+        if (req.files && req.files.eventimg) {
+            const files = Array.isArray(req.files.eventimg) ? req.files.eventimg : [req.files.eventimg];
+
+            for (const file of files) {
+
+
+                const result = await cloudinary.uploader.upload(file.tempFilePath, {
+                    transformation: [
+                        { width: 1000, crop: 'scale' },
+                        { quality: 'auto:best' },
+                        { fetch_format: 'auto' }
+                    ],
+                    folder: 'UpdEvent_images' // Folder in Cloudinary
+                });
+
+                uploadedImages=result.secure_url; // Push the secure URL to the array
+            }
+            const updateEventData = {
+                Eventname,
+                Description,
+                Eventimg:  uploadedImages,
+                StartTime,
+                EndTime,
+                status: 'Upcoming', 
+                ItemIDs, 
+                createdby: UserId,
+                
+            };
+            updateData= updateEventData
+        }
+        else{
+            const updateEventData = {
+                Eventname,
+                Description,
+                Eventimg:  event.Eventimg,
+                StartTime,
+                EndTime,
+                status: 'Upcoming', 
+                ItemIDs, 
+                createdby: UserId,
+                
+            };
+            updateData= updateEventData  
+            
+        }
+        console.log(updateData); 
+        console.log(id);    
+        const updatedEvent = await Event.findByIdAndUpdate(id,  updateData,  { new: true });
+        console.log(updatedEvent)
+        
         if (!updatedEvent) {
             return res.status(404).json({ message: 'Event not found' });
         }
+        
         scheduleEvent(updatedEvent);
         res.status(200).json({ message: 'Event updated successfully', updatedEvent });
     } catch (error) {
@@ -145,12 +248,14 @@ exports.CloseEvent = async (req, res) => {
     } catch (err) {
         res.status(500).json({ message: err.message });
     }
-};    
+};
 exports.StartEvent = async (req, res) => {
     const id = req.params.id;
+    console.log(id)
     try {
         const startedEvent = await Event.findByIdAndUpdate(id, { status: 'Ongoing' }, { new: true });
         if (!startedEvent) {
+            console.log('Event not found');
             return res.status(404).json({ message: 'Item not found' });
         }
         res.status(200).json({ message: 'Item verified successfully', startedEvent });
@@ -160,9 +265,9 @@ exports.StartEvent = async (req, res) => {
 };
 exports.getRandomEvents = async (req, res) => {
     try {
-      const randomEvents = await Event.aggregate([{ $sample: { size: 3 } }]); // Retrieve 3 random events
-      res.status(200).json(randomEvents);
+        const randomEvents = await Event.aggregate([{ $sample: { size: 3 } }]); // Retrieve 3 random events
+        res.status(200).json(randomEvents);
     } catch (error) {
-      res.status(500).json({ message: 'Failed to fetch random events', error });
+        res.status(500).json({ message: 'Failed to fetch random events', error });
     }
-  };
+};

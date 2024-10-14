@@ -2,6 +2,7 @@ const Item = require('../models/Item');
 const Event = require('../models/Event');
 const User = require('../models/User');
 const cloudinary = require('../cloudinaryConfig');
+const fs = require('fs');   
 
 
 
@@ -125,7 +126,7 @@ exports.updateItem = async (req, res) => {
                         { quality: 'auto:best' },
                         { fetch_format: 'auto' }
                     ],
-                    folder: 'item_images' // Folder in Cloudinary
+                    folder: 'Upditem_images' // Folder in Cloudinary
                 });
 
                 uploadedImages.push(result.secure_url); // Push the secure URL to the array
@@ -176,7 +177,7 @@ exports.getUserItems = async (req, res) => {
 
 exports.getPendingItems = async (req, res) => {
     try {
-        const items = await Item.find({ status: 'pending' }).populate('Userid', 'username'); // Find items with matching user ID
+        const items = await Item.find({ status: 'pending' }).populate('Userid', 'username'); 
 
         res.status(200).json({ success: true, data: items });
     } catch (error) {
@@ -231,16 +232,14 @@ exports.getVerifiedItems = async (req, res) => {
         const verifiedItems = await Item.find({ status: 'verified' });
 
         // Step 2: Retrieve all events and get their assigned ItemIDs
-        const events = await Event.find({}, 'ItemIDs'); // Retrieve only ItemIDs from events
-
+        const events = await Event.find({}, 'ItemIDs'); // Retrieve only ItemIDs from events 
         // Step 3: Extract all assigned ItemIDs into a single array
         const assignedItemIds = events.reduce((acc, event) => {
-            return acc.concat(event.ItemIDs); // Accumulate all ItemIDs into one array
+            return acc.concat(event.ItemIDs.map(id => id.toString())); // Accumulate all ItemIDs into one array
         }, []);
 
         // Step 4: Filter verified items to exclude the ones that are assigned to an event
         const availableItems = verifiedItems.filter(item => !assignedItemIds.includes(item._id.toString()));
-
         // Step 5: Return the available verified items
         res.status(200).json({ success: true, data: availableItems });
     } catch (error) {
@@ -249,46 +248,7 @@ exports.getVerifiedItems = async (req, res) => {
     }
 };
 
-exports.getEventForUpdate = async (req, res) => {
-    try {
-        const eventId = req.params.id;
 
-        // Step 1: Retrieve the event being updated
-        const event = await Event.findById(eventId).populate('ItemIDs');
-
-        if (!event) {
-            return res.status(404).json({ success: false, message: 'Event not found' });
-        }
-
-        // Step 2: Retrieve all verified items
-        const verifiedItems = await Item.find({ status: 'verified' });
-
-        // Step 3: Retrieve all events (excluding the current event being updated)
-        const otherEvents = await Event.find({ _id: { $ne: eventId } }, 'ItemIDs'); // Fetch ItemIDs excluding the current event
-
-        // Step 4: Extract all ItemIDs already assigned to other events
-        const assignedItemIds = otherEvents.reduce((acc, otherEvent) => {
-            return acc.concat(otherEvent.ItemIDs);
-        }, []);
-
-        // Step 5: Filter verified items to get unassigned items (not in any other event)
-        const availableItems = verifiedItems.filter(item => !assignedItemIds.includes(item._id.toString()));
-
-        // Step 6: Send response with event-specific items (checked) and available items (unchecked)
-        res.status(200).json({
-            success: true,
-            data: {
-                event,              // Event data including previously assigned items
-                assignedItems: event.ItemIDs, // Pre-selected items for the event
-                availableItems      // Free, unassigned items for the selection
-            }
-        });
-
-    } catch (error) {
-        console.error('Error fetching event for update:', error);
-        res.status(500).json({ success: false, message: 'Failed to retrieve event for update', error: error.message });
-    }
-};
 
 
 
