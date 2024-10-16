@@ -6,8 +6,8 @@ const authController = require('../controllers/authController');
 router.get('/', authController.authenticate, reviewController.getAllReviews);
 router.get('/:id', authController.authenticate, reviewController.getReviewById);
 router.post('/', authController.authenticate, reviewController.createReview);
-router.put('/:id', authController.authenticate, reviewController.updateReview);
-router.delete('/:id', authController.authenticate, reviewController.deleteReview);
+router.put('/:id', authController.authenticate, reviewController.getRandomReviews);
+
 
 
 module.exports = router;

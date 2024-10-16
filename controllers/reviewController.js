@@ -25,13 +25,12 @@ exports.getReviewById = async (req, res) => {
 
 // Create a new review
 exports.createReview = async (req, res) => {
-    const { review_text, rating, itemId, userId } = req.body;
-
+    const { review_text, rating, userId } = req.body;
+    console.log(req.body);
     try {
         const newReview = new Review({
             review_text,
             rating,
-            itemId,
             userId,
         });
         await newReview.save();
@@ -41,32 +40,11 @@ exports.createReview = async (req, res) => {
     }
 };
 
-// Update an existing review
-exports.updateReview = async (req, res) => {
+exports.getRandomReviews = async (req, res) => {
     try {
-        const updatedReview = await Review.findByIdAndUpdate(
-            req.params.id,
-            req.body,
-            { new: true, runValidators: true }
-        );
-        if (!updatedReview) {
-            return res.status(404).json({ message: 'Review not found' });
-        }
-        res.status(200).json({ message: 'Review updated successfully', updatedReview });
+        const randomReviews = await Review.aggregate([{ $sample: { size: 2 } }]); // Retrieve 3 random events
+        res.status(200).json(randomReviews);
     } catch (error) {
-        res.status(500).json({ message: 'Failed to update review', error });
-    }
-};
-
-// Delete a review
-exports.deleteReview = async (req, res) => {
-    try {
-        const deletedReview = await Review.findByIdAndDelete(req.params.id);
-        if (!deletedReview) {
-            return res.status(404).json({ message: 'Review not found' });
-        }
-        res.status(200).json({ message: 'Review deleted successfully' , deletedReview});
-    } catch (error) {
-        res.status(500).json({ message: 'Failed to delete review', error });
+        res.status(500).json({ message: 'Failed to fetch random reviews', error });
     }
 };

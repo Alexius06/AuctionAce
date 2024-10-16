@@ -41,40 +41,50 @@ exports.getUserbids = async (req, res) => {
 exports.getHighestBidsForItem = async (req, res) => {
     try {
         // Fetch all bids
+        const UserId = req.params.id || req.user.id;
         console.log("requser");
-        // const allBids = await Bid.find();
+        const allBids = await Bid.find();
 
-        // // Group bids by itemId
-        // const groupedBids = allBids.reduce((groups, bid) => {
-        //     if (!groups[bid.itemId]) groups[bid.itemId] = [];
-        //     groups[bid.itemId].push(bid);
-        //     return groups;
-        // }, {});
+        // Group bids by itemId
+        const groupedBids = allBids.reduce((groups, bid) => {
+            if (!groups[bid.itemId]) groups[bid.itemId] = [];
+            groups[bid.itemId].push(bid);
+            return groups;
+        }, {});
+        console.log( Object.keys(groupedBids).length)
 
-        // const Wonitems = [];
+        const Wonitems = [];
 
-        // // Iterate through each group and find the highest bid
-        // for (const itemId in groupedBids) {
-        //     const bidsForItem = groupedBids[itemId];
+        // Iterate through each group and find the highest bid
+        for (const itemId in groupedBids) {
+            const bidsForItem = groupedBids[itemId];
 
-        //     // Find the highest bid inNaira
-        //     const highestBid = bidsForItem.reduce((max, bid) =>
-        //         parseFloat(bid.bidInNaira) > parseFloat(max.bidInNaira) ? bid : max
-        //     );
+            // Find the highest bid inNaira
+            let highestBid = bidsForItem.reduce((max, bid) =>
+                parseFloat(bid.bidInNaira) > parseFloat(max.bidInNaira) ? bid : max
+            );
+            console.log(highestBid.itemId);
+            
+            // Populate with item details
+            const item = await Item.findById(highestBid.itemId)
+            if (!item){
+                console.log("Item is missing");
+                continue;
+            };
+            console.log(item)
+            highestBid = {
+                ...highestBid, // Spread the existing fields of highestBid
+                itemName: item.Itemname,
+                itemImg: item.Itemimgs[0] // Adding the new fields
+            };
 
-        //     // Populate with item details
-        //     const item = await Item.find({ _id: itemId });
-        //     if (!item) continue;
-
-        //     highestBid.itemName = item.name;
-        //     highestBid.itemImg = item.images[0];
-
-        //     console.log(highestBid);
-        //     // Compare userId with req.user.id
-        //     if (highestBid.userId.toString() === req.user.id.toString()) {
-        //         Wonitems.push(highestBid);
-        //     }
-        //}
+            console.log(highestBid._doc.userId);
+            console.log(UserId)
+            // Compare userId with req.user.id
+            if (highestBid._doc.userId.toString() === UserId) {
+                Wonitems.push(highestBid);
+            }
+        }
 
         // Send the highest bids for this user
         res.json({ data: Wonitems });

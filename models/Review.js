@@ -2,12 +2,6 @@ const mongoose = require('mongoose');
 const schema = mongoose.Schema;
 
 const ReviewSchema = new schema({
-    // id: {
-    //     type: Number,
-    //     required: true,
-    //     unique: true,
-          
-    // },
     review_text: {
         type: String,
         minlength: 10,
@@ -17,11 +11,6 @@ const ReviewSchema = new schema({
         type: Number,
         enum: [1, 2, 3, 4, 5],
         required: true,        
-    },
-    itemId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Item',
-        required: true,
     },
     userId: {
         type: mongoose.Schema.Types.ObjectId,

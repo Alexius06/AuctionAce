@@ -24,7 +24,7 @@ exports.getAdmins = async (req, res) => {
         res.status(200).json(users);
     } catch (err) {
         res.status(500).json({ message: err.message });
-    }
+    } 
 };
 
 // Get a single user by ID
