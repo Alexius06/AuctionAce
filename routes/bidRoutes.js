@@ -6,7 +6,12 @@ const authController = require('../controllers/authController');
 // Protected routes
 router.get('/', authController.authenticate, bidController.getAllBids);
 router.get('/:id', authController.authenticate, bidController.getBidById);
+router.get('/user/:id', authController.authenticate, bidController.getUserbids);  
+router.delete('/:id', authController.authenticate, authController.authorize(['bidder','admin']), bidController.deleteBid);  
+router.get('/wonitems',()=>{
+    console.log('   won items   received ');
+}, authController.authenticate, bidController.getHighestBidsForItem);        
 router.post('/', authController.authenticate, authController.authorize(['bidder']), bidController.createBid);
-router.delete('/:id', authController.authenticate, authController.authorize(['bidder','admin']), bidController.deleteBid);
+
 
 module.exports = router;

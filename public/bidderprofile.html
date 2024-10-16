@@ -121,8 +121,20 @@
                     </p>
                 </div>
 
-                <!-- Edit Button -->
-
+                <!-- coming soon -->
+                <div id="comingSoonModal"
+                    class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden">
+                    <div class="bg-white p-6 rounded-lg shadow-lg max-w-sm w-full">
+                        <h2 class="text-lg font-semibold text-gray-900 mb-4">Coming Soon!</h2>
+                        <p class="text-gray-700 mb-6">Payment functionality will be available soon.</p>
+                        <div class="flex justify-end">
+                            <button onclick="closeComingSoon()"
+                                class="px-4 py-2 bg-[#c7ae6a] text-white rounded hover:bg-[#b08f5d] transition">
+                                Close
+                            </button>
+                        </div>
+                    </div>
+                </div>
 
                 <!-- Tabs -->
                 <div class="mt-8 w-full pr-[10rem]">
@@ -133,39 +145,57 @@
                         <li id="WonItems" onclick="setActiveTab('WonItems')"
                             class="mr-4 pb-2 cursor-pointer transition-colors duration-300 ease-in-out">Won Items</li>
                         <li id="PaymentHistory" onclick="setActiveTab('PaymentHistory')"
-                            class="mr-4 pb-2 cursor-pointer transition-colors duration-300 ease-in-out">Payment History</li>
+                            class="mr-4 pb-2 cursor-pointer transition-colors duration-300 ease-in-out">Payment History
+                        </li>
                         <li id="Review" onclick="setActiveTab('Review')"
                             class="pb-2 cursor-pointer transition-colors duration-300 ease-in-out">Review</li>
                     </ul>
 
 
                     <!-- Table Section -->
-                    <div class="mt-4 transition-opacity duration-500 ease-in-out">
+                    <div class="mt-4  transition-opacity duration-500 ease-in-out container">
                         <div class="h-[122px] overflow-y-scroll page">
                             <table class="table-auto w-full text-left text-gray-500">
                                 <thead class="mb-1">
                                     <tr class="text-xs uppercase text-gray-400 sticky top-0 bg-gray-200">
-                                        <th class="px-4 py-2">Name</th>
-                                        <th class="px-4 py-2">Size</th>
-                                        <th class="px-4 py-2">Location</th>
-                                        <th class="px-4 py-2">Status</th>
-                                        <th class="px-4 py-2">Last Modified</th>
+                                        <th class="px-4 py-2">Auction Item</th>
+                                        <th class="px-4 py-2">Bid Amount</th>
+                                        <th class="px-4 py-2">Bid Date</th>
                                     </tr>
                                 </thead>
-                                <tbody>
-                                    <tr class="bg-white border-b" id="itemsTableBody"
-                                        class="max-h-[122px] overflow-y-scroll"></tr>>
-                                    <td class="px-4 py-2">Moro Chickens Co.</td>
-                                    <td class="px-4 py-2">40 Acres</td>
-                                    <td class="px-4 py-2">Mando</td>
-                                    <td class="px-4 py-2 text-red-500">Pending</td>
-                                    <td class="px-4 py-2">16 Sept 2024</td>
+                                <tbody id="auctionHistoryTableBody">
+                                    <!-- Example Row -->
+                                    <tr class="hover:bg-gray-50">
+                                        <td class="px-4 py-2">Vintage Vase</td>
+                                        <td class="px-4 py-2">$150</td>
+                                        <td class="px-4 py-2">2024-10-10 14:30</td>
                                     </tr>
-                                    <!-- More rows as needed -->
+                                    <tr class="hover:bg-gray-50">
+                                        <td class="px-4 py-2">Antique Clock</td>
+                                        <td class="px-4 py-2">$200</td>
+                                        <td class="px-4 py-2">2024-10-11 10:15</td>
+                                    </tr>
+                                    <!-- More rows will be dynamically generated here -->
                                 </tbody>
                             </table>
                         </div>
+                    </div>
 
+
+                    <div class="mt-4 transition-opacity duration-500 ease-in-out container">
+                        <div class="h-[122px] overflow-y-scroll page">
+                            <table class="table-auto w-full text-left text-gray-500">
+                                <thead class="mb-1">
+                                    <tr class="text-xs uppercase text-gray-400 sticky top-0 bg-gray-200">
+                                        <th class="px-4 text-center py-2">Auction Item</th>
+                                        <th class="px-4 text-center py-2">Payments</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="WonitemsBody">
+                                    <!-- Dynamic rows will be generated here -->
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -335,9 +365,90 @@
 
         // Call setActiveTab on page load to set the default active tab (optional)
         window.onload = function () {
-            setActiveTab('AuctionHistory'); // Set the default active tab
+            setActiveTab('AuctionHistory');
+            fetchAuctionHistory();
         };
 
+        async function fetchAuctionHistory() {
+            try {
+                const response = await fetch(`/bids/user/${userId}`); // API endpoint for fetching bids history
+                const auctionHistory = await response.json();
+
+                const tableBody = document.getElementById('auctionHistoryTableBody');
+                tableBody.innerHTML = ''; // Clear existing rows
+
+                auctionHistory.data.forEach(Bid => {
+                    const row = document.createElement('tr');
+                    row.classList.add('hover:bg-gray-50');
+                    row.innerHTML = `
+                <td class="px-4 py-2 border">${Bid.itemId.Itemname}</td>
+                <td class="px-4 py-2 border">${Bid.bidAmount}</td>
+                <td class="px-4 py-2 border">${new Date(Bid.createdAt).toLocaleString()}</td>
+            `;
+                    tableBody.appendChild(row);
+                });
+            } catch (error) {
+                console.error('Error fetching auction history:', error);
+            }
+        }
+
+        //
+
+
+        async function fetchwonitems() {
+            fetch('/bids/wonitems', {
+                method: 'GET',
+                credentials: 'include', 
+
+            })
+                .then(res => res.json())
+                .then(data => {
+                    const wonItemsBody = document.getElementById('WonitemsBody');
+
+                    // Clear any existing rows
+                    wonItemsBody.innerHTML = '';
+                    console.log(data);  
+
+                    if (data.length === 0) {
+                        wonItemsBody.innerHTML = '<tr><td colspan="2" class="text-center py-4">No won items yet!</td></tr>';
+                    } else {
+                        data.highestBids.forEach(bid => {
+                            const row = document.createElement('tr');
+                            row.classList.add('hover:bg-gray-50');
+
+                            // Create the item cell with image and name
+                            const itemCell = document.createElement('td');
+                            itemCell.classList.add('px-4', 'py-2');
+                            itemCell.innerHTML = `
+                    <div class="flex items-center">
+                        <img src="${bid.itemImg}" alt="${bid.itemName}" class="w-12 h-12 mr-2 object-cover" />
+                        <span>${bid.itemName}</span>
+                    </div>
+                `;
+
+                            // Create the payment button cell
+                            const paymentCell = document.createElement('td');
+                            paymentCell.classList.add('px-4', 'py-2');
+                            const paymentButton = document.createElement('button');
+                            paymentButton.classList.add('bg-blue-500', 'text-white', 'px-4', 'py-2', 'rounded');
+                            paymentButton.innerText = 'Make Payment';
+                            paymentButton.onclick = () => showComingSoonModal(); // Function to show the coming soon modal
+
+                            paymentCell.appendChild(paymentButton);
+
+                            // Append cells to the row
+                            row.appendChild(itemCell);
+                            row.appendChild(paymentCell);
+
+                            // Append the row to the table body
+                            wonItemsBody.appendChild(row);
+                        });
+                    }
+                })
+                .catch(err => console.error(err));
+
+        }
+        fetchwonitems()
     </script>
 </body>
 

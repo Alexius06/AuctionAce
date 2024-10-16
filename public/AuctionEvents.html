@@ -156,6 +156,19 @@
         class=" event-button px-2 py-1 border bg-gray-300 hover:bg-[#c7ae6a] text-sm text-gray-900 font-semibold focus:outline-none">Ended</button>
     </div>
 
+
+    <!-- Modal Structure -->
+    <div id="messageModal" class="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50 hidden">
+      <div class="bg-white p-6 rounded-lg shadow-lg max-w-sm w-full">
+        <p id="modalMessage" class="text-gray-700 mb-6"></p>
+        <div class="flex justify-end">
+          <button id="closeModalButton" class="px-4 py-2 bg-[#c7ae6a] text-white rounded hover:bg-[#b08f5d] transition">
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
+
     <!-- Event Grid -->
     <div id="event-grid" class="grid grid-cols-1 md:grid-cols-3 gap-8 animate-fade1">
       <!-- Sample Event Item -->
@@ -282,7 +295,33 @@
     }
 
 
-    document.addEventListener('DOMContentLoaded', async () => {
+    function formatTimeDuration(duration) {
+      const hours = Math.floor(duration / (1000 * 60 * 60));
+      const minutes = Math.floor((duration % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((duration % (1000 * 60)) / 1000);
+
+      return `${hours}h ${minutes}m ${seconds}s`;
+    }
+
+    function showModal(message) {
+      // Get the modal and message elements
+      const modal = document.getElementById('messageModal');
+      const modalMessage = document.getElementById('modalMessage');
+
+      // Set the message inside the modal
+      modalMessage.textContent = message;
+      
+      // Display the modal by removing the 'hidden' class
+      modal.classList.remove('hidden');
+
+      // Add event listener to close button to hide the modal
+      document.getElementById("closeModalButton").addEventListener('click', () => {
+        modal.classList.add('hidden');
+      });
+    }
+
+
+    async function fetchEvents() {
       const eventGrid = document.getElementById('event-grid');
       let currentEventId = null;
       eventGrid.textContent = '';
@@ -292,22 +331,20 @@
         const events = await response.json(); // Parse JSON response
 
         // Loop through each event and create corresponding divs
-        events.forEach(event => {
+        events.forEach(async event => {
           const eventItem = document.createElement('div');
           eventItem.className = 'bg-white p-6 rounded-lg shadow-md transition-transform transform hover:scale-105 event-item';
           eventItem.dataset.status = event.status; // Set data-status attribute
           eventItem.dataset.eventId = event._id; // Store event ID for routing
-          eventItem.onclick = () => {
-            currentEventId = event._id; // Update currentEventId on click
-            window.location.href = `/LiveAuction.html?eventId=${currentEventId}`// You can add routing or other actions here
-            console.log(`Current Event ID: ${currentEventId}`);
-          };
 
+          const status = document.createElement('p');
+          status.classList.add("text-white", "bg-red-500", "rounded-lg", "shadow-lg", "px-1", "fixed", "w-fit");
           // Create and append image
           const img = document.createElement('img');
           img.src = event.Eventimg; // Use event image URL
           img.alt = "Auction Item";
           img.className = "w-full h-40 object-cover mb-4 rounded-lg";
+          eventItem.appendChild(status);
           eventItem.appendChild(img);
 
           // Create and append title and description based on event status
@@ -319,27 +356,75 @@
           const description = document.createElement('p');
           description.className = "text-gray-700";
 
+          const timer = document.createElement('p');
+          timer.className = "text-gray-500 text-sm mb-4";
+
           // Set the description based on the event status
           if (event.status === 'Ended') {
             description.innerText = "This auction has ended.";
-            // Specific description for ended events
+
+            const timeSinceEnd = new Date() - new Date(event.EndTime);
+            timer.innerText = `Ended ${formatTimeDuration(timeSinceEnd)} ago`;
+            eventItem.classList.add('opacity-50'); // Visual indicator that the event has ended
+            eventItem.onclick = function () {
+              
+              showModal('This Event has ended and is no longer available to access.Please check out other currently ongoing events!');
+            };
           } else if (event.status === 'Ongoing') {
             description.innerText = "Bid now while the event is live!";
+            status.innerText = "Live!";
+            const timeTillEnd = new Date(event.EndTime) - new Date();
+            timer.innerText = `Ends in: ${formatTimeDuration(timeTillEnd)}`;
+
+            const interval = setInterval(async () => {
+              const updatedTimeUntilEnd = new Date(event.EndTime) - new Date();
+              if (updatedTimeUntilEnd > 0) {
+                timer.innerText = `Ends in: ${formatTimeDuration(updatedTimeUntilEnd)}`;
+              } else {
+                //console.log(updatedTimeUntilEnd)
+                await clearInterval(interval);
+                location.reload();
+              }
+            }, 1000);
+            eventItem.onclick = () => {
+              currentEventId = event._id; // Update currentEventId on click
+              window.location.href = `/LiveAuction.html?eventId=${currentEventId}`// You can add routing or other actions here
+              console.log(`Current Event ID: ${currentEventId}`);
+            };
             // Description for ongoing events
           } else if (event.status === 'Upcoming') {
             description.innerText = "Starts soon. Get ready to bid!";
-            // Description for upcoming events
+            // Countdown until the event starts
+            const timeUntilStart = new Date(event.StartTime) - new Date();
+            timer.innerText = `Starts in: ${formatTimeDuration(timeUntilStart)}`;
+            eventItem.onclick = function () {
+              showModal('This Event has not started yet and is  therefore unavailable to access. The Event would become available at the scheduled time!');
+            }; 
+
+
+            const interval = setInterval(async () => {
+              const updatedTimeUntilStart = new Date(event.StartTime) - new Date();
+              if (updatedTimeUntilStart > 0) {
+                timer.innerText = `Starts in: ${formatTimeDuration(updatedTimeUntilStart)}`;
+              } else {
+                //console.log(updatedTimeUntilStart)
+                // Reload the page or change status dynamically
+                await clearInterval(interval)
+                location.reload();
+              }
+            }, 1000);
           }
 
           eventItem.appendChild(description);
-
+          eventItem.appendChild(timer);
           // Append the event item to the grid
           eventGrid.appendChild(eventItem);
         });
       } catch (error) {
         console.error('Error fetching events:', error);
       }
-    });
+    };
+    fetchEvents();
 
     document.addEventListener('DOMContentLoaded', async function () {
       const urlParams = new URLSearchParams(window.location.search);
@@ -354,10 +439,10 @@
             console.log('I  found  the  div')
             featuredEventDiv.scrollIntoView({ behavior: 'smooth' });
             featuredEventDiv.classList.add('border-4', 'border-[#c7ae6a]');
-            setTimeout(function () {  
+            setTimeout(function () {
               featuredEventDiv.classList.remove('border-4', 'border-[#c7ae6a]');
 
-            },4000)
+            }, 4000)
           }
         }
       }, 1000)
