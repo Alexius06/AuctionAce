@@ -73,7 +73,7 @@ app.use('/reviews', reviewRoutes);
 app.use('/notifications', notificationRoutes);
 app.use('/payments', paymentRoutes);
 app.use('/auth', authRoutes);
-mongoose.connect('mongodb://localhost:27017/AuctionDB')
+mongoose.connect('mongodb+srv://benedictosadolor:8R41Lj7G9vqbWIt3@cluster0.xtgly.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0')
   .then(async () => {
 
 

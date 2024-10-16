@@ -1,11 +1,5 @@
 {
 
-  "engines": {
-
-    "node": "22.4.1"
-
-  },
-
   "dependencies": {
 
     "bcrypt": "^5.1.1",
@@ -41,6 +35,8 @@
     "nodemailer": "^6.9.15",
 
     "nodemon": "^3.1.7",
+
+    "socket-types": "^1.0.0",
 
     "socket.io": "^4.8.0"
 
