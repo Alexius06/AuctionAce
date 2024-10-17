@@ -1,5 +1,6 @@
 const Bid = require('../models/Bid');
 const Item = require('../models/Item');
+const Event = require('../models/Event');
 // Get all bids
 exports.getAllBids = async (req, res) => {
     try {
@@ -72,6 +73,13 @@ exports.getHighestBidsForItem = async (req, res) => {
                 continue;
             };
             console.log(item)
+
+            const event = await Event.findById(highestBid.eventId);
+            if (!event || event.status !== 'Ended') {
+                // Skip this bid if the event status is not 'Ended'
+                console.log(`Skipping bid for event ${highestBid.eventId}, status: ${event ? event.status : "Unknown"}`);
+                continue;
+            }
             highestBid = {
                 ...highestBid, // Spread the existing fields of highestBid
                 itemName: item.Itemname,

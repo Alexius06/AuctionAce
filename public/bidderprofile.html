@@ -35,20 +35,31 @@
 
       .page::-webkit-scrollbar-track {
         background: transparent;
-        /* Hide the track */
+        
       }
 
       .page::-webkit-scrollbar-thumb {
         background: #bfa75d;
         /* Gold color */
         border-radius: 4px;
-        /* Rounded scrollbar */
+      
       }
 
       .page::-webkit-scrollbar-thumb:hover {
         background: #a68e4d;
-        /* Darker gold on hover */
+        
       }
+
+      .popup-hidden {
+            transform: translateY(-100%);
+            opacity: 0;
+        }
+
+        .popup-visible {
+            transform: translateY(0);
+            width: 100%;
+            opacity: 1;
+        }
     </style>
   </head>
 
@@ -58,12 +69,12 @@
       <div
         class="relative bg-gradient-to-b from-gray-200 to-gray-50 rounded-lg shadow-lg overflow-hidden"
       >
-        <!-- Intricate lines -->
+        
         <div
           class="absolute top-0 left-0 w-full h-64 bg-gray-300 opacity-50 transform scale-125 -rotate-6"
         ></div>
 
-        <!-- Navbar (Assumed to be included) -->
+        
         <nav class="absolute top-0 w-full bg-transparent px-6 py-4 z-50">
           <ul class="flex space-x-4 text-white">
             <li>
@@ -77,11 +88,18 @@
               onclick="openEditProfilePopup()"
               class="absolute top-4 right-4 text-[#606060] px-4 py-2 rounded-full shadow-md hover:shadow-xl bg-[#c7ae6a]"
             >
-              <i class="fa-thin fa-user-pen"></i>Edit
+              <i class="fas fa-user-pen"></i>Edit
             </button>
             <!-- Add more navbar items here -->
           </ul>
         </nav>
+
+        <div
+              id="popupMessage"
+              class="fixed top-0  w-full bg-green-500 text-white p-4 text-center shadow-md popup-hidden z-50 transition-transform duration-500"
+            >
+              <span id="popupContent"></span>
+      </div>
         <!-- edit profile section -->
         <div
           id="editProfilePopup"
@@ -249,6 +267,7 @@
               </li>
             </ul>
 
+            
             <!-- Table Section -->
             <div
               class="mt-4 transition-opacity duration-500 ease-in-out container tabcontent"
@@ -392,7 +411,9 @@
       </div>
     </div>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/jwt-decode/build/jwt-decode.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jwt-decode/build/jwt-decode.min.js"></script> 
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+
     <script>
       // fetch user  details
       var userId;
@@ -619,12 +640,14 @@
             const row = document.createElement("tr");
             row.classList.add("hover:bg-gray-50");
             row.innerHTML = `
-                        <td class="px-4 py-2 border">${Bid.itemId.Itemname}</td>
-                        <td class="px-4 py-2 border">${Bid.bidAmount}</td>
-                        <td class="px-4 py-2 border">${new Date(
-                          Bid.createdAt
-                        ).toLocaleString()}</td>
-                    `;
+                              <td class="px-4 py-2 border">${
+                                Bid.itemId.Itemname
+                              }</td>
+                              <td class="px-4 py-2 border">${Bid.bidAmount}</td>
+                              <td class="px-4 py-2 border">${new Date(
+                                Bid.createdAt
+                              ).toLocaleString()}</td>
+                          `;
             tableBody.appendChild(row);
           });
         } catch (error) {
@@ -654,7 +677,7 @@
         // Clear any existing rows
         wonItemsBody.innerHTML = "";
 
-        if (data.length === 0) {
+        if (data.data.length === 0) {
           wonItemsBody.innerHTML =
             '<tr><td colspan="2" class="text-center py-4">No won items yet!</td></tr>';
         } else {
@@ -664,20 +687,20 @@
 
             // Create the item cell with image and name
             const itemCell = document.createElement("td");
-            itemCell.classList.add("px-4", "py-2");
+            itemCell.classList.add("px-4", "py-2", "w-1/2");
             itemCell.innerHTML = `
-                            <div class="flex items-center">
-                                <img src="${bid.itemImg}" alt="${bid.itemName}" class="w-12 h-12 mr-2 rounded-lg object-cover" />
-                                <span>${bid.itemName}</span>
-                            </div>
-                        `;
+                                  <div class="flex justify-center items-center">
+                                      <img src="${bid.itemImg}" alt="${bid.itemName}" class="w-12 h-12 mr-2 rounded-lg object-cover" />
+                                      <span>${bid.itemName}</span>
+                                  </div>
+                              `;
 
             // Create the payment button cell
             const paymentCell = document.createElement("td");
-            paymentCell.classList.add("px-4", "py-2");
+            paymentCell.classList.add("px-4", "py-2", "w-1/2", "text-center");
             const paymentButton = document.createElement("button");
             paymentButton.classList.add(
-              "bg-blue-500",
+              "bg-[#c7ae6a]",
               "text-white",
               "px-4",
               "py-2",
@@ -697,14 +720,13 @@
           });
         }
       }
-
-      document.getElementById("reviewform").addEventListener("submit", function (event) {
+      document
+        .getElementById("reviewform")
+        .addEventListener("submit", function (event) {
           event.preventDefault(); // Prevent default form submission
 
-          // Get the review text
+          // Get the review text and rating values
           const reviewText = document.getElementById("reviewText").value;
-
-          // Get the rating from the hidden input
           const rating = document.getElementById("ratingValue").value;
 
           // Validation: Check if review text is provided
@@ -713,20 +735,75 @@
             return;
           }
 
-          // Prepare the data for submission (e.g., sending to a server via AJAX)
+          // Prepare the data for submission
           const reviewData = {
             review_text: reviewText,
             rating: rating,
             userId: userId,
           };
 
-          // Simulate form submission (You can replace this with AJAX or actual submission logic)
-          console.log("Review submitted:", reviewData);
+          // Submit the review via Fetch API to the server
+          fetch("http://localhost:3000/reviews", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(reviewData),
+          })
+            .then((response) => {
+              if (response.ok) {
+                return response.json();
+              } else {
+                throw new Error("Failed to submit review");
+              }
+            })
+            .then((data) => {
+              showPopup(`${data.message}`);
 
-          // Optionally, reset the form after submission
-          document.getElementById('reviewform').reset(); // Clears the form fields
-          setRating(1); // Resets stars back to 1 by default
+              document.getElementById("reviewform").reset(); // Clears the form fields
+              setRating(1); // Resets stars back to 1 by default
+            })
+            .catch((error) => {
+              console.error("Error:", error);
+              alert(
+                "There was an error submitting your review. Please try again."
+              );
+            });
         });
+
+      function showPopup(message) {
+        const popup = document.getElementById("popupMessage");
+        const popupContent = document.getElementById("popupContent");
+        console.log(message);
+        // Set the message content
+        if (message.toUpperCase().includes("FAILED")) {
+          popup.classList.remove("bg-green-500");
+          popup.classList.add("bg-red-500");
+        } else {
+          popup.classList.remove("bg-red-500");
+          popup.classList.add("bg-green-500");
+        }
+        popupContent.textContent = message;
+
+        // Show the popup with the transition effect
+        popup.classList.remove("popup-hidden");
+        popup.classList.add("popup-visible");
+
+        // Automatically hide the popup after 1 second
+        setTimeout(() => {
+          hidePopup();
+        }, 3000);
+      }
+
+      // Hide the popup when anywhere on the page is clicked
+      document.body.addEventListener("click", hidePopup);
+
+      // Hide the popup
+      function hidePopup() {
+        const popup = document.getElementById("popupMessage");
+        popup.classList.remove("popup-visible");
+        popup.classList.add("popup-hidden");
+      }
     </script>
   </body>
 </html>

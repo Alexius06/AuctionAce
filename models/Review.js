@@ -4,7 +4,7 @@ const schema = mongoose.Schema;
 const ReviewSchema = new schema({
     review_text: {
         type: String,
-        minlength: 10,
+        minlength: 5,
         maxlength: 500
     },
     rating: {

@@ -370,18 +370,18 @@
             <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
                 <div class="bg-white p-6 rounded-lg shadow-md">
                     <h2 class="text-xl font-semibold mb-4">Total Auctions</h2>
-                    <p class="text-4xl font-bold">150</p>
-                    <p>Ongoing: 30 | Upcoming: 70 | Ended: 50</p>
+                    <p id="WEventCount" class="text-4xl font-bold">150</p>
+                    <p id="WEventStatus">Ongoing: 30 | Upcoming: 70 | Ended: 50</p>
                 </div>
                 <div class="bg-white p-6 rounded-lg shadow-md">
                     <h2 class="text-xl font-semibold mb-4">Registered Users</h2>
-                    <p class="text-4xl font-bold">2,300</p>
-                    <p>Merchants: 500 | Bidders: 1500</p>
+                    <p id="WUserCount" class="text-4xl font-bold">2,300</p>
+                    <p id="WUserRoleCount">Merchants: 500 | Bidders: 1500</p>
                 </div>
                 <div class="bg-white p-6 rounded-lg shadow-md">
-                    <h2 class="text-xl font-semibold mb-4">Items Uploaded</h2>
-                    <p class="text-4xl font-bold">5,780</p>
-                    <p>Last 24 hours: 200</p>
+                    <h2  class="text-xl font-semibold mb-4">Items Uploaded</h2>
+                    <p id="WItemCount" class="text-4xl font-bold">5,780</p>
+                    <p id="WverifiedItems"></p>
                 </div>
                 <div class="bg-white p-6 rounded-lg shadow-md">
                     <h2 class="text-xl font-semibold mb-4">Total Earnings</h2>
@@ -400,7 +400,7 @@
                     <i class="fas fa-box-open"></i>
                 </div>
                 <h3 class="text-xl font-bold">Pending Item Verification</h3>
-                <p class="text-gray-600">X items are awaiting approval</p>
+                <p class="text-gray-600" id="pendingItemCount">X items are awaiting approval</p>
                 <a data-target="verify"
                     class="bg-[#c7ae6a] w-fit block text-white p-2 mt-4 scroll-to rounded-md hover:bg-[#b29559] transition-all duration-300">Verify
                     Now</a>
@@ -413,7 +413,7 @@
                     <i class="fas fa-calendar-alt"></i>
                 </div>
                 <h3 class="text-xl font-bold">Upcoming Auction Events</h3>
-                <p class="text-gray-600">X upcoming, Y ongoing events</p>
+                <p class="text-gray-600" id="EventCount">X upcoming, Y ongoing events</p>
                 <a data-target="events"
                     class="bg-[#c7ae6a] w-fit block text-white p-2 mt-4 rounded-md hover:bg-[#b29559] scroll-to transition-all duration-300">Manage
                     Events</a>
@@ -426,7 +426,7 @@
                     <i class="fas fa-users"></i>
                 </div>
                 <h3 class="text-xl font-bold">User Management</h3>
-                <p class="text-gray-600">Total Users: X, Suspended: Y</p>
+                <p class="text-gray-600" id="Usercount">Total Users: X</p>
                 <a data-target="users"
                     class="bg-[#c7ae6a] w-fit block text-white p-2 mt-4 rounded-md hover:bg-[#b29559] scroll-to transition-all duration-300">View
                     Users</a>
@@ -439,7 +439,7 @@
                     <i class="fas fa-user-shield"></i>
                 </div>
                 <h3 class="text-xl font-bold">Admin Management</h3>
-                <p class="text-gray-600">X active admins</p>
+                <p class="text-gray-600" id="Admincount">X active admins</p>
                 <a data-target="Admins"
                     class="bg-[#c7ae6a]  w-fit block text-white p-2 mt-4 rounded-md hover:bg-[#b29559] scroll-to transition-all duration-300">Manage
                     Admins</a>
@@ -1219,6 +1219,14 @@
         //===============  fetch  pending items/verify & unverify  item6=s  ================\
         async function fetchPendingItems() {
             try {
+                const response = await fetch('/items');
+                const items = await response.json();
+                console.log(items)
+                document.getElementById('WItemCount').innerHTML = items.length;
+            } catch (error) {
+                console.error('Error fetching items:', error);
+            }
+            try {
                 const response = await fetch('/items/items/pending');
                 const items = await response.json(); // Parse JSON response
                 console.log(items)
@@ -1226,6 +1234,9 @@
                 // Get the table body element
                 const itemsTableBody = document.getElementById('itemsTableBody');
                 itemsTableBody.innerHTML = ''; // Clear existing rows
+                document.getElementById('pendingItemCount').textContent = `${items.data.length} items are awaiting approval`;
+
+                
 
                 // Create a row for each item
                 items.data.forEach(item => {
@@ -1311,7 +1322,13 @@
 
                 const users = await response.json(); // Parse JSON response
                 console.log(users);  // Check the structure of the users data
+                document.getElementById('Usercount').textContent = `Total Users: ${users.length}`; 
+                document.getElementById('WUserCount').textContent = ` ${users.length}`; 
+                document.getElementById('WUserRoleCount').textContent = `Merchants: ${users.filter(user => user.role === 'merchant').length} | Bidders: ${users.filter(user => user.role === 'bidder').length}`; 
+                
+                
 
+                
                 const usersTableBody = document.getElementById('usersTableBody');
                 usersTableBody.innerHTML = '';  // Clear any existing rows
 
@@ -1383,6 +1400,9 @@
 
                 const admins = await response.json(); // Parse JSON response
                 console.log(admins);  // Check the structure of the users data
+                document.getElementById('Admincount').textContent = `${admins.length} Active Admins `;
+                
+
 
                 const adminsTableBody = document.getElementById('adminsTableBody');
                 adminsTableBody.innerHTML = '';  // Clear any existing rows
@@ -1546,6 +1566,13 @@
                 // Get the events collection container
                 const eventsCollection = document.getElementById('eventscollection');
                 eventsCollection.innerHTML = ''; // Clear any existing content
+                
+                document.getElementById('EventCount').textContent =`${events.filter(event => event.status === 'Upcoming').length} Upcoming, ${events.filter(event => event.status === 'Ongoing').length} Ongoing events`; // Clear
+                document.getElementById('WEventCount').textContent =`${events.length}`; // Clear
+                document.getElementById('WEventStatus').textContent =`Ongoing: ${events.filter(event => event.status === 'Ongoing').length} | Upcoming: ${events.filter(event => event.status === 'Upcoming').length} | 
+                Ended: ${events.filter(event => event.status === 'Ended').length}`; // Clear
+                
+
 
                 // Loop through each event and generate the HTML structure
                 events.forEach(event => {
@@ -1597,7 +1624,8 @@
                 const verifiedResponse = await fetch('/items/items/verified');
                 const verifiedItems = await verifiedResponse.json();
                 console.log(verifiedItems)
-
+                document.getElementById('WverifiedItems').innerHTML = `Verified: ${verifiedItems.data.length}`
+                
                 // Loop through the verified items
                 verifiedItems.data.forEach(item => {
                     // Check if the item is not already assigned
