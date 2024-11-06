@@ -88,6 +88,7 @@ mongoose.connect('mongodb+srv://benedictosadolor:8R41Lj7G9vqbWIt3@cluster0.xtgly
 const expressServer = app.listen(3000, () => {
   console.log('Server running on port 3000');
 });
+
 const io = new server(expressServer, {
   pingInterval: 60000,
   pingTimeout: 60000
